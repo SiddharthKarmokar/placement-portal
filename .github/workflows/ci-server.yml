@@ -38,9 +38,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Code linting with flake8
-        run: flake8 .
+      - name: Run flake8
+        run: |
+          pip install flake8
+          flake8 --format=sarif --output-file=flake8-results.sarif
 
+      - name: Upload scanning results
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: flake8-results.sarif
+          
       - name: Run pytest
         run: pytest
 
