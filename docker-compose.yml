@@ -9,6 +9,7 @@ services:
       - 8000:8000
     volumes:
       - ./server:/app
+    command: [ "sh", "-c", "chmod +x ./run.sh && ./run.sh" ]
     environment:
       - ENV=dev
     networks:
