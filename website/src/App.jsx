@@ -7,6 +7,8 @@ import AdminStaff from './components/AdminStaff';
 import StudentForm from './components/detailform';
 import Home from './components/Home'; 
 import Student_login from './student/Student_login';
+import JobBoard from "./admin/JobBoard.jsx";
+import AdminHome from "./admin/AdminHome.jsx";
 
 const App = () => {
   return (
@@ -19,6 +21,8 @@ const App = () => {
         <Route path="/admin" element={<AdminStaff />} />
         <Route path="/a" element={<StudentForm />} />
         <Route path="/StudentLogin" element={<Student_login/>} />
+        <Route path="/admin/home" element={<AdminHome />} />
+        <Route path="/admin/jobs" element={<JobBoard />} />
       </Routes>
     </BrowserRouter>
   );
