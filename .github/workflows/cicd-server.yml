@@ -115,3 +115,6 @@ jobs:
 
       - name: Show deployed domain
         run: echo "Deployed Render domain is ${{ steps.get_domain.outputs.domain }}"
+    
+      - name: Add Render domain to summary
+        run: echo "### Render Deployment\n[Visit Render App](https://${{ steps.get_domain.outputs.domain }})" >> $GITHUB_STEP_SUMMARY
