@@ -15,7 +15,7 @@ const Message = () => {
       {/* Left side: Image */}
       <div className="md:w-1/3 flex justify-center">
         <img
-          src="https://www.iith.ac.in/assets/images/profiles/murty-bs.jpg"
+          src="/murty-bs.jpg"
           alt="Prof. Budaraju Srinivasa Murty"
           className="rounded-xl shadow-lg object-cover max-w-xs sm:max-w-sm md:max-w-md"
         />
