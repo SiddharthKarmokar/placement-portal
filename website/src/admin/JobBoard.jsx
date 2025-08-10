@@ -11,7 +11,7 @@ import {
   FiExternalLink,
 } from "react-icons/fi";
 import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+// import "react-toastify/dist/ReactToastify.css";
 
 const JobBoard = () => {
   const SERVER_URI = import.meta.env.VITE_SERVER_URI || "http://localhost:5000";
@@ -90,7 +90,7 @@ const JobBoard = () => {
 
           <button
             onClick={() => setShowPostPopup(true)}
-            className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+            className="bg-[#31398A] text-white px-6 py-3 rounded-lg hover:bg-[#3f48aa] transition-colors flex items-center gap-2"
           >
             <FiEdit2 size={18} />
             Post a Job
@@ -125,7 +125,7 @@ const JobBoard = () => {
           </div>
         </div>
 
-        {/* Jobs List */}
+        {/* Jobs List and the job Cards*/}
         {isLoading ? (
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
@@ -142,7 +142,7 @@ const JobBoard = () => {
             {filteredJobs.map((job) => (
               <div
                 key={job._id}
-                className="border border-gray-200 rounded-xl p-6 bg-white hover:shadow-md transition-shadow"
+                className="border border-gray-200 rounded-xl p-6 bg-white shadow-md hover:shadow-xl transition-shadow"
               >
                 <div className="flex flex-col md:flex-row justify-between gap-6">
                   <div className="flex-1">
@@ -183,7 +183,7 @@ const JobBoard = () => {
                   <div className="flex flex-col gap-3 min-w-[180px]">
                     <a
                       href={`/applications/${job._id}`}
-                      className="flex items-center justify-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
+                      className="flex items-center justify-center gap-2 bg-[#029309] text-white px-4 py-2 rounded-lg hover:bg-[#03b40c] transition-colors"
                     >
                       <FiExternalLink size={16} />
                       Applications
@@ -193,7 +193,7 @@ const JobBoard = () => {
                         setSelectedJob(job);
                         setShowModifyPopup(true);
                       }}
-                      className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                      className="flex items-center justify-center gap-2 bg-[#56318A] text-white px-4 py-2 rounded-lg hover:bg-[#45276f] transition-colors"
                     >
                       <FiEdit2 size={16} />
                       Edit

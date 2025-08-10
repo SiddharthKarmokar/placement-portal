@@ -18,9 +18,12 @@ router.post("/", async (req, res) => {
   try {
     const newJob = new Job(req.body);
     const savedJob = await newJob.save();
+
     res.status(201).json(savedJob);
   } catch (err) {
+
     res.status(400).json({ error: err.message });
+    
   }
 });
 
@@ -30,6 +33,7 @@ router.put("/:id", async (req, res) => {
     const updatedJob = await Job.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
+    // console.log(updatedJob)
     res.json(updatedJob);
   } catch (err) {
     res.status(400).json({ error: err.message });
