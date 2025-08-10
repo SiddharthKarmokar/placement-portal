@@ -25,8 +25,8 @@ const AdminHome = () => {
         }`}
       />
 
-      <div className="relative min-h-screen bg-gray-100 dark:bg-gray-900">
-        <div className="relative h-96 bg-blue-600 flex items-center justify-center text-white">
+      <div className="relative min-h-screen bg-gray-100">
+        <div className="relative h-96 bg-[#56318A] flex items-center justify-center text-white">
           <div className="text-center p-6 bg-black/30 rounded-lg backdrop-blur-md">
             <h1 className="text-4xl md:text-5xl font-bold">Welcome, Admin</h1>
             <p className="mt-2 text-lg md:text-xl">
@@ -34,7 +34,7 @@ const AdminHome = () => {
             </p>
           </div>
 
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 opacity-70"></div>
+          <div className="absolute inset-0 bg-gradient-to-br from-[#56318A] to-[#029309] opacity-70"></div>
         </div>
 
         <div className="container mx-auto px-4 -mt-16 relative z-10">
@@ -42,17 +42,17 @@ const AdminHome = () => {
             <div className="col-span-1">
               <ProfileCard
                 profName="Admin"
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 transition-transform hover:scale-105"
+                className="bg-white  rounded-lg shadow-xl p-6 transition-transform hover:scale-105"
               />
             </div>
 
             <div className="col-span-1">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 h-full flex flex-col justify-between transition-transform hover:scale-105">
+              <div className="bg-white  rounded-lg shadow-xl p-6 h-full flex flex-col justify-between transition-transform hover:scale-105">
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
+                  <h2 className="text-2xl font-semibold text-gray-800 ">
                     Job Postings
                   </h2>
-                  <p className="mt-2 text-gray-600 dark:text-gray-400">
+                  <p className="mt-2 text-gray-600 ">
                     View, create, and manage all job listings.
                   </p>
                 </div>
@@ -65,12 +65,12 @@ const AdminHome = () => {
             </div>
 
             <div className="col-span-1">
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 h-full flex flex-col justify-between transition-transform hover:scale-105">
+              <div className="bg-white  rounded-lg shadow-xl p-6 h-full flex flex-col justify-between transition-transform hover:scale-105">
                 <div>
-                  <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
-                    User Management
+                  <h2 className="text-2xl font-semibold text-gray-800">
+                    Student Management
                   </h2>
-                  <p className="mt-2 text-gray-600 dark:text-gray-400">
+                  <p className="mt-2 text-gray-600 ">
                     Manage user accounts and permissions.
                   </p>
                 </div>

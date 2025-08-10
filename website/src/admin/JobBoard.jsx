@@ -5,11 +5,12 @@ import ModifyJobPopup from "./ModifyJobPopup";
 import {
   FiEdit2,
   FiBriefcase,
-  FiDollarSign,
   FiMapPin,
   FiClock,
   FiExternalLink,
+  FiTrash,
 } from "react-icons/fi";
+import { IndianRupee } from "lucide-react";
 import { toast } from "react-toastify";
 // import "react-toastify/dist/ReactToastify.css";
 
@@ -63,6 +64,22 @@ const JobBoard = () => {
     } catch (err) {
       console.error(err);
       toast.error("Failed to update job");
+    }
+  };
+
+  // New function to handle job deletion
+  const handleDeleteJob = async (jobId) => {
+    // You could add a confirmation dialog here for better UX
+    if (window.confirm("Are you sure you want to delete this job?")) {
+      try {
+        await axios.delete(`${SERVER_URI}/api/jobs/${jobId}`);
+
+        setJobs(jobs.filter((job) => job._id !== jobId));
+        toast.success("Job deleted successfully!");
+      } catch (err) {
+        console.error(err);
+        toast.error("Failed to delete job");
+      }
     }
   };
 
@@ -158,7 +175,7 @@ const JobBoard = () => {
 
                         <div className="mt-4 flex flex-wrap gap-4">
                           <div className="flex items-center gap-2 text-gray-700">
-                            <FiDollarSign className="text-gray-500" />
+                            <IndianRupee className="text-gray-500" />
                             <span>{job.salary || "Not specified"}</span>
                           </div>
                           <div className="flex items-center gap-2 text-gray-700">
@@ -197,6 +214,13 @@ const JobBoard = () => {
                     >
                       <FiEdit2 size={16} />
                       Edit
+                    </button>
+                    <button
+                      onClick={() => handleDeleteJob(job._id)}
+                      className="flex items-center justify-center gap-2 bg-[#c10505] text-white px-4 py-2 rounded-lg hover:bg-[#a10404] transition-colors"
+                    >
+                      <FiTrash size={16} />
+                      Remove
                     </button>
                   </div>
                 </div>
