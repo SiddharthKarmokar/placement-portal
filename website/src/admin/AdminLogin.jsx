@@ -1,36 +1,11 @@
 import React from "react";
 import "../css/student_login.css";
 
-export default function StudentLogin() {
+export default function AdminLogin() {
   return (
     <div className="flex h-screen ">
       {/* Left Section */}
-      <div className="flex-1 bg-white w-1/2 flex z-100 flex-col justify-start px-12">
-      <img className='w-[200px] mx-auto mb-40 mt-20' src="/logo.webp" alt="logo" />
-        <h2 className="text-3xl mx-auto font-bold mb-8">Login</h2>
-        <form className="flex w-2/3 mx-auto flex-col gap-5">
-          <input
-            type="text"
-            placeholder="Username"
-            className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
-          />
-          <p className="text-sm text-gray-500 cursor-pointer">
-            Forgot Password?
-          </p>
-          <button
-            type="submit"
-            className="bg-[#181204] text-white py-3 rounded-lg hover:bg-black transition"
-          >
-            Login
-          </button>
-        </form>
-      </div>
-
+ 
       {/* Right Section */}
       <div className="right-section flex flex-col w-1/2 justify-evenly items-center bg-[#181204] relative overflow-hidden">
 
@@ -38,7 +13,7 @@ export default function StudentLogin() {
         <div className=" z-20">
           <h1 className="text-white text-5xl font-bold leading-tight">
             Welcome to <br />
-            <span className=" text-7xl font-extrabold ">student portal</span>
+            <span className=" text-7xl font-extrabold ">Admin portal</span>
           </h1>
           <p className="text-gray-300 mt-2 text-sm">
             Login to access your account
@@ -46,7 +21,6 @@ export default function StudentLogin() {
         </div>
 
         {/* Illustration Placeholder */}
-          {/* Replace this with actual image/illustration */}
         <img className="w-[500px] md:w-[700px] z-30" src="/login.png" alt="login" />
       </div>
         <svg width="297" className="vector1 " height="274" viewBox="0 0 297 274" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -71,6 +45,32 @@ export default function StudentLogin() {
         <svg className="vector6 " width="402" height="342" viewBox="0 0 402 342" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M246.183 -104.329C312.639 -116.256 371.52 -62.0773 418.718 -13.7965C465.269 33.8225 509.63 92.4428 503.35 158.738C497.371 221.846 441.487 266.079 388.857 301.412C346.913 329.57 296.568 327.713 246.183 331.386C189.06 335.551 127.863 356.88 81.0709 323.851C29.1946 287.233 -8.32216 221.457 1.5951 158.738C10.9568 99.5328 85.3425 82.6115 126.158 38.7128C170.216 -8.67467 182.496 -92.898 246.183 -104.329Z" fill="#C89945" />
         </svg>
+
+    <div className="flex-1 bg-white w-1/2 flex z-100 flex-col justify-start px-12">
+      <img className='w-[200px] mx-auto mb-40 mt-20' src="/logo.webp" alt="logo" />
+        <h2 className="text-3xl mx-auto font-bold mb-8">Login</h2>
+        <form className="flex w-2/3 mx-auto flex-col gap-5">
+          <input
+            type="text"
+            placeholder="Username"
+            className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
+          />
+          <p className="text-sm text-gray-500 cursor-pointer">
+            Forgot Password?
+          </p>
+          <button
+            type="submit"
+            className="bg-[#181204] text-white py-3 rounded-lg hover:bg-black transition"
+          >
+            Login
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

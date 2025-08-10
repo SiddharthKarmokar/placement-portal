@@ -24,26 +24,26 @@ const ContactUs = () => {
               Professor In Charge
             </h3>
             <p className="font-medium text-gray-800">
-              Dr. C. Chandrasekhara Sastry
+              Dr. Nittala Noel Anurag Prashanth
             </p>
             <p className="text-sm text-gray-500 mb-4">
-              Department of Mechanical Engineering
+              Department of Science
             </p>
 
             <div className="space-y-2 text-sm text-gray-700">
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-[#029309]" />
-                <a href="tel:+919840936835" className="hover:underline">
-                  +91-9840936835
+                <Phone className="w-4 h-4 text-[#029309]" /> 
+                <a href="#" className="hover:underline">
+                  08518-289100 (Ext:239)
                 </a>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#029309]" />
                 <a
-                  href="mailto:chandrasekhara@iiitk.ac.in"
+                  href="mailto:noel@iiitk.ac.in"
                   className="hover:underline"
                 >
-                  chandrasekhara@iiitk.ac.in
+                  noel@iiitk.ac.in
                 </a>
               </div>
             </div>

@@ -54,10 +54,8 @@ const Home = () => {
           </div>
 
           <div className="w-full flex flex-col md:flex-row justify-center items-center gap-5">
-            <Link to="/login" className="w-full md:w-auto">
-              <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md"
-                onClick={()=> Navigate("/StudentLogin")}
-              >
+            <Link to="/student/login" className="w-full md:w-auto">
+              <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md"              >
                 <img src="/projectV1.png" alt="Student" className="w-5 h-5" />
                 Student Login
               </button>
@@ -68,10 +66,12 @@ const Home = () => {
               Recruiter Login
             </button>
 
+           <Link to="/admin/login" className="w-full md:w-auto">
             <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
               <img src="/ad.png" alt="Admin" className="w-5 h-5" />
               Admin Login
             </button>
+            </Link>
           </div>
         </div>
       </div>
