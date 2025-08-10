@@ -23,10 +23,10 @@ const industries = [
 ];
 const branches = ["CSE", "ECE", "AIDS", "MECH", "EEE", "All Branches"];
 
-const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
+export default function ModifyJobPopup({ job, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
-    title: "",
     company: "",
+    title: "",
     website: "",
     type: "",
     location: "",
@@ -37,6 +37,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
     cgpa: "",
     gender: [],
     backlogsAllowed: "No",
+    backlogCourses: "",
     deadline: "",
   });
 
@@ -55,6 +56,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
         cgpa: job.cgpa || "",
         gender: job.gender || [],
         backlogsAllowed: job.backlogsAllowed || "No",
+        backlogCourses: "",
         deadline: job.deadline || "",
       });
     }
@@ -77,7 +79,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    onSubmit({ ...formData, _id: job?._id });
   };
 
   return (
@@ -87,9 +89,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
       className="fixed inset-0 z-50 overflow-y-auto"
     >
       <div className="flex items-center justify-center min-h-screen p-4">
-        <Dialog.Overlay className="fixed inset-0 bg-black/30" />
-
-        <div className="relative bg-white rounded-lg shadow-xl w-full max-w-2xl">
+        <div className="relative bg-white rounded-lg shadow-2xl w-full max-w-2xl">
           <div className="flex justify-between items-center p-4 border-b">
             <Dialog.Title className="text-xl font-semibold">
               Edit Job Posting
@@ -381,6 +381,4 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
       </div>
     </Dialog>
   );
-};
-
-export default ModifyJobPopup;
+}

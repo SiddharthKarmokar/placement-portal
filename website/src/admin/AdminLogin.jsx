@@ -1,7 +1,51 @@
+import { useState  } from "react";
+import { useNavigate } from "react-router-dom"; // Needed for navigation
 import React from "react";
 import "../css/student_login.css";
+import { API_URL } from "../../env-config";
 
 export default function AdminLogin() {
+    const [Password, setPassword] = useState("");
+    const [Username, setUsername] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+
+      const handleLogin = async (e) => {
+        e.preventDefault();
+        try {
+          const tokenRes = await fetch(`${API_URL}/api/auth/token`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({
+              username: Username,
+              password: Password,
+            }),
+          });
+    
+          const tokenData = await tokenRes.json();
+          if (!tokenRes.ok) return alert(`❌ ${tokenData.detail || "Login failed"}`);
+    
+          const accessToken = tokenData.access_token;
+          localStorage.setItem("token", accessToken);
+    
+          const profileRes = await fetch(`${API_URL}/profile/admin/me`, {
+            method: "GET",
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+    
+          const profileData = await profileRes.json();
+          if (!profileRes.ok)
+            return alert("⚠️ Login succeeded, but failed to fetch profile.");
+    
+          localStorage.setItem("user", JSON.stringify(profileData));
+          alert(`✅ Welcome, ${profileData.username || "User"}!`);
+          navigate(`/admin/${profileData.username}`);
+        } catch (err) {
+          console.error("Login Error:", err);
+          alert("❌ Server error. Please try again.");
+        }
+      };
+
   return (
     <div className="flex h-screen ">
       {/* Left Section */}
@@ -49,15 +93,21 @@ export default function AdminLogin() {
     <div className="flex-1 bg-white w-1/2 flex z-100 flex-col justify-start px-12">
       <img className='w-[200px] mx-auto mb-40 mt-20' src="/logo.webp" alt="logo" />
         <h2 className="text-3xl mx-auto font-bold mb-8">Login</h2>
-        <form className="flex w-2/3 mx-auto flex-col gap-5">
+        <form onSubmit={handleLogin} className="flex w-2/3 mx-auto flex-col gap-5">
           <input
             type="text"
             placeholder="Username"
+            onChange={(e)=>{
+                setUsername(e.target.value);
+            }}
             className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
           />
           <input
             type="password"
             placeholder="Password"
+            onChange={(e)=>{
+                setPassword(e.target.value);
+            }}
             className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
           />
           <p className="text-sm text-gray-500 cursor-pointer">

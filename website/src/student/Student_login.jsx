@@ -1,24 +1,90 @@
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom"; // Needed for navigation
+import { Eye, EyeOff } from "lucide-react"; // Icons
 import "../css/student_login.css";
+import { API_URL } from '../../env-config';
 
 export default function StudentLogin() {
+  const [Password, setPassword] = useState("");
+  const [Username, setUsername] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const tokenRes = await fetch(`${API_URL}/api/auth/token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          username: Username,
+          password: Password,
+        }),
+      });
+
+      const tokenData = await tokenRes.json();
+      if (!tokenRes.ok) return alert(`❌ ${tokenData.detail || "Login failed"}`);
+
+      const accessToken = tokenData.access_token;
+      localStorage.setItem("token", accessToken);
+
+      const profileRes = await fetch(`${API_URL}/profile/student/me`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+
+      const profileData = await profileRes.json();
+      if (!profileRes.ok)
+        return alert("⚠️ Login succeeded, but failed to fetch profile.");
+
+      localStorage.setItem("user", JSON.stringify(profileData));
+      alert(`✅ Welcome, ${profileData.username || "User"}!`);
+      navigate(`/student/${profileData.username}`);
+    } catch (err) {
+      console.error("Login Error:", err);
+      alert("❌ Server error. Please try again.");
+    }
+  };
+
   return (
-    <div className="flex h-screen ">
+    <div className="flex h-screen">
       {/* Left Section */}
       <div className="flex-1 bg-white w-1/2 flex z-100 flex-col justify-start px-12">
-      <img className='w-[200px] mx-auto mb-40 mt-20' src="/logo.webp" alt="logo" />
+        <img
+          className="w-[200px] mx-auto mb-40 mt-20"
+          src="/logo.webp"
+          alt="logo"
+        />
         <h2 className="text-3xl mx-auto font-bold mb-8">Login</h2>
-        <form className="flex w-2/3 mx-auto flex-col gap-5">
+        <form
+          className="flex w-2/3 mx-auto flex-col gap-5"
+          onSubmit={handleLogin}
+        >
           <input
             type="text"
             placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
             className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
+            required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
-          />
+
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-2 text-gray-500 hover:text-black"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
           <p className="text-sm text-gray-500 cursor-pointer">
             Forgot Password?
           </p>
@@ -33,23 +99,25 @@ export default function StudentLogin() {
 
       {/* Right Section */}
       <div className="right-section flex flex-col w-1/2 justify-evenly items-center bg-[#181204] relative overflow-hidden">
-
-        {/* Welcome Text - exact position */}
-        <div className=" z-20">
+        {/* Welcome Text */}
+        <div className="z-20">
           <h1 className="text-white text-5xl font-bold leading-tight">
             Welcome to <br />
-            <span className=" text-7xl font-extrabold ">student portal</span>
+            <span className="text-7xl font-extrabold">student portal</span>
           </h1>
           <p className="text-gray-300 mt-2 text-sm">
             Login to access your account
           </p>
         </div>
 
-        {/* Illustration Placeholder */}
-          {/* Replace this with actual image/illustration */}
-        <img className="w-[500px] md:w-[700px] z-30" src="/login.png" alt="login" />
+        {/* Illustration */}
+        <img
+          className="w-[500px] md:w-[700px] z-30"
+          src="/login.png"
+          alt="login"
+        />
       </div>
-        <svg width="297" className="vector1 " height="274" viewBox="0 0 297 274" fill="none" xmlns="http://www.w3.org/2000/svg">
+     <svg width="297" className="vector1 " height="274" viewBox="0 0 297 274" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path fill-rule="evenodd" clip-rule="evenodd" d="M61.3073 29.0586C88.2219 6.40331 123.623 1.39297 158.797 0.723607C190.998 0.110826 224.821 3.53503 248.377 25.4986C271.085 46.6717 270.217 80.1536 276.577 110.543C284.477 148.289 308.691 187.757 289.316 221.101C268.574 256.8 223.355 271.04 182.12 273.109C142.251 275.109 106.28 256.102 74.5541 231.875C40.7509 206.062 2.99212 176.647 0.22008 134.205C-2.5263 92.1563 29.0695 56.1946 61.3073 29.0586Z" fill="#F0F0F0" fill-opacity="0.43" />
         </svg>
         <svg className="vector2 " width="297" height="222" viewBox="0 0 297 222" fill="none" xmlns="http://www.w3.org/2000/svg">
