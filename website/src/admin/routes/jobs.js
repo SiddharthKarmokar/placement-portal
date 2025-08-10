@@ -21,9 +21,7 @@ router.post("/", async (req, res) => {
 
     res.status(201).json(savedJob);
   } catch (err) {
-
     res.status(400).json({ error: err.message });
-    
   }
 });
 
@@ -37,6 +35,19 @@ router.put("/:id", async (req, res) => {
     res.json(updatedJob);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+});
+
+// DELETE a job by ID
+router.delete("/:id", async (req, res) => {
+  try {
+    const deletedJob = await Job.findByIdAndDelete(req.params.id);
+    if (!deletedJob) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+    res.json({ message: "Job deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

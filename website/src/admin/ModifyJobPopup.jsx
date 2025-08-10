@@ -3,14 +3,13 @@ import { Dialog } from "@headlessui/react";
 import {
   FiX,
   FiBriefcase,
-  FiDollarSign,
   FiMapPin,
   FiGlobe,
   FiClock,
   FiBook,
   FiAward,
 } from "react-icons/fi";
-
+import { IndianRupee } from "lucide-react";
 // Define constants outside the component
 const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
 const industries = [
@@ -226,7 +225,7 @@ export default function ModifyJobPopup({ job, onClose, onSubmit }) {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiDollarSign className="text-gray-400" />
+                      <IndianRupee className="text-gray-400" />
                     </div>
                     <input
                       name="salary"

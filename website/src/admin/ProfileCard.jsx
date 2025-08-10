@@ -17,7 +17,7 @@ const ProfileCard = ({ profName }) => {
         </div>
       </div>
 
-      <button className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition">
+      <button className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 hover:scale-105 transition">
         Edit Profile
       </button>
     </div>
