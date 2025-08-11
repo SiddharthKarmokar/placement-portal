@@ -35,10 +35,10 @@ const Home = () => {
       />
 
   <div
-        className="relative min-h-[100vh] bg-cover bg-center flex items-center justify-center"
-        style={{ backgroundImage: "url(/sketch.png)" }}
+        className="relative min-h-[100vh] bg-cover bg-top flex items-center justify-center"
+        style={{ backgroundImage: "url(/Hero1.jpeg)" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-black/20 z-0" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/55 via-black/50 to-black/20 z-0" />
 
         <div className="relative z-10 max-w-5xl w-full px-6 flex flex-col items-center text-white text-center space-y-10">
           
@@ -60,11 +60,12 @@ const Home = () => {
                 Student Login
               </button>
             </Link>
-
+            <Link to="https://docs.google.com/forms/d/e/1FAIpQLScmbLuoAeDym_5EhLRUBspbGtLqA5yjahxVJOmuiOK3aCv8gw/viewform" className="w-full md:w-auto">
             <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
               <img src="/rec.png" alt="Recruiter" className="w-5 h-5" />
               Recruiter Login
             </button>
+            </Link>
 
            <Link to="/admin/login" className="w-full md:w-auto">
             <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
