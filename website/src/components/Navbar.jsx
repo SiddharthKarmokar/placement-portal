@@ -9,7 +9,9 @@ export default function Navbar({ className = "" }) {
   const activeStyle = "text-gray-300 underline";
 
   return (
-    <nav className={`p-4 flex justify-between items-center flex-wrap fixed top-0 w-full transition-all duration-300 z-50 ${className}`}>
+    <nav
+      className={`p-4 flex justify-between backdrop-blur-2xl items-center flex-wrap fixed top-0 w-full transition-all duration-300 z-50 ${className}`}
+    >
       {/* Logo and Title */}
       <div className="flex items-center text-white text-lg font-bold">
         <img
@@ -32,11 +34,21 @@ export default function Navbar({ className = "" }) {
           isOpen ? "block" : "hidden"
         } w-full md:flex md:items-center md:w-auto md:space-x-6 text-white font-bold md:mr-10 mt-4 md:mt-0`}
       >
-        <a href="#overview" className={linkStyle}>Overview</a>
-        <a href="#why-recruit" className={linkStyle}>Why Recruit</a>
-        <a href="#directors-message" className={linkStyle}>Director's Message</a>
-        <a href="#process" className={linkStyle}>Recruitment Process</a>
-        <a href="#contact" className={linkStyle}>Contact Us</a>
+        <a href="#overview" className={linkStyle}>
+          Overview
+        </a>
+        <a href="#why-recruit" className={linkStyle}>
+          Why Recruit
+        </a>
+        <a href="#directors-message" className={linkStyle}>
+          Leadership Messages
+        </a>
+        <a href="#process" className={linkStyle}>
+          Placement Process
+        </a>
+        <a href="#contact" className={linkStyle}>
+          Contact Us
+        </a>
       </div>
     </nav>
   );

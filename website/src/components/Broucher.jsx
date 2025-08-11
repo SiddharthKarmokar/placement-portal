@@ -1,17 +1,17 @@
-import React from 'react';
+import React from "react";
 import {
   BookOpen,
   Building2,
   School,
   FileText,
   FlaskConical,
-} from 'lucide-react';
+} from "lucide-react";
 
 const brochures = [
-  { year: '2024–25', file: '/24re.pdf' },
-  { year: '2023–24', file: '/23.pdf' },
-  { year: '2022–23', file: '/22.pdf' },
-  { year: '2021–22', file: '/21.pdf' },
+  { year: "2024–25", file: "/24re.pdf" },
+  { year: "2023–24", file: "/23.pdf" },
+  { year: "2022–23", file: "/22.pdf" },
+  { year: "2021–22", file: "/21.pdf" },
 ];
 
 const Card = ({ Icon, title, children, linkText, link }) => (
@@ -36,9 +36,7 @@ const Brochure = () => {
   return (
     <section id="overview" className="bg-gray-50 py-12 px-4 sm:px-8 lg:px-20">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-bold text-center mb-12">
-          Institute Overview
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-12">Overview</h2>
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -51,8 +49,9 @@ const Brochure = () => {
               linkText="Learn more"
               link="#"
             >
-              IIITDM Kurnool provides a flexible and research-driven academic environment. Students are
-              encouraged to explore creative and practical learning opportunities.
+              IIITDM Kurnool provides a flexible and research-driven academic
+              environment. Students are encouraged to explore creative and
+              practical learning opportunities.
             </Card>
 
             {/* Card 2 */}
@@ -62,8 +61,9 @@ const Brochure = () => {
               linkText="Explore IDC"
               link="#"
             >
-              IDC blends creative pedagogy with design innovation. It covers Industrial Design, Visual
-              Communication, Interaction Design, Animation, and more.
+              IDC blends creative pedagogy with design innovation. It covers
+              Industrial Design, Visual Communication, Interaction Design,
+              Animation, and more.
             </Card>
 
             {/* Card 3 */}
@@ -73,8 +73,9 @@ const Brochure = () => {
               linkText="Know more"
               link="#"
             >
-              IIITDM Kurnool offers over 20 departments and 10 programs, fostering multi-disciplinary
-              growth with state-of-the-art facilities and academic rigor.
+              IIITDM Kurnool offers over 20 departments and 10 programs,
+              fostering multi-disciplinary growth with state-of-the-art
+              facilities and academic rigor.
             </Card>
 
             {/* Card 4 */}
@@ -84,8 +85,9 @@ const Brochure = () => {
               linkText="Explore Research"
               link="#"
             >
-              The institute actively supports innovation, startups, and cutting-edge research through
-              dedicated labs, collaborations, and interdisciplinary initiatives.
+              The institute actively supports innovation, startups, and
+              cutting-edge research through dedicated labs, collaborations, and
+              interdisciplinary initiatives.
             </Card>
           </div>
 
