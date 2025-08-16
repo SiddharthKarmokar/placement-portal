@@ -8,6 +8,7 @@ import Home from "./components/Home";
 import Student_login from "./student/Student_login";
 import JobBoard from "./admin/JobBoard.jsx";
 import JobPost from "./admin/JobPost.jsx";
+import JobGet from "./student/JobGet.jsx";
 import AdminHome from "./admin/AdminHome.jsx";
 import StudentLogin from "./student/Student_login";
 import AdminLogin from "./admin/AdminLogin.jsx";
@@ -26,6 +27,7 @@ const App = () => {
         <Route path="/admin/jobs" element={<JobBoard />} />
         <Route path="/admin/post" element={<JobPost />} />
         <Route path="/student/login" element={<StudentLogin />} />
+        <Route path="/student/get" element={<JobGet />} />
         <Route path="/admin/login" element={<AdminLogin />} />
       </Routes>
     </BrowserRouter>
