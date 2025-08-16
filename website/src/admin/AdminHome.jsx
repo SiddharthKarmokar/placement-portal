@@ -1,7 +1,7 @@
 import { useState, useEffect, React } from "react";
-import ProfileCard from "./ProfileCard";
+import Sidebar from "../components/SideNav";
 import LogoNav from "../components/LogoNav";
-import { Link } from "react-router-dom";
+import JobPost from "./JobPost";
 
 const AdminHome = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -16,73 +16,47 @@ const AdminHome = () => {
   }, []);
 
   return (
-    <>
-    <div className="flex justify-center items-center p-2">
-    <LogoNav/>
-    </div>
+    <div className="h-screen flex bg-[#EEEEEE]">
+      {/* Sidebar - collapses on small screens */}
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
 
-      <div className="relative min-h-screen bg-gray-100">
-        <div className="relative h-96 bg-[#56318A] flex items-center justify-center text-white">
-          <div className="text-center p-6 bg-black/30 rounded-lg backdrop-blur-md">
-            <h1 className="text-4xl md:text-5xl font-bold">Welcome, Admin</h1>
-            <p className="mt-2 text-lg md:text-xl">
-              Manage your dashboard efficiently.
-            </p>
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col">
+        <LogoNav className="shadow-md sticky top-0 z-10" />
+        <div className="flex flex-1 flex-col lg:flex-row gap-6 p-4 md:p-6 overflow-y-auto">
+          {/* Job Post Section */}
+          <div className="flex-1 rounded-3xl md:overflow-y-auto">
+            <JobPost />
           </div>
 
-          <div className="absolute inset-0 bg-gradient-to-br from-[#56318A] to-[#029309] opacity-70"></div>
-        </div>
-
-        <div className="container mx-auto px-4 -mt-16 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="col-span-1">
-              <ProfileCard
-                profName="Admin"
-                className="bg-white  rounded-lg shadow-xl p-6 transition-transform hover:scale-105"
-              />
+          {/* Right Side Actions */}
+          <div className="w-full lg:w-[280px] hidden flex-col lg:flex gap-4">
+            {/* Update Brochure */}
+            <div className="bg-red-400 rounded-2xl p-6 shadow-md cursor-pointer flex items-center justify-center text-center">
+              <h2 className="text-white font-semibold text-lg">Update Brochure</h2>
             </div>
 
-            <div className="col-span-1">
-              <div className="bg-white  rounded-lg shadow-xl p-6 h-full flex flex-col justify-between transition-transform hover:scale-105">
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-800 ">
-                    Job Postings
-                  </h2>
-                  <p className="mt-2 text-gray-600 ">
-                    View, create, and manage all job listings.
-                  </p>
-                </div>
-                <Link to="/admin/post" className="mt-4">
-                  <button className="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
-                    Go to Job Postings
-                  </button>
-                </Link>
-              </div>
+            {/* Home Page Control */}
+            <div className="bg-white rounded-2xl p-6 shadow-md cursor-pointer flex items-center justify-center text-center">
+              <h2 className="text-black font-semibold">Home Page Control</h2>
             </div>
 
-            <div className="col-span-1">
-              <div className="bg-white  rounded-lg shadow-xl p-6 h-full flex flex-col justify-between transition-transform hover:scale-105">
-                <div>
-                  <h2 className="text-2xl font-semibold text-gray-800">
-                    Student Management
-                  </h2>
-                  <p className="mt-2 text-gray-600 ">
-                    Manage user accounts and permissions.
-                  </p>
-                </div>
+            {/* CSV Upload */}
+            <div className="bg-white rounded-2xl p-6 shadow-md cursor-pointer flex items-center justify-center text-center">
+              <h2 className="text-black font-semibold">Upload CSV</h2>
+            </div>
 
-                <button
-                  disabled
-                  className="w-full py-3 px-6 bg-gray-400 text-white font-semibold rounded-lg"
-                >
-                  Coming Soon
-                </button>
-              </div>
+            {/* Users */}
+            <div className="bg-white rounded-2xl p-6 shadow-md cursor-pointer flex items-center justify-center text-center">
+              <h2 className="text-black font-semibold">Users</h2>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
+
 export default AdminHome;
