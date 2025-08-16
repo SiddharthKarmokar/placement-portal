@@ -88,7 +88,7 @@ export default function ModifyJobPopup({ job, onClose, onSubmit }) {
       className="fixed inset-0 z-50 overflow-y-auto"
     >
       <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="relative bg-white rounded-lg shadow-2xl w-full max-w-2xl">
+        <div className="relative bg-white border-2 rounded-lg shadow-2xl w-full max-w-2xl">
           <div className="flex justify-between items-center p-4 border-b">
             <Dialog.Title className="text-xl font-semibold">
               Edit Job Posting
