@@ -1,6 +1,6 @@
 import { useState, useEffect, React } from "react";
 import ProfileCard from "./ProfileCard";
-import Navbar from "./Navbar";
+import LogoNav from "../components/LogoNav";
 import { Link } from "react-router-dom";
 
 const AdminHome = () => {
@@ -17,13 +17,9 @@ const AdminHome = () => {
 
   return (
     <>
-      <Navbar
-        className={`transition-all duration-300 ${
-          isScrolled
-            ? "bg-white text-gray-800 shadow-md"
-            : "bg-transparent text-white"
-        }`}
-      />
+    <div className="flex justify-center items-center p-2">
+    <LogoNav/>
+    </div>
 
       <div className="relative min-h-screen bg-gray-100">
         <div className="relative h-96 bg-[#56318A] flex items-center justify-center text-white">

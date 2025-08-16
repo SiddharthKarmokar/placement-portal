@@ -78,7 +78,7 @@ const PlacementProcess = () => {
           {/* Center line */}
           <div className="hidden md:block absolute left-1/2 top-0 h-full w-1 bg-gradient-to-b from-[#31398A] via-[#029309] to-[#31398A] opacity-20 transform -translate-x-1/2" />
 
-          <div className="space-y-12">
+          <div className="space-y-0">
             {steps.map((step, index) => {
               const Icon = icons[index % icons.length];
               const isEven = index % 2 === 0;
@@ -91,7 +91,7 @@ const PlacementProcess = () => {
                   }`}
                 >
                   {/* Connector Icon */}
-                  <div className="md:w-1/2 flex justify-center mb-6 md:mb-0">
+                  <div className="md:w-1/2 flex justify-center mb-2 md:mb-0">
                     <div
                       className={`w-14 h-14 rounded-full ${
                         isEven ? "bg-[#31398A]" : "bg-[#029309]"
