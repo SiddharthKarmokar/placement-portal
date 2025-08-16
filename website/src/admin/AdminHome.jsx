@@ -52,7 +52,7 @@ const AdminHome = () => {
                     View, create, and manage all job listings.
                   </p>
                 </div>
-                <Link to="/admin/jobs" className="mt-4">
+                <Link to="/admin/post" className="mt-4">
                   <button className="w-full py-3 px-6 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition duration-300">
                     Go to Job Postings
                   </button>

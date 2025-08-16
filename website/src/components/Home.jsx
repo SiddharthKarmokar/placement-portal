@@ -11,6 +11,7 @@ import Navbar from "./Navbar";
 import PlacementProcess from "./PlacementProcess";
 import Footer from "./Footer";
 import { Link, Navigate } from "react-router-dom";
+import CompanySlider from "./CompanySlider";
 
 const Home = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -95,7 +96,7 @@ const Home = () => {
       <div id="process" className="scroll-mt-24">
         <PlacementProcess />
       </div>
-
+      <CompanySlider />
       <AdminStaff />
       <Coordinators />
       <div id="contact" className="scroll-mt-24">
