@@ -12,6 +12,7 @@ import PlacementProcess from "./PlacementProcess";
 import Footer from "./Footer";
 import { Link, Navigate } from "react-router-dom";
 import CompanySlider from "./CompanySlider";
+import "../css/scroll.css"
 
 const Home = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -28,7 +29,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="w-full">
+    <div className="w-full custom-scroll">
       <Navbar
         className={`transition-all duration-300 ${
           isScrolled ? "bg-blue-600 shadow-md" : "bg-transparent"

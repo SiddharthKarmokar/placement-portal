@@ -9,24 +9,35 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div
-      className={`h-[90vh] mt-[5vh] ${
-        isOpen ? "w-64" : "w-20"
-      } relative top-0 left-0 rounded-3xl p-4 bg-white shadow-2xl flex flex-col justify-between transition-all duration-300`}
+    <motion.div
+      animate={{ width: isOpen ? 256 : 80 }}
+      transition={{
+        type: "spring",
+        stiffness: 200,
+        damping: 20,
+      }}
+      className="h-[90vh] mt-[5vh] relative top-0 left-0 rounded-3xl p-4 bg-white shadow-2xl flex flex-col justify-between "
     >
       {/* Logo + Toggle */}
       <div>
         <div className="flex items-center gap-3 relative">
           <img src="/logo.webp" alt="logo" className="w-12" />
           {isOpen && (
-            <span className="text-lg font-semibold text-gray-800">
+            <motion.span
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="text-lg font-semibold text-gray-800"
+            >
               Placement Cell
-            </span>
+            </motion.span>
           )}
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -38,53 +49,55 @@ const Sidebar = () => {
 
         {/* Menu */}
         <nav className="flex flex-col gap-2 mt-8">
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors">
-            <Home size={22} className="text-gray-700" />
-            {isOpen && <span className="text-gray-700 font-medium">Dashboard</span>}
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors">
-            <FileText size={22} className="text-gray-700" />
-            {isOpen && <span className="text-gray-700 font-medium">Students</span>}
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors">
-            <Settings size={22} className="text-gray-700" />
-            {isOpen && <span className="text-gray-700 font-medium">Home Page Control</span>}
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors">
-            <Bell size={22} className="text-gray-700" />
-            {isOpen && <span className="text-gray-700 font-medium">Notifications</span>}
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors">
-            <Info size={22} className="text-gray-700" />
-            {isOpen && <span className="text-gray-700 font-medium">Info</span>}
-          </div>
-
-          <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer transition-colors">
-            <Users size={22} className="text-gray-700" />
-            {isOpen && <span className="text-gray-700 font-medium">Users</span>}
-          </div>
+          {[
+            { icon: Home, label: "Dashboard" },
+            { icon: FileText, label: "Students" },
+            { icon: Settings, label: "Home Page Control" },
+            { icon: Bell, label: "Notifications" },
+            { icon: Info, label: "Info" },
+            { icon: Users, label: "Users" },
+          ].map(({ icon: Icon, label }, idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer"
+            >
+              <Icon size={22} className="text-gray-700" />
+              {isOpen && (
+                <motion.span
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4 }}
+                  className="text-gray-700 font-medium"
+                >
+                  {label}
+                </motion.span>
+              )}
+            </div>
+          ))}
         </nav>
       </div>
 
-      {/* Bottom Profile */}
-      <div className="border-t pt-4 flex items-center gap-3">
-        <img
-          src="/profile.png"
-          alt="profile"
-          className="w-10 h-10 rounded-full cursor-pointer"
-        />
-        {isOpen && (
-          <div className="flex flex-col">
-            <span className="text-sm text-gray-500">Welcome back</span>
-            <span className="font-medium text-gray-800">Captain</span>
-          </div>
-        )}
-      </div>
-    </div>
+<div className="border-t pt-4 flex items-center gap-3">
+  {/* Profile image always visible */}
+  <img
+    src="/profile.png"
+    alt="profile"
+    className="w-10 h-10 rounded-full cursor-pointer"
+  />
+
+  {/* Text fades out on collapse */}
+  <motion.div
+    initial={{ opacity: 0, x: -10 }}
+    animate={{ opacity: 1  ,x:0}}
+    transition={{ duration: 0.4 }}
+    className={`${isOpen ? "flex flex-col" : "hidden"}`}
+  >
+    <span className="text-sm text-gray-500">Welcome back</span>
+    <span className="font-medium text-gray-800">Captain</span>
+  </motion.div>
+</div>
+
+    </motion.div>
   );
 };
 

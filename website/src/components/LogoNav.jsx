@@ -10,7 +10,7 @@ const LogoNav = () => {
 
   return (
     <div className="w-full flex justify-center relative px-6">
-      <nav className="flex justify-between md:justify-center w-[100%] items-center gap-3 px-4 sm:p-4 py-2 mt-3 sm:mt-0 rounded-full bg-white shadow-2xl relative">
+      <nav className="flex justify-between md:justify-center w-[100%] items-center gap-3 px-4 sm:p-4 py-2 mt-3 sm:mt-5 rounded-full bg-white shadow-2xl relative">
         {/* Left side - Hamburger (Mobile only) */}
         <button
           onClick={toggleMenu}
