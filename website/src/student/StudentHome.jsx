@@ -36,26 +36,34 @@ const StudentHome = () => {
             />
             <div className="p-4 ">
               <h3 className="text-lg font-semibold">Mika Kunisaki</h3>
-              <button className="mt-3 w-full bg-white border-1 border-gray-300  hover:bg-gray-100 active:bg-white rounded-2xl py-2">
+              <button className="mt-3 w-full bg-white border-1 font-extrabold border-gray-300  hover:bg-gray-100 active:bg-white rounded-2xl py-2">
                 View Profile
               </button>
             </div>
           </div>
 
           {/* Upload Resume */}
-          <div className="bg-white rounded-2xl shadow-3xl p-4">
-            <UploadResume />
+          <div className="bg-white flex flex-wrap rounded-2xl shadow-3xl p-4">
+            <img src="/cvUp.png" alt="Upload CV" />
+            <button className="mt-3 w-fit px-3 mx-auto font-extrabold bg-white border-1 border-gray-300  hover:bg-gray-100 active:bg-white rounded-2xl py-2">
+              Upload Resume
+            </button>
           </div>
 
           {/* Change Password */}
-          <div className="bg-white rounded-2xl shadow-3xl p-4">
-            <ChangePassword />
+          <div className="bg-white rounded-2xl flex flex-wrap shadow-3xl p-4">
+            <button className="mt-3 px-3 mx-auto font-extrabold bg-white border-1 border-gray-300  hover:bg-gray-100 active:bg-white rounded-2xl py-2">
+              <img src="/passChange.png" alt="change password" />
+              <span>Change Password</span>
+            </button>
+
+            <button className="mt-3 px-3 mx-auto font-extrabold bg-white border-1 border-gray-300  hover:bg-gray-100 active:bg-white rounded-2xl py-2">
+              <img src="/logout.png" alt="logout" />
+              <span>Logout</span>
+            </button>
           </div>
 
           {/* Logout */}
-          <button className="w-full bg-red-500 shadow-3xl hover:bg-red-600 text-white rounded-lg py-2 shadow-md">
-            Logout
-          </button>
         </div>
       </div>
     </div>
