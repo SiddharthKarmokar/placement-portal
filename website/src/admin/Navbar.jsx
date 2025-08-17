@@ -14,7 +14,7 @@ export default function Navbar({ className = "" }) {
     >
       <div className="flex items-center text-white text-lg font-bold">
         <img
-          src="https://upload.wikimedia.org/wikipedia/en/5/5f/Indian_Institute_of_Information_Technology_Design_and_Manufacturing%2C_Kurnool_logo.png"
+          src="/logo.webp"
           alt="IIITDM Kurnool"
           className="h-10 w-10 mr-2"
         />
