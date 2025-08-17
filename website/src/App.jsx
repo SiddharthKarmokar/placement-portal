@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import RegisterNow from "./components/RegisterNow";
-import StudentDashboard from "./components/studashboard";
+import StudentDashboard from "./student/studashboard.jsx";
 import AdminStaff from "./components/AdminStaff";
 import StudentForm from "./components/detailform";
 import Home from "./components/Home";
