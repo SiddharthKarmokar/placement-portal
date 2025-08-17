@@ -34,7 +34,6 @@ const Modal = ({ children, onClose }) => {
   );
 };
 
-// The component to display job details in the popup
 const JobDetails = ({ job, onClose }) => {
   if (!job) return null;
 
