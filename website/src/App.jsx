@@ -13,6 +13,7 @@ import StudentLogin from "./student/Student_login";
 import AdminLogin from "./admin/AdminLogin.jsx";
 import { RotateCcwKey } from "lucide-react";
 import StudentHome from "./student/StudentHome.jsx";
+import HomePageControl from "./admin/HomePageControl.jsx";
 
 const App = () => {
   return (
@@ -30,6 +31,7 @@ const App = () => {
         <Route path="/student/get" element={<JobGet />} />
         <Route path="/student/user/:name" element={<StudentProfile/>}/>
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/control" element={<HomePageControl />} />
       </Routes>
     </BrowserRouter>
   );
