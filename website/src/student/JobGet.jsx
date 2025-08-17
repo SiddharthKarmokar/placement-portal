@@ -170,7 +170,7 @@ const JobGet = () => {
               {filteredJobs.map((job) => (
                 <div
                   key={job._id}
-                  className="bg-white rounded-3xl border-2 border-solid p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 "
+                  className="bg-white rounded-3xl shadow-lg border-2 border-solid p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 "
                 >
                   <div className="flex flex-col md:flex-row w-full justify-between gap-6">
                     <div className="flex-1 space-y-2">
