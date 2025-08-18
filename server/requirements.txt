@@ -14,3 +14,7 @@ fastapi-mail
 pytest-asyncio
 pytest-mock
 httpx
+redis
+asyncio
+upstash-redis
+celery[redis]
