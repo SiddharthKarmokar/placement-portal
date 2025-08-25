@@ -84,14 +84,11 @@ jobs:
     steps:
       - name: Sync secrets to Render
         run: |
-          # Fetch existing env vars
+          # Fetch existing env vars (already an array)
           existing=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
             https://api.render.com/v1/services/$RENDER_SERVICE_ID/env-vars)
 
-          # Extract the envVars array
-          existing_array=$(echo "$existing" | jq '.envVars')
-
-          # Build new secrets JSON
+          # Build new secrets JSON (same as before)
           new_secrets=$(jq -n \
             --arg MONGODB_URL "$SECRET_MONGODB_URL" \
             --arg DATABASE_NAME "$SECRET_DATABASE_NAME" \
@@ -121,7 +118,8 @@ jobs:
             ]')
 
           # Merge existing + new, avoiding duplicates
-          combined=$(jq -s '.[0] + .[1] | unique_by(.key)' <(echo "$existing_array") <(echo "$new_secrets"))
+          combined=$(jq -s '.[0] + .[1] | unique_by(.key)' <(echo "$existing") <(echo "$new_secrets"))
+
 
           # Optional: debug the final JSON
           echo "Merged env vars:"
