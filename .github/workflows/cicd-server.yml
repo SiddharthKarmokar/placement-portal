@@ -84,7 +84,7 @@ jobs:
     steps:
       - name: Sync secrets to Render
         run: |
-            secrets_list="MONGODB_URL DATABASE_NAME JWT_HASH_KEY MAIL_USERNAME MAIL_PASSWORD"
+            secrets_list="MONGODB_URL DATABASE_NAME JWT_HASH_KEY MAIL_USERNAME MAIL_PASSWORD UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN APPS_SCRIPT_URL GOOGLE_REDIRECT_URI GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_ID CELERY_REDIS_URL"
             for secret in $secrets_list; do
             value_var="SECRET_${secret}"
             VALUE="${!value_var}"
