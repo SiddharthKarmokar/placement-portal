@@ -49,6 +49,13 @@ jobs:
           JWT_HASH_KEY: ${{ secrets.JWT_HASH_KEY }}
           MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          CELERY_REDIS_URL: ${{ secrets.CELERY_REDIS_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          APPS_SCRIPT_URL: ${{ secrets.GOOGLE_CLIENT_SECRET }}
         run: pytest
 
 
@@ -96,6 +103,13 @@ jobs:
             SECRET_JWT_HASH_KEY: ${{ secrets.JWT_HASH_KEY }}
             SECRET_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
             SECRET_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+            SECRET_UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+            SECRET_UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+            SECRET_CELERY_REDIS_URL: ${{ secrets.CELERY_REDIS_URL }}
+            SECRET_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+            SECRET_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+            SECRET_GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+            SECRET_APPS_SCRIPT_URL: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
       - name: Trigger Render Deploy
         run: |
