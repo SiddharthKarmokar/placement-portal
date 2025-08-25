@@ -84,8 +84,12 @@ jobs:
     steps:
       - name: Sync secrets to Render
         run: |
-          # Build JSON with all secrets
-          secrets_json=$(jq -n \
+          # Fetch existing env vars
+          existing=$(curl -s -H "Authorization: Bearer $RENDER_API_KEY" \
+            https://api.render.com/v1/services/$RENDER_SERVICE_ID/env-vars)
+
+          # Build new secrets JSON
+          new_secrets=$(jq -n \
             --arg MONGODB_URL "$SECRET_MONGODB_URL" \
             --arg DATABASE_NAME "$SECRET_DATABASE_NAME" \
             --arg JWT_HASH_KEY "$SECRET_JWT_HASH_KEY" \
@@ -113,13 +117,16 @@ jobs:
               {key: "APPS_SCRIPT_URL", value: $APPS_SCRIPT_URL}
             ]')
 
-          # Send all secrets in one PATCH request
+          # Merge existing + new, avoiding duplicates
+          combined=$(jq -s '.[0] + .[1] | unique_by(.key)' <(echo "$existing") <(echo "$new_secrets"))
+
+          # Push full list
           curl -X PATCH \
-            -H "Accept: application/json" \
             -H "Authorization: Bearer $RENDER_API_KEY" \
             -H "Content-Type: application/json" \
             https://api.render.com/v1/services/$RENDER_SERVICE_ID/env-vars \
-            -d "$secrets_json"
+            -d "$combined"
+
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
@@ -148,7 +155,7 @@ jobs:
         run: |
             RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
             https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }})
-            DOMAIN=$(echo "$RESPONSE" | jq -r '.serviceDetails.defaultDomain // .serviceDetails.url // empty')
+            DOMAIN=$(echo "$RESPONSE" | jq -r '.service.defaultDomain')
             echo "Render service domain: $DOMAIN"
             echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
 
