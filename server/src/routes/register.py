@@ -4,8 +4,7 @@ from src.services.register import process_student_csv, create_admin
 from src.database import get_database
 from src.routes.utils import security
 from src.services.schemas import AdminCreate
-
-
+from src.redis import cache_delete  # import redis utils
 router = APIRouter(prefix="/register", tags=["Registration"])
 
 
@@ -36,6 +35,7 @@ async def upload_student_csv(
 
     file_bytes = await csv_file.read()
     result = await process_student_csv(db, file_bytes)
+    cache_delete("students:all")
     return result
 
 
@@ -45,7 +45,9 @@ async def create_admin_user(
     db: AsyncIOMotorDatabase = Depends(get_database)
 ):
     """
-    Create a new admin user.
+    Create a new admin user (password login still works)
+    Google login can later be linked for Sheets access.
     """
     result = await create_admin(db, admin_data.dict())
+    cache_delete("admins:all")
     return result

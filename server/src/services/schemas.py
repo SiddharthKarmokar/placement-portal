@@ -12,13 +12,13 @@ class StudentCreate(BaseModel):
     roll_number: str
     branch: str
     course: Optional[str] = None
-    year: int
+    batch: int
     phone_no: Optional[str] = None
     password: str
 
 
 class StudentInDB(BaseModel):
-    id: Optional[str] = None
+    id: Optional[str] = Field(default=None, alias="_id")
     name: str
     gender: Optional[str] = None
     email: EmailStr
@@ -26,10 +26,11 @@ class StudentInDB(BaseModel):
     roll_number: str
     branch: str
     course: Optional[str] = None
-    year: int
+    batch: int
     phone_no: Optional[str] = None
     hashed_password: str
     role: str = "student"
+    last_login: Optional[datetime] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
@@ -46,12 +47,13 @@ class AdminCreate(BaseModel):
 
 
 class AdminInDB(BaseModel):
-    id: Optional[str] = None
+    id: str = Field(alias="_id")
     username: str
     email: EmailStr
     name: str
     hashed_password: str
     role: str = "admin"
+    last_login: Optional[datetime] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:

@@ -15,18 +15,18 @@ services:
     networks:
       - app-net
   
-  # website:
-  #   build:
-  #     context: ./website
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 3000:3000
-  #   volumes:
-  #     - ./website:/app
-  #   networks:
-  #     - app-net
-  #   depends_on:
-  #     - server
+  website:
+    build:
+      context: ./website
+      dockerfile: Dockerfile
+    ports:
+      - 3000:80
+    volumes:
+      - ./website:/app
+    networks:
+      - app-net
+    depends_on:
+      - server
 
 networks:
   app-net:

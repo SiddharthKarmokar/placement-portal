@@ -5,29 +5,23 @@ from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Optional, Any
 from motor.motor_asyncio import AsyncIOMotorDatabase
-
 from src.config import secrets
 from src.routes.schemas import TokenRequest
 from src.database import get_database
+import pytz
+
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/token")
 ALGORITHM = "HS256"
+ist = pytz.timezone('Asia/Kolkata')
 
 
-async def get_user_from_collection(
-    db: AsyncIOMotorDatabase,
-    username: str,
-    role: str
-) -> Optional[Dict[str, Any]]:
+async def get_user_from_collection(db: AsyncIOMotorDatabase, username: str, role: str):
     try:
         if role == "student":
-            user = await db.students.find_one({
-                "$or": [{"username": username}, {"email": username}]
-            })
+            user = await db.students.find_one({"$or": [{"username": username}, {"email": username}]})
         elif role == "admin":
-            user = await db.admins.find_one({
-                "$or": [{"username": username}, {"email": username}]
-            })
+            user = await db.admins.find_one({"$or": [{"username": username}, {"email": username}]})
         else:
             user = None
 

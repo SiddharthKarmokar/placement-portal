@@ -1,5 +1,13 @@
 from pydantic import BaseModel, EmailStr, Field
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
+import pytz
+from bson import ObjectId
+
+
+def ist():
+    tz = pytz.timezone("Asia/Kolkata")
+    return datetime.now(tz)
 
 
 class TokenData(BaseModel):
@@ -26,7 +34,7 @@ class TokenRequest(BaseModel):
 
 
 class UserResponseStudent(BaseModel):
-    id: Optional[str] = None
+    id: str = Field(alias="_id")
     name: str = Field(..., min_length=2, max_length=100)
     gender: Optional[str] = Field(None, pattern="^(male|female|other)$")
     email: EmailStr
@@ -34,8 +42,8 @@ class UserResponseStudent(BaseModel):
     roll_number: str = Field(..., min_length=3, max_length=20)
     branch: str
     course: Optional[str] = None
-    year: int = Field(..., ge=1, le=10)
-    phone_no: Optional[str] = Field(None, pattern=r"^\+?\d{7,15}$")
+    batch: int
+    phone_no: Optional[str] = None
     role: str = "student"
 
 
@@ -45,6 +53,18 @@ class UserResponseAdmin(BaseModel):
     role: str
     name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
+
+
+class StudentProfileUpdate(BaseModel):
+    name: Optional[str] = None
+    gender: Optional[str] = None
+    phone_no: Optional[str] = None
+
+
+class AdminProfileUpdate(BaseModel):
+    username: Optional[str] = None
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
 
 
 class LoginRequest(BaseModel):
@@ -57,9 +77,84 @@ class Token(BaseModel):
     token_type: str
 
 
-class JobPost(BaseModel):
+class JobCreate(BaseModel):
     title: str = Field(..., min_length=2, max_length=200)
-    description: str = Field(..., min_length=10)
-    company: str = Field(..., min_length=2, max_length=100)
-    location: str = Field(..., min_length=2, max_length=100)
-    salary: str = Field(..., min_length=1)
+    company: str = Field(..., min_length=2, max_length=200)
+    batch: list[int] = Field(..., min_items=1, max_items=4)
+    CG_Cutoff: Optional[float] = Field(None, ge=0.0, le=10.0)
+    gender_preference: Optional[List[str]] = Field(None, min_items=1, max_items=2)
+    location: Optional[str] = Field(None, min_length=2, max_length=200)
+    form_link: str = Field(..., min_length=5, max_length=500)
+    application_deadline: Optional[datetime] = None
+    job_description: Optional[str] = None
+
+
+class JobInDB(JobCreate):
+    id: str = Field(alias="_id")
+    created_by: str
+    created_at: datetime = Field(default_factory=ist)
+    updated_at: datetime = Field(default_factory=ist)
+    responses_sheet_link: str
+    master_sheet_id: str
+    master_sheet_link: str
+    synced: bool = False
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }
+
+
+class JobResponse(BaseModel):
+    id: str = Field(alias="_id")
+    title: str
+    company: str
+    batch: list[int]
+    gender_preference: Optional[List[str]] = None
+    location: Optional[str] = None
+    CG_Cutoff: Optional[float] = None
+    form_link: str
+    application_deadline: Optional[datetime] = None
+    responses_sheet_link: Optional[str] = None
+    master_sheet_id: str
+    master_sheet_link: str
+
+    class Config:
+        populate_by_name = True
+        arbitrary_types_allowed = True
+        json_encoders = {
+            ObjectId: str
+        }
+
+
+class JobMetricsRequest(BaseModel):
+    job_id: str = Field(..., min_length=1, description="Unique Job ID")
+
+
+class MasterSheetInDB(BaseModel):
+    _id: str
+    admin_id: Optional[str] = None
+    batch_year: Optional[List[int]] = None
+    spreadsheet_id: Optional[str] = None
+    created_at: Optional[datetime] = None
+
+
+class MasterSheetResponse(BaseModel):
+    _id: str
+    admin_id: Optional[str] = None
+    batch_year: Optional[List[int]] = None
+    spreadsheet_id: Optional[str] = None
+    created_at: Optional[str] = None
+
+
+class AdminEditStudentProfile(BaseModel):
+    name: Optional[str] = None
+    gender: Optional[str] = None
+    phone_no: Optional[str] = None
+    course: Optional[str] = None
+    batch: Optional[int] = None
+    year: Optional[int] = None
+    roll_number: Optional[str] = None
+    branch: Optional[str] = None
