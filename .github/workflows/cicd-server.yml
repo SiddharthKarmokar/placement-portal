@@ -84,32 +84,57 @@ jobs:
     steps:
       - name: Sync secrets to Render
         run: |
-            secrets_list="MONGODB_URL DATABASE_NAME JWT_HASH_KEY MAIL_USERNAME MAIL_PASSWORD UPSTASH_REDIS_REST_URL UPSTASH_REDIS_REST_TOKEN APPS_SCRIPT_URL GOOGLE_REDIRECT_URI GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_ID CELERY_REDIS_URL"
-            for secret in $secrets_list; do
-            value_var="SECRET_${secret}"
-            VALUE="${!value_var}"
-            curl -X PATCH \
-                -H "Accept: application/json" \
-                -H "Authorization: Bearer $RENDER_API_KEY" \
-                -H "Content-Type: application/json" \
-                https://api.render.com/v1/services/$RENDER_SERVICE_ID/env-vars \
-                -d "[{\"key\": \"$secret\", \"value\": \"$VALUE\"}]"
-            done
+          # Build JSON with all secrets
+          secrets_json=$(jq -n \
+            --arg MONGODB_URL "$SECRET_MONGODB_URL" \
+            --arg DATABASE_NAME "$SECRET_DATABASE_NAME" \
+            --arg JWT_HASH_KEY "$SECRET_JWT_HASH_KEY" \
+            --arg MAIL_USERNAME "$SECRET_MAIL_USERNAME" \
+            --arg MAIL_PASSWORD "$SECRET_MAIL_PASSWORD" \
+            --arg UPSTASH_REDIS_REST_URL "$SECRET_UPSTASH_REDIS_REST_URL" \
+            --arg UPSTASH_REDIS_REST_TOKEN "$SECRET_UPSTASH_REDIS_REST_TOKEN" \
+            --arg CELERY_REDIS_URL "$SECRET_CELERY_REDIS_URL" \
+            --arg GOOGLE_CLIENT_ID "$SECRET_GOOGLE_CLIENT_ID" \
+            --arg GOOGLE_CLIENT_SECRET "$SECRET_GOOGLE_CLIENT_SECRET" \
+            --arg GOOGLE_REDIRECT_URI "$SECRET_GOOGLE_REDIRECT_URI" \
+            --arg APPS_SCRIPT_URL "$SECRET_APPS_SCRIPT_URL" \
+            '[
+              {key: "MONGODB_URL", value: $MONGODB_URL},
+              {key: "DATABASE_NAME", value: $DATABASE_NAME},
+              {key: "JWT_HASH_KEY", value: $JWT_HASH_KEY},
+              {key: "MAIL_USERNAME", value: $MAIL_USERNAME},
+              {key: "MAIL_PASSWORD", value: $MAIL_PASSWORD},
+              {key: "UPSTASH_REDIS_REST_URL", value: $UPSTASH_REDIS_REST_URL},
+              {key: "UPSTASH_REDIS_REST_TOKEN", value: $UPSTASH_REDIS_REST_TOKEN},
+              {key: "CELERY_REDIS_URL", value: $CELERY_REDIS_URL},
+              {key: "GOOGLE_CLIENT_ID", value: $GOOGLE_CLIENT_ID},
+              {key: "GOOGLE_CLIENT_SECRET", value: $GOOGLE_CLIENT_SECRET},
+              {key: "GOOGLE_REDIRECT_URI", value: $GOOGLE_REDIRECT_URI},
+              {key: "APPS_SCRIPT_URL", value: $APPS_SCRIPT_URL}
+            ]')
+
+          # Send all secrets in one PATCH request
+          curl -X PATCH \
+            -H "Accept: application/json" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            https://api.render.com/v1/services/$RENDER_SERVICE_ID/env-vars \
+            -d "$secrets_json"
         env:
-            RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-            RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
-            SECRET_MONGODB_URL: ${{ secrets.MONGODB_URL }}
-            SECRET_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-            SECRET_JWT_HASH_KEY: ${{ secrets.JWT_HASH_KEY }}
-            SECRET_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
-            SECRET_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
-            SECRET_UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
-            SECRET_UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-            SECRET_CELERY_REDIS_URL: ${{ secrets.CELERY_REDIS_URL }}
-            SECRET_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-            SECRET_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-            SECRET_GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-            SECRET_APPS_SCRIPT_URL: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          SECRET_MONGODB_URL: ${{ secrets.MONGODB_URL }}
+          SECRET_DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          SECRET_JWT_HASH_KEY: ${{ secrets.JWT_HASH_KEY }}
+          SECRET_MAIL_USERNAME: ${{ secrets.MAIL_USERNAME }}
+          SECRET_MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          SECRET_UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          SECRET_UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          SECRET_CELERY_REDIS_URL: ${{ secrets.CELERY_REDIS_URL }}
+          SECRET_GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          SECRET_GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          SECRET_GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_REDIRECT_URI }}
+          SECRET_APPS_SCRIPT_URL: ${{ secrets.APPS_SCRIPT_URL }}
 
       - name: Trigger Render Deploy
         run: |
