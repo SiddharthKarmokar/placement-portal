@@ -1,383 +1,245 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import {
-  FiX,
-  FiBriefcase,
-  FiMapPin,
-  FiGlobe,
-  FiClock,
-  FiBook,
-  FiAward,
-} from "react-icons/fi";
-import { IndianRupee } from "lucide-react";
-// Define constants outside the component
-const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
-const industries = [
-  "IT",
-  "Manufacturing",
-  "Finance",
-  "Healthcare",
-  "Education",
-  "Design",
-];
-const branches = ["CSE", "ECE", "AIDS", "MECH", "EEE", "All Branches"];
 
-export default function ModifyJobPopup({ job, onClose, onSubmit }) {
+/**
+ * A popup form to modify an existing job post.
+ * @param {object} props - The component props.
+ * @param {object} props.job - The job object to modify.
+ * @param {function} props.onClose - Function to close the popup.
+ * @param {function} props.onSubmit - Function to handle form submission.
+ */
+const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
+  // Initial state for the form data, pre-filled with the selected job's data.
   const [formData, setFormData] = useState({
-    company: "",
-    title: "",
-    website: "",
-    type: "",
-    location: "",
-    industry: "",
-    salary: "",
-    branch: "",
-    description: "",
-    cgpa: "",
-    gender: [],
-    backlogsAllowed: "No",
-    backlogCourses: "",
-    deadline: "",
+    ...job,
+    CG_Cutoff: job.CG_Cutoff || "",
+    gender_preference: job.gender_preference || [],
+    application_deadline: job.application_deadline
+      ? new Date(job.application_deadline).toISOString().substring(0, 10)
+      : "",
+    job_description: job.job_description || "",
   });
 
-  useEffect(() => {
-    if (job) {
-      setFormData({
-        title: job.title || "",
-        company: job.company || "",
-        website: job.website || "",
-        type: job.type || "",
-        location: job.location || "",
-        industry: job.industry || "",
-        salary: job.salary || "",
-        branch: job.branch || "",
-        description: job.description || "",
-        cgpa: job.cgpa || "",
-        gender: job.gender || [],
-        backlogsAllowed: job.backlogsAllowed || "No",
-        backlogCourses: "",
-        deadline: job.deadline || "",
-      });
-    }
-  }, [job]);
-
+  // Handles changes to form inputs, including checkboxes for gender.
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, options } = e.target;
 
-    if (type === "checkbox") {
+    if (type === "checkbox" && name === "gender_preference") {
       setFormData((prev) => ({
         ...prev,
-        gender: checked
-          ? [...prev.gender, value]
-          : prev.gender.filter((g) => g !== value),
+        gender_preference: checked
+          ? [...prev.gender_preference, value]
+          : prev.gender_preference.filter((g) => g !== value),
       }));
+    } else if (name === "batch") {
+      const selectedBatches = Array.from(options)
+        .filter((option) => option.selected)
+        .map((option) => Number(option.value));
+      setFormData((prev) => ({ ...prev, batch: selectedBatches }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+  // Handles form submission, converting data to match the schema format.
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ ...formData, _id: job?._id });
+    const payload = {
+      ...formData,
+      CG_Cutoff: parseFloat(formData.CG_Cutoff),
+    };
+    onSubmit(payload);
+    onClose();
   };
 
   return (
     <Dialog
       open={true}
       onClose={onClose}
-      className="fixed inset-0 z-50 overflow-y-auto"
+      className="fixed inset-0 z-50 overflow-y-auto bg-transparent bg-opacity-50"
     >
-      <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="relative bg-white border-2 rounded-lg shadow-2xl w-full max-w-2xl">
-          <div className="flex justify-between items-center p-4 border-b">
-            <Dialog.Title className="text-xl font-semibold">
-              Edit Job Posting
+      <div className="flex items-center justify-center min-h-screen px-4">
+        <Dialog.Panel className="bg-white border-2 rounded-lg shadow-2xl w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
+          <div className="flex justify-between items-start mb-4">
+            <Dialog.Title className="text-2xl font-bold text-gray-800">
+              Modify Job
             </Dialog.Title>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700"
             >
-              <FiX size={24} />
+              ✕
             </button>
           </div>
-
-          <form onSubmit={handleSubmit} className="p-4 space-y-4">
-            {/* Job Details Section */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Company & Job Information */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FiBriefcase className="text-indigo-600" />
-                Job Details
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Job Information
               </h3>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Job Title*
-                  </label>
-                  <input
-                    name="title"
-                    value={formData.title}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    required
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Company Name*
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Company Name
                   </label>
                   <input
                     name="company"
                     value={formData.company}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Website
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Job Title
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiGlobe className="text-gray-400" />
-                    </div>
-                    <input
-                      name="website"
-                      value={formData.website}
-                      onChange={handleChange}
-                      type="url"
-                      className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Job Type
-                  </label>
-                  <select
-                    name="type"
-                    value={formData.type}
+                  <input
+                    name="title"
+                    value={formData.title}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    <option value="">Select Type</option>
-                    {jobTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+                  />
                 </div>
-              </div>
-            </div>
-
-            {/* Location & Compensation */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FiMapPin className="text-indigo-600" />
-                Location & Compensation
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Location
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiMapPin className="text-gray-400" />
-                    </div>
-                    <input
-                      name="location"
-                      value={formData.location}
-                      onChange={handleChange}
-                      className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Industry
-                  </label>
-                  <select
-                    name="industry"
-                    value={formData.industry}
+                  <input
+                    name="location"
+                    value={formData.location}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    <option value="">Select Industry</option>
-                    {industries.map((ind) => (
-                      <option key={ind} value={ind}>
-                        {ind}
-                      </option>
-                    ))}
-                  </select>
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Salary/Stipend
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Apply Link
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <IndianRupee className="text-gray-400" />
-                    </div>
-                    <input
-                      name="salary"
-                      value={formData.salary}
-                      onChange={handleChange}
-                      className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
-                    Eligible Branch
-                  </label>
-                  <select
-                    name="branch"
-                    value={formData.branch}
+                  <input
+                    name="form_link"
+                    value={formData.form_link}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    <option value="">All Branches</option>
-                    {branches.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
+                    type="url"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
               </div>
             </div>
 
             {/* Job Description */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FiBook className="text-indigo-600" />
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 Job Description
               </h3>
               <textarea
-                name="description"
-                value={formData.description}
+                name="job_description"
+                value={formData.job_description}
                 onChange={handleChange}
                 rows={5}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter detailed job description..."
               />
             </div>
 
-            {/* Requirements */}
+            {/* Eligibility Criteria */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
-                <FiAward className="text-indigo-600" />
-                Requirements
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Eligibility Criteria
               </h3>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Minimum CGPA
                   </label>
                   <input
-                    name="cgpa"
-                    value={formData.cgpa}
+                    name="CG_Cutoff"
+                    value={formData.CG_Cutoff}
                     onChange={handleChange}
                     type="number"
                     min="0"
                     max="10"
                     step="0.1"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-
-                <div className="space-y-1">
-                  <label className="block text-sm font-medium text-gray-700">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Last Date to Apply
                   </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FiClock className="text-gray-400" />
-                    </div>
-                    <input
-                      type="date"
-                      name="deadline"
-                      value={formData.deadline}
-                      onChange={handleChange}
-                      className="w-full pl-10 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                    />
+                  <input
+                    type="date"
+                    name="application_deadline"
+                    value={formData.application_deadline}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Gender Preference
+                  </label>
+                  <div className="flex flex-wrap gap-4">
+                    {["Male", "Female", "Other"].map((g) => (
+                      <label key={g} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          name="gender_preference"
+                          value={g}
+                          checked={formData.gender_preference.includes(g)}
+                          onChange={handleChange}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span>{g}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
-              </div>
-
-              <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Gender Preference
-                </label>
-                <div className="flex flex-wrap gap-4">
-                  {["Male", "Female", "Other"].map((gender) => (
-                    <label key={gender} className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        name="gender"
-                        value={gender}
-                        checked={formData.gender.includes(gender)}
-                        onChange={handleChange}
-                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                      />
-                      <span>{gender}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Backlogs Allowed
-                </label>
-                <div className="flex flex-wrap gap-4">
-                  {["No", "Yes", "Conditional"].map((option) => (
-                    <label key={option} className="flex items-center space-x-2">
-                      <input
-                        type="radio"
-                        name="backlogsAllowed"
-                        value={option}
-                        checked={formData.backlogsAllowed === option}
-                        onChange={handleChange}
-                        className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300"
-                      />
-                      <span>{option}</span>
-                    </label>
-                  ))}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Eligible Batch
+                  </label>
+                  <select
+                    name="batch"
+                    multiple
+                    value={formData.batch.map(String)}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                  >
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                  </select>
                 </div>
               </div>
             </div>
 
             {/* Form Actions */}
-            <div className="flex justify-end gap-2 pt-4 border-t">
+            <div className="flex justify-end space-x-4 pt-4 border-t">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 border rounded-md"
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                Save Changes
+                Update Job
               </button>
             </div>
           </form>
-        </div>
+        </Dialog.Panel>
       </div>
     </Dialog>
   );
-}
+};
+
+export default ModifyJobPopup;

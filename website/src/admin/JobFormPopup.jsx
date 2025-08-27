@@ -1,44 +1,36 @@
 import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
 
-const branches = ["CSE", "AIDS", "ECE", "MECH"];
-const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
-const industries = [
-  "IT",
-  "Manufacturing",
-  "Finance",
-  "Healthcare",
-  "Education",
-];
-
 const JobFormPopup = ({ onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
-    company: "",
     title: "",
-    website: "",
-    type: "",
+    company: "",
+    batch: [],
+    CG_Cutoff: 0,
+    gender_preference: [],
     location: "",
-    industry: "",
-    salary: "",
-    branch: "",
-    description: "",
-    cgpa: "",
-    gender: [],
-    backlogsAllowed: "No",
-    backlogCourses: "",
-    deadline: "",
+    form_link:
+      // "https://docs.google.com/forms/d/1E8V2qQ-XpHofcMyAvpyw44jRflFoPcFhvrMtMef5FiA/edit",
+      "",
+    application_deadline: "",
+    job_description: "",
   });
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, options } = e.target;
 
-    if (type === "checkbox") {
+    if (type === "checkbox" && name === "gender_preference") {
       setFormData((prev) => ({
         ...prev,
-        gender: checked
-          ? [...prev.gender, value]
-          : prev.gender.filter((g) => g !== value),
+        gender_preference: checked
+          ? [...prev.gender_preference, value]
+          : prev.gender_preference.filter((g) => g !== value),
       }));
+    } else if (name === "batch") {
+      const selectedBatches = Array.from(options)
+        .filter((option) => option.selected)
+        .map((option) => Number(option.value));
+      setFormData((prev) => ({ ...prev, batch: selectedBatches }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
@@ -46,7 +38,10 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
+    const payload = {
+      ...formData,
+    };
+    onSubmit(payload);
     onClose();
   };
 
@@ -69,14 +64,11 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
               ✕
             </button>
           </div>
-
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Company Information Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
-                Company Information
+                Job Information
               </h3>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -90,7 +82,6 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                     required
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Job Title
@@ -103,39 +94,6 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                     required
                   />
                 </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Website
-                  </label>
-                  <input
-                    name="website"
-                    value={formData.website}
-                    onChange={handleChange}
-                    type="url"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Job Type
-                  </label>
-                  <select
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Job Type</option>
-                    {jobTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Location
@@ -147,67 +105,29 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Industry
-                  </label>
-                  <select
-                    name="industry"
-                    value={formData.industry}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Industry</option>
-                    {industries.map((ind) => (
-                      <option key={ind} value={ind}>
-                        {ind}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    CTC/Stipend
+                    Apply Link
                   </label>
                   <input
-                    name="salary"
-                    value={formData.salary}
+                    name="form_link"
+                    value={formData.form_link}
                     onChange={handleChange}
+                    type="url"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Eligible Branch
-                  </label>
-                  <select
-                    name="branch"
-                    value={formData.branch}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">All Branches</option>
-                    {branches.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
                 </div>
               </div>
             </div>
 
-            {/* Job Description Section */}
+            {/* Job Description */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 Job Description
               </h3>
               <textarea
-                name="description"
-                value={formData.description}
+                name="job_description"
+                value={formData.job_description}
                 onChange={handleChange}
                 rows={5}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -215,20 +135,18 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
               />
             </div>
 
-            {/* Eligibility Criteria Section */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
                 Eligibility Criteria
               </h3>
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Minimum CGPA
                   </label>
                   <input
-                    name="cgpa"
-                    value={formData.cgpa}
+                    name="CG_Cutoff"
+                    value={formData.CG_Cutoff}
                     onChange={handleChange}
                     type="number"
                     min="0"
@@ -237,15 +155,14 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Last Date to Apply
                   </label>
                   <input
                     type="date"
-                    name="deadline"
-                    value={formData.deadline}
+                    name="application_deadline"
+                    value={formData.application_deadline}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
@@ -262,9 +179,9 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                       <label key={g} className="flex items-center space-x-2">
                         <input
                           type="checkbox"
-                          name="gender"
+                          name="gender_preference"
                           value={g}
-                          checked={formData.gender.includes(g)}
+                          checked={formData.gender_preference.includes(g)}
                           onChange={handleChange}
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
@@ -273,29 +190,22 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                     ))}
                   </div>
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Backlogs Allowed
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Eligible Batch
                   </label>
-                  <div className="flex flex-wrap gap-4">
-                    {["No", "Yes", "Conditional"].map((option) => (
-                      <label
-                        key={option}
-                        className="flex items-center space-x-2"
-                      >
-                        <input
-                          type="radio"
-                          name="backlogsAllowed"
-                          value={option}
-                          checked={formData.backlogsAllowed === option}
-                          onChange={handleChange}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                        />
-                        <span>{option}</span>
-                      </label>
-                    ))}
-                  </div>
+                  <select
+                    name="batch"
+                    multiple
+                    value={formData.batch.map(String)} // Convert numbers to strings for select value
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
+                  >
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                  </select>
                 </div>
               </div>
             </div>
