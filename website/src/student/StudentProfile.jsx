@@ -1,135 +1,122 @@
-import React, { useState, useEffect } from "react";
-import { API_URL } from "../../env-config";
-const StudentProfile = () => {
-  const [student, setStudent] = useState(null);
+import React, { useEffect, useState } from "react";
+import { MapPin } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
+import LogoNav from "../components/LogoNav";
+import Sidebar from "./SideNav";
 
-  const fetchProfile = async () => {
-    try {
-      const profileRes = await fetch(`${API_URL}/profile/student/me`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-
-      if (!profileRes.ok) {
-        throw new Error(`Error: ${profileRes.status} ${profileRes.statusText}`);
-      }
-
-      const data = await profileRes.json();
-      console.log("Fetched profile:", data);
-
-      setStudent({
-        name: data.name || "",
-        fatherName: "",
-        rollNumber: data.roll_number || "",
-        dob: "",
-        email: data.email || "",
-        mobileNumber: data.phone_no || "",
-        gender: data.gender || "",
-        address: "",
-        linkedin: "",
-        github: "",
-        portfolio: "",
-        degreeDetails: {
-          degree: data.course || "",
-          major: "",
-          branch: data.branch || "",
-          year: `${data.year || ""} Year`,
-          expectedPassout: "",
-          gpa: "",
-          cgpa: "",
-        },
-        academicRecords: [],
-        certifications: [],
-        internships: [],
-        achievements: [],
-        skills: [],
-        projects: [],
-      });
-    } catch (err) {
-      console.error("Failed to fetch the profile:", err);
-    }
-  };
-
-  const getInitials = (name) => {
-    if (!name) return "";
-    const names = name.split(" ");
-    return names
-      .map((n) => n.charAt(0))
-      .join("")
-      .toUpperCase();
-  };
+export default function Profile() {
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchProfile();
+    try {
+      const storedProfile = localStorage.getItem("user");
+
+      if (!storedProfile) {
+        toast.error("No profile found. Please log in.");
+        setLoading(false);
+        return;
+      }
+
+      const parsedProfile = JSON.parse(storedProfile);
+      setProfile(parsedProfile);
+    } catch (error) {
+      toast.error("Failed to load profile from storage.");
+      console.error("Profile parse error:", error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  if (!student) {
-    return <p className="p-6">Loading profile...</p>;
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
+  if (!profile) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-600">No profile data available</p>
+      </div>
+    );
+  }
+
+  const avatar =
+    profile.gender === "female"
+      ? "https://cdn-icons-png.flaticon.com/512/6997/6997662.png"
+      : "https://cdn-icons-png.flaticon.com/512/6997/6997661.png";
+
   return (
-    <div className="p-6 font-sans bg-gray-100 min-h-screen">
-      <h1 className="text-4xl font-bold mb-6 text-blue-700">
-        Student Dashboard
-      </h1>
-
-      <div className="bg-white p-6 rounded-lg shadow-lg mb-6 flex flex-col items-center md:flex-row md:items-start">
-        <div className="bg-blue-500 text-white rounded-full w-32 h-32 md:w-48 md:h-48 flex items-center justify-center text-7xl font-bold mr-0 md:mr-6 mb-4 md:mb-0">
-          {getInitials(student.name)}
-        </div>
-        <div className="text-center md:text-left">
-          <h2 className="text-3xl font-bold text-blue-700">{student.name}</h2>
-          <p className="text-lg">
-            <strong>Father's Name:</strong> {student.fatherName}
-          </p>
-          <p className="text-lg">
-            <strong>Roll Number:</strong> {student.rollNumber}
-          </p>
-          <p className="text-lg">
-            <strong>Date of Birth:</strong> {student.dob}
-          </p>
-        </div>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar hidden on small screens */}
+      <div className="hidden lg:block">
+        <Sidebar />
       </div>
 
-      {/* Contact Info */}
-      <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-        <h2 className="text-xl font-semibold mb-2 text-blue-700">
-          Contact Information
-        </h2>
-        <p>
-          <strong>Email:</strong> {student.email}
-        </p>
-        <p>
-          <strong>Mobile Number:</strong> {student.mobileNumber}
-        </p>
-        <p>
-          <strong>Gender:</strong> {student.gender}
-        </p>
-        <p>
-          <strong>Address:</strong> {student.address}
-        </p>
-      </div>
+      {/* Main Content */}
+      <div className="flex-1">
+        <Toaster position="top-right" />
+        <LogoNav />
 
-      {/* Degree Details */}
-      <div className="bg-white p-4 rounded-lg shadow-md">
-        <h2 className="text-xl font-semibold mb-2 text-blue-700">
-          Degree Details
-        </h2>
-        <p>
-          <strong>Degree:</strong> {student.degreeDetails.degree}
-        </p>
-        <p>
-          <strong>Branch:</strong> {student.degreeDetails.branch}
-        </p>
-        <p>
-          <strong>Year:</strong> {student.degreeDetails.year}
-        </p>
+        <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left - Personal & Professional Info */}
+          <div className="col-span-2 flex flex-col gap-6">
+            {/* Personal Info */}
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-4">
+              <h2 className="text-lg font-semibold mb-2">Personal Info</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InfoField label="Full Name" value={profile.name} />
+                <InfoField label="Email" value={profile.email} />
+                <InfoField label="Contact Number" value={profile.phone_no} />
+                <InfoField label="Username" value={profile.username} />
+              </div>
+            </div>
+
+            {/* Professional Info */}
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-4">
+              <h2 className="text-lg font-semibold mb-2">Professional Info</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <InfoField label="Degree" value={profile.course} />
+                <InfoField label="Branch" value={profile.branch} />
+                <InfoField label="Batch" value={profile.batch} />
+                <InfoField label="Roll Number" value={profile.roll_number} />
+              </div>
+            </div>
+          </div>
+
+          {/* Right - Profile Picture & Location */}
+          <div className="flex flex-col items-center gap-6">
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-6 flex flex-col items-center w-full">
+              <img
+                src={avatar}
+                alt="Profile Avatar"
+                className="w-32 h-32 rounded-full border-4 border-blue-200 mb-3 shadow-md"
+              />
+              <h2 className="text-xl font-semibold">{profile.name}</h2>
+              <p className="text-gray-500 capitalize">{profile.gender}</p>
+            </div>
+
+            <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition p-4 w-full">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                <MapPin size={18} /> Location
+              </h2>
+              <p className="mt-2 font-medium">IIIT KURNOOL</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
+}
 
-export default StudentProfile;
+function InfoField({ label, value }) {
+  return (
+    <div>
+      <p className="text-sm text-gray-500">{label}</p>
+      <p className="font-medium">{value || "—"}</p>
+    </div>
+  );
+}

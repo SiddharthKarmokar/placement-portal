@@ -19,6 +19,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // Import the new popup components
 import JobFormPopup from "./JobFormPopup";
 import ModifyJobPopup from "./ModifyJobPopup";
+import { API_URL } from "../../env-config";
 
 // Helper components and data
 const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
@@ -69,7 +70,6 @@ const ConfirmationModal = ({ isOpen, title, message, onConfirm, onCancel }) => {
  * This component fetches, displays, and manages job postings.
  */
 const JobPost = () => {
-  const SERVER_URI = import.meta.env.VITE_SERVER;
   const [jobs, setJobs] = useState([]);
   const [showPostPopup, setShowPostPopup] = useState(false);
   const [showModifyPopup, setShowModifyPopup] = useState(false);
@@ -80,27 +80,42 @@ const JobPost = () => {
   const [filter, setFilter] = useState("all");
 
   // Fetches jobs from the backend on component mount.
-  useEffect(() => {
+    useEffect(() => {
     const fetchJobs = async () => {
       try {
         setIsLoading(true);
-        // Corrected API endpoint to match the schema and documentation.
-        const res = await axios.get(`${SERVER_URI}/api/jobs/get-jobs`);
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          toast.error("You are not authenticated. Please log in.");
+          setIsLoading(false);
+          return;
+        }
+
+        const res = await axios.get(`${API_URL}/api/jobs/get-jobs`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ attach JWT
+            "Content-Type": "application/json",
+          },
+        });
+
+        // handle flexible API response structure
         setJobs(Array.isArray(res.data) ? res.data : res.data.jobs || []);
-        setIsLoading(false);
       } catch (err) {
-        console.error(err);
-        toast.error("Failed to fetch jobs");
+        console.error("Error fetching jobs:", err);
+        toast.error(err.response?.data?.message || "Failed to fetch jobs");
+      } finally {
         setIsLoading(false);
       }
     };
+
     fetchJobs();
   }, []);
 
   const handlePostJob = async (jobData) => {
     try {
       console.log(jobData);
-      const res = await axios.post(`${SERVER_URI}/api/jobs/create`, jobData, {
+      const res = await axios.post(`${API_URL}/api/jobs/create`, jobData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
           "Content-Type": "application/json",
@@ -118,7 +133,7 @@ const JobPost = () => {
   const handleModifyJob = async (updatedJob) => {
     try {
       const res = await axios.put(
-        `${SERVER_URI}/api/jobs/${updatedJob._id}`,
+        `${API_URL}/api/jobs/${updatedJob._id}`,
         updatedJob
       );
       setJobs(jobs.map((job) => (job._id === updatedJob._id ? res.data : job)));
@@ -132,7 +147,7 @@ const JobPost = () => {
 
   const handleSyncJobs = async () => {
     try {
-      await axios.post(`${SERVER_URI}/api/jobs/sync-expired`);
+      await axios.post(`${API_URL}/api/jobs/sync-expired`);
       toast.success("Job Synced successfully!");
     } catch (err) {
       console.error(err);

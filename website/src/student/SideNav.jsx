@@ -50,14 +50,14 @@ const Sidebar = () => {
         {/* Menu */}
         <nav className="flex flex-col gap-2 mt-8">
           {[
-            { icon: Home, label: "Dashboard" },
+            { icon: Home, label: "Dashboard"},
             { icon: FileText, label: "Students" },
             { icon: Settings, label: "Home Page Control" },
             { icon: Bell, label: "Notifications" },
             { icon: Info, label: "Info" },
             { icon: Users, label: "Users" },
           ].map(({ icon: Icon, label }, idx) => (
-            <div
+            <button
               key={idx}
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-purple-100 cursor-pointer"
             >
@@ -72,7 +72,7 @@ const Sidebar = () => {
                   {label}
                 </motion.span>
               )}
-            </div>
+            </button>
           ))}
         </nav>
       </div>

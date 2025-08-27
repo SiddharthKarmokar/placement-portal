@@ -15,6 +15,7 @@ export default function StudentLogin() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
+    console.log(API_URL)
     try {
       const tokenRes = await fetch(`${API_URL}/api/auth/token`, {
         method: "POST",
@@ -31,9 +32,10 @@ export default function StudentLogin() {
         setLoading(false);
         return;
       }
-
+      console.log(tokenData)
       const accessToken = tokenData.access_token;
       localStorage.setItem("token", accessToken);
+      localStorage.setItem("role", 'student');
 
       const profileRes = await fetch(`${API_URL}/profile/student/me`, {
         method: "GET",
@@ -49,8 +51,8 @@ export default function StudentLogin() {
 
       localStorage.setItem("user", JSON.stringify(profileData));
       toast.success(`✅ Welcome, ${profileData.username || "User"}!`);
-
-      setTimeout(() => navigate(`/student/${profileData.username}`), 1000);
+      var student = (profileData.username).slice(0,(profileData.username).length - 12);
+      setTimeout(() => navigate(`/student/${student}`), 1000);
     } catch (err) {
       console.error("Login Error:", err);
       toast.error("❌ Server error. Please try again.");
@@ -110,6 +112,22 @@ export default function StudentLogin() {
           >
             {loading ? "Logging in..." : "Login"}
           </button>
+                    <div className="flex justify-between mt-4">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+            >
+              ⬅ Home
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/admin/login")}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+            >
+              Admin Login
+            </button>
+          </div>
         </form>
       </div>
 

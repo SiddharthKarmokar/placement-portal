@@ -19,8 +19,10 @@ const StudentHome = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("token"); // remove auth token
-    navigate("/login"); // redirect to login page
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("role");
+    navigate("/student/login"); // redirect to login page
   };
 
   return (
@@ -30,33 +32,30 @@ const StudentHome = () => {
         <Sidebar />
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <LogoNav className="shadow-md sticky top-0 z-10" />
 
         <div className="flex flex-1 flex-col lg:flex-row gap-6 p-4 md:p-6 overflow-y-auto">
-          {/* Job Section */}
           <div className="flex-1 rounded-3xl md:overflow-y-auto custom-scroll">
             <JobGet />
           </div>
 
-          {/* Right Panel */}
           <div className="w-full lg:w-[280px] flex flex-col gap-6">
-            {/* Profile Card */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden text-center">
-              <div className="h-20 bg-[#DED9D9] relative"></div>
-              <img
-                src="https://i.pravatar.cc/150?img=5"
-                alt="Profile"
-                className="w-24 h-24 rounded-full mx-auto -mt-12 border-4 border-white shadow-md"
-              />
-              <div className="p-4">
-                <h3 className="text-lg font-semibold">Mika Kunisaki</h3>
-                <button className="mt-3 w-full bg-white border font-bold border-gray-300 hover:bg-gray-100 rounded-2xl py-2 transition">
+
+                <button className="mt-3 w-full bg-white border font-bold border-gray-300 hover:bg-gray-100 rounded-2xl py-2 transition"
+                  onClick={() => {
+                    const user = JSON.parse(localStorage.getItem("user")); // parse safely
+                    if (user?.email) {
+                      const username = user.email.slice(0, user.email.length - 12);
+                      navigate(`/student/profile/${username}`);
+                    } else {
+                      console.error("User not found in localStorage");
+                    }
+                  }}
+                >
                   View Profile
                 </button>
-              </div>
-            </div>
+
 
             {/* Actions */}
             <div className="flex flex-col gap-4">
