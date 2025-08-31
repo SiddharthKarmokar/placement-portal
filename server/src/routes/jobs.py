@@ -2,20 +2,22 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from pydantic import BaseModel
+
+from src import logger
 from src.database import get_database
-from src.routes.utils import security
-from src.services import jobs as jobs_service
+from src.redis import cache_get, cache_set, cache_delete
 from src.routes.schemas import (
     JobCreate,
     JobResponse,
     MasterSheetInDB,
     MasterSheetResponse,
-    JobInDB
+    JobInDB,
+    JobUpdate,
 )
-from src.services.jobs import check_and_update_jobs
-from src.redis import cache_get, cache_set, cache_delete
+from src.routes.utils import security
+from src.services import jobs as jobs_service
 from src.services.job_metrics import update_all_jobs_metrics
-from src import logger
+from src.services.jobs import check_and_update_jobs
 
 
 router = APIRouter(prefix="/api/jobs", tags=["Jobs"])
@@ -41,7 +43,8 @@ async def create_job(
     try:
         form_id = await jobs_service.extract_form_id(str(payload.form_link))
         sheet_link = jobs_service.create_sheet_for_job(
-            form_id=form_id, job_title=payload.title
+            form_id=form_id,
+            job_title=payload.job_designation,
         )
 
         result = await jobs_service.create_job_with_links(
@@ -223,4 +226,55 @@ async def update_all_metrics(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update all metrics",
+        )
+
+
+@router.put("/update/{job_id}", response_model=JobResponse)
+async def update_job(
+    job_id: str,
+    payload: JobUpdate = Depends(),
+    db: AsyncIOMotorDatabase = Depends(get_database),
+    current_user: dict = Depends(security.get_current_user),
+):
+    if current_user.get("role") != "admin":
+        logger.warning(f"Unauthorized job update attempt by {current_user}")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only admins can update jobs",
+        )
+
+    try:
+        existing_job = await db.jobs.find_one({"_id": job_id})
+        if not existing_job:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Job not found",
+            )
+
+        update_data = {
+            k: v for k, v in payload.model_dump().items() if v is not None
+        }
+        if not update_data:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No valid fields provided for update",
+            )
+
+        await db.jobs.update_one(
+            {"_id": job_id},
+            {"$set": update_data},
+        )
+
+        cache_delete("jobs:all")
+
+        updated_job = await db.jobs.find_one({"_id": job_id})
+        updated_job["_id"] = str(updated_job["_id"])
+        return JobResponse(**updated_job)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error updating job {job_id}: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update job",
         )

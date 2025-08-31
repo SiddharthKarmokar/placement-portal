@@ -1,12 +1,15 @@
 import json
-from src.config import secrets
+import ssl
+
 from celery import Celery
 from upstash_redis import Redis
-import ssl
+
+from src.config import secrets
+
 
 redis = Redis(
     url=secrets.UPSTASH_REDIS_REST_URL,
-    token=secrets.UPSTASH_REDIS_REST_TOKEN
+    token=secrets.UPSTASH_REDIS_REST_TOKEN,
 )
 
 celery = Celery(
@@ -32,7 +35,7 @@ celery.conf.update(
 
 def cache_set(key: str, value, expire: int = 3600):
     """Set a key in Redis with optional expiry (default: 1 hour)."""
-    redis.set(key, json.dumps(value), ex=expire)
+    redis.set(key, json.dumps(value, default=str), ex=expire)
 
 
 def cache_get(key: str):
