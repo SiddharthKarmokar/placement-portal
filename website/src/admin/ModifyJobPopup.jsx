@@ -1,55 +1,118 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "@headlessui/react";
 
-/**
- * A popup form to modify an existing job post.
- * @param {object} props - The component props.
- * @param {object} props.job - The job object to modify.
- * @param {function} props.onClose - Function to close the popup.
- * @param {function} props.onSubmit - Function to handle form submission.
- */
 const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
-  // Initial state for the form data, pre-filled with the selected job's data.
   const [formData, setFormData] = useState({
-    ...job,
-    CG_Cutoff: job.CG_Cutoff || "",
-    gender_preference: job.gender_preference || [],
-    application_deadline: job.application_deadline
-      ? new Date(job.application_deadline).toISOString().substring(0, 10)
-      : "",
-    job_description: job.job_description || "",
+    company_name: "",
+    website: "",
+    linkedin_link: "",
+    address: "",
+    batch: [],
+    work_location: "",
+    job_designation: "",
+    type_of_employment: "",
+    eligibility_criteria: "",
+    applicable_branch: "",
+    stipend: "",
+    ctc: "",
+    other_benefits: "",
+    bond: "",
+    job_description: "",
+    about_company: "",
+    selection_process: [""],
+    form_link: "",
+    application_deadline: "",
   });
 
-  // Handles changes to form inputs, including checkboxes for gender.
-  const handleChange = (e) => {
-    const { name, value, type, checked, options } = e.target;
+  const employmentTypes = ["Full-time", "Part-time", "Internship", "Contract"];
+  const branches = [
+    "CSE",
+    "ECE",
+    "AIDS",
+    "MECH",
+    "EEE",
+    "Civil",
+    "All Branches",
+  ];
+  const batches = [2025, 2026, 2027, 2028];
 
-    if (type === "checkbox" && name === "gender_preference") {
+  useEffect(() => {
+    if (job) {
+      setFormData({
+        company_name: job.company_name || "",
+        website: job.website || "",
+        linkedin_link: job.linkedin_link || "",
+        address: job.address || "",
+        batch: job.batch || [],
+        work_location: job.work_location || "",
+        job_designation: job.job_designation || "",
+        type_of_employment: job.type_of_employment || "",
+        eligibility_criteria: job.eligibility_criteria || "",
+        applicable_branch: job.applicable_branch || "",
+        stipend: job.stipend || "",
+        ctc: job.ctc || "",
+        other_benefits: job.other_benefits || "",
+        bond: job.bond || "",
+        job_description: job.job_description || "",
+        about_company: job.about_company || "",
+        selection_process:
+          job.selection_process?.length > 0 ? job.selection_process : [""],
+        form_link: job.form_link || "",
+        application_deadline: job.application_deadline
+          ? new Date(job.application_deadline).toISOString().substring(0, 16)
+          : "",
+      });
+    }
+  }, [job]);
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    if (type === "checkbox" && name === "batch") {
+      const numericValue = Number(value);
       setFormData((prev) => ({
         ...prev,
-        gender_preference: checked
-          ? [...prev.gender_preference, value]
-          : prev.gender_preference.filter((g) => g !== value),
+        batch: checked
+          ? [...prev.batch, numericValue]
+          : prev.batch.filter((year) => year !== numericValue),
       }));
-    } else if (name === "batch") {
-      const selectedBatches = Array.from(options)
-        .filter((option) => option.selected)
-        .map((option) => Number(option.value));
-      setFormData((prev) => ({ ...prev, batch: selectedBatches }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
-  // Handles form submission, converting data to match the schema format.
+  const handleSelectionProcessChange = (index, value) => {
+    const updatedProcess = [...formData.selection_process];
+    updatedProcess[index] = value;
+    setFormData((prev) => ({ ...prev, selection_process: updatedProcess }));
+  };
+
+  const addSelectionStep = () => {
+    setFormData((prev) => ({
+      ...prev,
+      selection_process: [...prev.selection_process, ""],
+    }));
+  };
+
+  const removeSelectionStep = (index) => {
+    if (formData.selection_process.length > 1) {
+      const updatedProcess = formData.selection_process.filter(
+        (_, i) => i !== index
+      );
+      setFormData((prev) => ({ ...prev, selection_process: updatedProcess }));
+    }
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = {
       ...formData,
-      CG_Cutoff: parseFloat(formData.CG_Cutoff),
+      selection_process: formData.selection_process.filter(
+        (step) => step.trim() !== ""
+      ),
+      batch: formData.batch.map((year) => Number(year)),
     };
     onSubmit(payload);
-    onClose();
   };
 
   return (
@@ -66,25 +129,26 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
             </Dialog.Title>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 text-2xl"
             >
               ✕
             </button>
           </div>
+
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Company & Job Information */}
+            {/* Company Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
-                Job Information
+                Company Information
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Company Name
+                    Company Name *
                   </label>
                   <input
-                    name="company"
-                    value={formData.company}
+                    name="company_name"
+                    value={formData.company_name}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
@@ -92,11 +156,55 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Job Title
+                    Website
                   </label>
                   <input
-                    name="title"
-                    value={formData.title}
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    type="url"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    LinkedIn Profile
+                  </label>
+                  <input
+                    name="linkedin_link"
+                    value={formData.linkedin_link}
+                    onChange={handleChange}
+                    type="url"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Company Address
+                  </label>
+                  <input
+                    name="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Job Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Job Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Job Designation *
+                  </label>
+                  <input
+                    name="job_designation"
+                    value={formData.job_designation}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
@@ -104,18 +212,225 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Location
+                    Type of Employment
+                  </label>
+                  <select
+                    name="type_of_employment"
+                    value={formData.type_of_employment}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select Type</option>
+                    {employmentTypes.map((type) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Work Location
                   </label>
                   <input
-                    name="location"
-                    value={formData.location}
+                    name="work_location"
+                    value={formData.work_location}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Apply Link
+                    Applicable Branch
+                  </label>
+                  <select
+                    name="applicable_branch"
+                    value={formData.applicable_branch}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">Select Branch</option>
+                    {branches.map((branch) => (
+                      <option key={branch} value={branch}>
+                        {branch}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Compensation & Benefits */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Compensation & Benefits
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Stipend (for interns)
+                  </label>
+                  <input
+                    name="stipend"
+                    value={formData.stipend}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    CTC (for full-time)
+                  </label>
+                  <input
+                    name="ctc"
+                    value={formData.ctc}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Other Benefits
+                  </label>
+                  <input
+                    name="other_benefits"
+                    value={formData.other_benefits}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Bond Details
+                  </label>
+                  <input
+                    name="bond"
+                    value={formData.bond}
+                    onChange={handleChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Eligibility & Selection */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Eligibility & Selection Process
+              </h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Eligibility Criteria
+                </label>
+                <textarea
+                  name="eligibility_criteria"
+                  value={formData.eligibility_criteria}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="CGPA requirements, backlogs allowed, etc."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Selection Process Steps
+                </label>
+                {formData.selection_process.map((step, index) => (
+                  <div key={index} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={step}
+                      onChange={(e) =>
+                        handleSelectionProcessChange(index, e.target.value)
+                      }
+                      placeholder={`Step ${index + 1}`}
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                    {formData.selection_process.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeSelectionStep(index)}
+                        className="px-3 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={addSelectionStep}
+                  className="mt-2 px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                >
+                  Add Step
+                </button>
+              </div>
+            </div>
+
+            {/* Batch Selection */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Eligible Batches
+              </h3>
+              <div className="flex flex-wrap gap-4">
+                {batches.map((year) => (
+                  <label key={year} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      name="batch"
+                      value={year}
+                      checked={formData.batch.includes(year)}
+                      onChange={handleChange}
+                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    />
+                    <span>{year}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Descriptions */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Descriptions
+              </h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Job Description *
+                </label>
+                <textarea
+                  name="job_description"
+                  value={formData.job_description}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  About Company
+                </label>
+                <textarea
+                  name="about_company"
+                  value={formData.about_company}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            {/* Application Details */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
+                Application Details
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Application Form Link
                   </label>
                   <input
                     name="form_link"
@@ -125,96 +440,17 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-              </div>
-            </div>
-
-            {/* Job Description */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
-                Job Description
-              </h3>
-              <textarea
-                name="job_description"
-                value={formData.job_description}
-                onChange={handleChange}
-                rows={5}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter detailed job description..."
-              />
-            </div>
-
-            {/* Eligibility Criteria */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700 border-b pb-2">
-                Eligibility Criteria
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Minimum CGPA
+                    Application Deadline
                   </label>
                   <input
-                    name="CG_Cutoff"
-                    value={formData.CG_Cutoff}
-                    onChange={handleChange}
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Last Date to Apply
-                  </label>
-                  <input
-                    type="date"
+                    type="datetime-local"
                     name="application_deadline"
                     value={formData.application_deadline}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Gender Preference
-                  </label>
-                  <div className="flex flex-wrap gap-4">
-                    {["Male", "Female", "Other"].map((g) => (
-                      <label key={g} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          name="gender_preference"
-                          value={g}
-                          checked={formData.gender_preference.includes(g)}
-                          onChange={handleChange}
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                        />
-                        <span>{g}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Eligible Batch
-                  </label>
-                  <select
-                    name="batch"
-                    multiple
-                    value={formData.batch.map(String)}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-24"
-                  >
-                    <option value="2025">2025</option>
-                    <option value="2026">2026</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028</option>
-                  </select>
                 </div>
               </div>
             </div>

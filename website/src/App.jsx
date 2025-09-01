@@ -30,7 +30,7 @@ const App = () => {
         {/* 
         <Route path="/admin/post" element={<JobPost />} /> */}
         <Route path="/student/login" element={<StudentLogin />} />
-        {/* <Route path="/student/get" element={<JobGet />} /> */}
+        <Route path="/student/get" element={<JobGet />} />
         <Route path="/student/home" element={<StudentHome />} />
         <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/control" element={<HomePageControl />} />

@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { FiBriefcase, FiMapPin, FiClock } from "react-icons/fi";
-import { IndianRupee } from "lucide-react";
+import {
+  FiBriefcase,
+  FiMapPin,
+  FiClock,
+  FiDollarSign,
+  FiUser,
+  FiCalendar,
+} from "react-icons/fi";
 import { toast } from "react-toastify";
 import axios from "axios";
 
 // A simple modal component to wrap the job details
 const Modal = ({ children, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-transparent bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl border-2 p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto relative">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl shadow-2xl border-2 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors"
@@ -38,62 +44,136 @@ const Modal = ({ children, onClose }) => {
 const JobDetails = ({ job, onClose }) => {
   if (!job) return null;
 
-  return (
-    <div>
-      <h2 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h2>
-      <h3 className="text-lg font-semibold text-gray-700 mb-4">
-        {job.company}
-      </h3>
-      <p className="text-gray-600 mb-4">{job.description}</p>
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
 
-      <div className="grid grid-cols-2 gap-4 text-sm text-gray-700">
-        <div>
-          <span className="font-semibold">Website:</span>{" "}
-          <a
-            href={job.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:underline"
-          >
-            {job.website}
-          </a>
+  return (
+    <div className="space-y-4">
+      <div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          {job.job_designation}
+        </h2>
+        <h3 className="text-xl font-semibold text-gray-700 mb-4">
+          {job.company_name}
+        </h3>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <FiMapPin className="text-gray-400" />
+          <span>
+            <strong>Location:</strong> {job.work_location || "Not specified"}
+          </span>
         </div>
-        <div>
-          <span className="font-semibold">Type:</span> {job.type}
+        <div className="flex items-center gap-2">
+          <FiBriefcase className="text-gray-400" />
+          <span>
+            <strong>Type:</strong> {job.type_of_employment || "Not specified"}
+          </span>
         </div>
-        <div>
-          <span className="font-semibold">Location:</span> {job.location}
+        <div className="flex items-center gap-2">
+          <FiUser className="text-gray-400" />
+          <span>
+            <strong>Branch:</strong> {job.applicable_branch || "All branches"}
+          </span>
         </div>
-        <div>
-          <span className="font-semibold">Industry:</span> {job.industry}
+        <div className="flex items-center gap-2">
+          <FiDollarSign className="text-gray-400" />
+          <span>
+            <strong>Compensation:</strong>{" "}
+            {job.ctc
+              ? `CTC: ${job.ctc}`
+              : job.stipend
+              ? `Stipend: ${job.stipend}`
+              : "Not specified"}
+          </span>
         </div>
-        <div>
-          <span className="font-semibold">Salary:</span> {job.salary}
+        <div className="flex items-center gap-2">
+          <FiCalendar className="text-gray-400" />
+          <span>
+            <strong>Batch:</strong> {job.batch?.join(", ") || "Not specified"}
+          </span>
         </div>
-        <div>
-          <span className="font-semibold">Branch:</span> {job.branch}
-        </div>
-        <div>
-          <span className="font-semibold">CGPA:</span> {job.cgpa}
-        </div>
-        <div>
-          <span className="font-semibold">Gender:</span> {job.gender.join(", ")}
-        </div>
-        <div>
-          <span className="font-semibold">Backlogs Allowed:</span>{" "}
-          {job.backlogsAllowed}
-        </div>
-        {job.backlogCourses && (
-          <div>
-            <span className="font-semibold">Backlog Courses:</span>{" "}
-            {job.backlogCourses}
-          </div>
-        )}
-        <div>
-          <span className="font-semibold">Deadline:</span>{" "}
-          {new Date(job.deadline).toLocaleDateString()}
+        <div className="flex items-center gap-2">
+          <FiClock className="text-gray-400" />
+          <span>
+            <strong>Deadline:</strong>{" "}
+            {job.application_deadline
+              ? formatDate(job.application_deadline)
+              : "Not specified"}
+          </span>
         </div>
       </div>
+
+      {job.eligibility_criteria && (
+        <div className="bg-gray-50 p-4 rounded-lg">
+          <h4 className="font-semibold text-gray-800 mb-2">
+            Eligibility Criteria
+          </h4>
+          <p className="text-gray-700">{job.eligibility_criteria}</p>
+        </div>
+      )}
+
+      {job.job_description && (
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-2">Job Description</h4>
+          <p className="text-gray-700">{job.job_description}</p>
+        </div>
+      )}
+
+      {job.about_company && (
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-2">About Company</h4>
+          <p className="text-gray-700">{job.about_company}</p>
+        </div>
+      )}
+
+      {job.selection_process && job.selection_process.length > 0 && (
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-2">
+            Selection Process
+          </h4>
+          <ol className="list-decimal list-inside space-y-1 text-gray-700">
+            {job.selection_process.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {job.other_benefits && (
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-2">Other Benefits</h4>
+          <p className="text-gray-700">{job.other_benefits}</p>
+        </div>
+      )}
+
+      {job.bond && (
+        <div>
+          <h4 className="font-semibold text-gray-800 mb-2">Bond Details</h4>
+          <p className="text-gray-700">{job.bond}</p>
+        </div>
+      )}
+
+      {job.form_link && (
+        <div className="text-center mt-6">
+          <a
+            href={job.form_link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Apply Now
+          </a>
+        </div>
+      )}
     </div>
   );
 };
@@ -107,12 +187,14 @@ const JobGet = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
+  const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
+
   useEffect(() => {
     const fetchJobs = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get(`${SERVER_URI}/api/jobs`);
-        setJobs(Array.isArray(res.data) ? res.data : res.data.jobs || []);
+        const res = await axios.get(`${SERVER_URI}/api/jobs/get-jobs`);
+        setJobs(Array.isArray(res.data) ? res.data : []);
         setIsLoading(false);
       } catch (err) {
         console.error(err);
@@ -125,16 +207,19 @@ const JobGet = () => {
 
   const filteredJobs = jobs.filter((job) => {
     const matchesSearch =
-      job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.company.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter = filter === "all" || job.type === filter;
+      job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter =
+      filter === "all" || job.type_of_employment?.toLowerCase() === filter;
     return matchesSearch && matchesFilter;
   });
 
-  const handleApply = (jobId) => {
-    console.log(`Apply button clicked for job ID: ${jobId}`);
-    // Add your application logic here, e.g., a redirection or form submission
-    toast.info("Application functionality is not yet implemented.");
+  const handleApply = (job) => {
+    if (job.form_link) {
+      window.open(job.form_link, "_blank");
+    } else {
+      toast.info("Application link not available for this job.");
+    }
   };
 
   const handleDetails = (job) => {
@@ -142,16 +227,50 @@ const JobGet = () => {
     setShowDetailsPopup(true);
   };
 
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <div className="bg-[#DED9D9] min-h-screen p-8 font-[Figtree]">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         {/* Header with Title */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Jobs</h1>
+          <h1 className="text-3xl font-bold text-gray-800">Available Jobs</h1>
         </div>
-        <hr />
+
+        {/* Search and Filter Section */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="Search by job title or company..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-4 pr-4 py-2 rounded-xl border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors"
+            />
+          </div>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="w-full md:w-auto px-4 py-2 rounded-xl border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors"
+          >
+            <option value="all">All Job Types</option>
+            {jobTypes.map((type) => (
+              <option key={type} value={type.toLowerCase()}>
+                {type}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <hr className="border-gray-400 mb-8" />
+
         {/* Job Cards */}
-        <div className="space-y-6 mt-8">
+        <div className="space-y-6">
           {isLoading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
@@ -170,49 +289,69 @@ const JobGet = () => {
               {filteredJobs.map((job) => (
                 <div
                   key={job._id}
-                  className="bg-white rounded-3xl shadow-lg border-2 border-solid p-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 "
+                  className="bg-white rounded-3xl shadow-lg border-2 border-gray-200 p-6 hover:shadow-xl transition-shadow"
                 >
-                  <div className="flex flex-col md:flex-row w-full justify-between gap-6">
-                    <div className="flex-1 space-y-2">
-                      <div className="text-gray-800 font-semibold text-lg">
-                        {job.company}
-                      </div>
-                      <div className="text-2xl font-bold text-gray-900">
-                        {job.title}
+                  <div className="flex flex-col md:flex-row justify-between gap-6">
+                    {/* Job Information */}
+                    <div className="flex-1 space-y-3">
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">
+                          {job.job_designation}
+                        </h3>
+                        <p className="text-lg font-semibold text-gray-700">
+                          {job.company_name}
+                        </p>
                       </div>
 
-                      <div className="flex flex-wrap gap-3 items-center text-gray-600 space-x-4 text-sm mt-2">
-                        <div className="flex items-center bg-[#F5F7FC] rounded-3xl gap-1 py-1 object-contain px-2">
+                      <div className="flex flex-wrap gap-3 items-center text-gray-600 text-sm">
+                        <div className="flex items-center bg-[#F5F7FC] rounded-3xl gap-2 py-1 px-3">
                           <FiBriefcase className="text-gray-400" />
-                          <span>{job.type}</span>
-                        </div>
-                        <div className="flex bg-[#F5F7FC] rounded-3xl items-center object-contain gap-1 py-1 px-2">
-                          <FiMapPin className="text-gray-400" />
-                          <span>{job.location}</span>
-                        </div>
-                        <div className="flex bg-[#F5F7FC] rounded-3xl items-center object-contain gap-1 py-1 px-2">
-                          <IndianRupee className="text-gray-400 w-4 h-4" />
-                          <span>{job.salary}</span>
-                        </div>
-                        <div className="flex bg-[#F5F7FC] rounded-3xl items-center object-contain gap-1 py-1 px-2">
-                          <FiClock className="text-gray-400 w-4 h-4" />
                           <span>
-                            {new Date(job.deadline).toLocaleDateString()}
+                            {job.type_of_employment || "Not specified"}
                           </span>
                         </div>
+                        <div className="flex items-center bg-[#F5F7FC] rounded-3xl gap-2 py-1 px-3">
+                          <FiMapPin className="text-gray-400" />
+                          <span>{job.work_location || "Remote"}</span>
+                        </div>
+                        <div className="flex items-center bg-[#F5F7FC] rounded-3xl gap-2 py-1 px-3">
+                          <FiDollarSign className="text-gray-400" />
+                          <span>
+                            {job.ctc
+                              ? `CTC: ${job.ctc}`
+                              : job.stipend
+                              ? `Stipend: ${job.stipend}`
+                              : "Not specified"}
+                          </span>
+                        </div>
+                        {job.application_deadline && (
+                          <div className="flex items-center bg-[#F5F7FC] rounded-3xl gap-2 py-1 px-3">
+                            <FiClock className="text-gray-400" />
+                            <span>
+                              Apply by: {formatDate(job.application_deadline)}
+                            </span>
+                          </div>
+                        )}
                       </div>
+
+                      {job.eligibility_criteria && (
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {job.eligibility_criteria}
+                        </p>
+                      )}
                     </div>
 
+                    {/* Action Buttons */}
                     <div className="flex flex-col gap-3 min-w-[120px]">
                       <button
-                        onClick={() => handleApply(job._id)}
-                        className="flex items-center justify-center gap-2 bg-[#029309] text-white px-2 py-2 rounded-lg hover:bg-[#03b40c] active:bg-[#029309] transition-colors"
+                        onClick={() => handleApply(job)}
+                        className="flex items-center justify-center gap-2 bg-[#029309] text-white px-4 py-2 rounded-lg hover:bg-[#03b40c] transition-colors"
                       >
                         Apply
                       </button>
                       <button
                         onClick={() => handleDetails(job)}
-                        className="flex items-center justify-center gap-2  bg-black active:bg-black text-white hover:bg-gray-900 px-2 py-2 rounded-lg transition-colors"
+                        className="flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
                       >
                         Details
                       </button>
@@ -224,7 +363,8 @@ const JobGet = () => {
           )}
         </div>
       </div>
-      {/* Popups */}
+
+      {/* Job Details Popup */}
       {showDetailsPopup && selectedJob && (
         <Modal onClose={() => setShowDetailsPopup(false)}>
           <JobDetails
