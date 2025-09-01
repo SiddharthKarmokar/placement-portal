@@ -3,8 +3,9 @@ import Sidebar from "../components/SideNav";
 import LogoNav from "../components/LogoNav";
 import JobPost from "./JobPost";
 import "../css/scroll.css"
-
+import { useNavigate } from "react-router-dom";
 const AdminHome = () => {
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -74,7 +75,13 @@ const AdminHome = () => {
 
             <div className="flex w-full justify-evenly items-start">
               {/* CSV Upload */}
-              <button className="bg-white rounded-2xl p-6 shadow-md cursor-pointer flex items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all duration-200">
+              <button className="bg-white rounded-2xl p-6 shadow-md cursor-pointer flex items-center justify-center text-center hover:shadow-lg hover:scale-105 transition-all duration-200"
+                onClick={()=>{
+                  localStorage.clear();
+                  navigate("/admin/login");
+                }}
+              
+              >
                   <img src="/csv.png" className="w-[80px]" alt="csv"/>
               </button>
 

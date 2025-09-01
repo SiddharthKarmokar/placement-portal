@@ -180,7 +180,7 @@ const JobGet = () => {
     const fetchJobs = async () => {
       try {
         setIsLoading(true);
-        const res = await axios.get(`${SERVER_URI}/api/jobs/get-jobs`);
+        const res = await axios.get(`${API_URL}/api/jobs/get-jobs`);
         setJobs(Array.isArray(res.data) ? res.data : []);
         setIsLoading(false);
       } catch (err) {
