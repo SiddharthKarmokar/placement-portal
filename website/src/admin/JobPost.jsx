@@ -20,6 +20,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import JobFormPopup from "./JobFormPopup";
 import ModifyJobPopup from "./ModifyJobPopup";
+import { API_URL } from "../../env-config";
 
 // const ConfirmationModal = ({ isOpen, title, message, onConfirm, onCancel }) => {
 //   if (!isOpen) return null;
@@ -70,7 +71,7 @@ const JobPost = () => {
       try {
         setIsLoading(true);
         const token = localStorage.getItem("token");
-        const res = await axios.get(`${SERVER_URI}/api/jobs/get-jobs`, {
+        const res = await axios.get(`${API_URL}/api/jobs/get-jobs`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -91,7 +92,7 @@ const JobPost = () => {
   const handlePostJob = async (jobData) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(`${SERVER_URI}/api/jobs/create`, jobData, {
+      const res = await axios.post(`${API_URL}/api/jobs/create`, jobData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
@@ -158,7 +159,7 @@ const JobPost = () => {
 
       // Make the PUT request with query parameters and request body
       const res = await axios.put(
-        `${SERVER_URI}/api/jobs/update/${
+        `${API_URL}/api/jobs/update/${
           updatedJob._id
         }?${queryParams.toString()}`,
         requestBody,
@@ -200,7 +201,7 @@ const JobPost = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        `${SERVER_URI}/api/jobs/sync-expired`,
+        `${API_URL}/api/jobs/sync-expired`,
         {},
         {
           headers: {

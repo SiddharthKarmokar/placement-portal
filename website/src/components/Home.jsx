@@ -12,6 +12,7 @@ import PlacementProcess from "./PlacementProcess";
 import Footer from "./Footer";
 import { Link, Navigate } from "react-router-dom";
 import CompanySlider from "./CompanySlider";
+import NewsSlider from "./NewsSlider";
 import "../css/scroll.css"
 
 const Home = () => {
@@ -83,12 +84,16 @@ const Home = () => {
       </div>
       {/* Sections with IDs for scroll */}
       <div className="scroll-mt-24">
+        <NewsSlider/>
+      </div>
+      <div className="scroll-mt-24">
         <Broucher />
       </div>
-
+      
       <div id="overview" className="scroll-mt-24">
         <Cta />
       </div>
+
 
       <div id="directors-message" className="scroll-mt-24">
         <Message />
