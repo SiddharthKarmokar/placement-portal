@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Home,
   FileText,
@@ -13,7 +14,11 @@ import { motion } from "framer-motion";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
-
+  const navigate = useNavigate();
+  const handleNavigation = () => {
+    localStorage.clear();
+    navigate("/admin/login");
+  };
   return (
     <motion.div
       animate={{ width: isOpen ? 256 : 80 }}
@@ -76,27 +81,33 @@ const Sidebar = () => {
           ))}
         </nav>
       </div>
+      <div>
+        <button
+          onClick={handleNavigation}
+          className="flex w-[80%] items-center mx-auto mb-7 justify-center gap-2 bg-red-700 hover:bg-red-500 active:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          Logout
+        </button>
+        <div className="border-t pt-4 flex items-center gap-3">
+          {/* Profile image always visible */}
+          <img
+            src="/profile.png"
+            alt="profile"
+            className="w-10 h-10 rounded-full cursor-pointer"
+          />
 
-<div className="border-t pt-4 flex items-center gap-3">
-  {/* Profile image always visible */}
-  <img
-    src="/profile.png"
-    alt="profile"
-    className="w-10 h-10 rounded-full cursor-pointer"
-  />
-
-  {/* Text fades out on collapse */}
-  <motion.div
-    initial={{ opacity: 0, x: -10 }}
-    animate={{ opacity: 1  ,x:0}}
-    transition={{ duration: 0.4 }}
-    className={`${isOpen ? "flex flex-col" : "hidden"}`}
-  >
-    <span className="text-sm text-gray-500">Welcome back</span>
-    <span className="font-medium text-gray-800">Captain</span>
-  </motion.div>
-</div>
-
+          {/* Text fades out on collapse */}
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className={`${isOpen ? "flex flex-col" : "hidden"}`}
+          >
+            <span className="text-sm text-gray-500">Welcome back</span>
+            <span className="font-medium text-gray-800">Captain</span>
+          </motion.div>
+        </div>
+      </div>
     </motion.div>
   );
 };

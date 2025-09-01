@@ -62,9 +62,9 @@ const JobPost = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+  const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
 
   const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
-
   useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -411,6 +411,34 @@ const JobPost = () => {
                           <FiEdit2 size={16} />
                           Edit
                         </button>
+                        <div className="flex justify-around items-center">
+                          <a
+                            href={job.responses_sheet_link}
+                            target="_blank"
+                            className="flex items-center w-[40%] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                          >
+                            <img
+                              src="/excel-logo.png"
+                              width={24}
+                              height={24}
+                              alt=""
+                            />
+                            Response
+                          </a>
+                          <a
+                            href={job.master_sheet_link}
+                            target="_blank"
+                            className="flex items-center w-[40%] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                          >
+                            <img
+                              src="/excel-logo.png"
+                              width={24}
+                              height={24}
+                              alt=""
+                            />
+                            Master
+                          </a>
+                        </div>
                         {/* <button
                           onClick={() => {
                             setSelectedJob(job);
@@ -421,7 +449,7 @@ const JobPost = () => {
                           <FiTrash size={16} className="text-red-500" />
                           Delete
                         </button> */}
-                        {job.form_link && (
+                        {/* {job.form_link && (
                           <a
                             href={job.form_link}
                             target="_blank"
@@ -431,7 +459,7 @@ const JobPost = () => {
                             <FiExternalLink size={16} />
                             Apply Now
                           </a>
-                        )}
+                        )} */}
                       </div>
 
                       {/* Created Info */}
