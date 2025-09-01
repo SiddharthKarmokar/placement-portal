@@ -9,8 +9,8 @@ import {
 } from "react-icons/fi";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { API_URL } from "../../env-config";
 
-// A simple modal component to wrap the job details
 const Modal = ({ children, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -19,20 +19,7 @@ const Modal = ({ children, onClose }) => {
           onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition-colors"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          ✕
         </button>
         {children}
       </div>
@@ -40,8 +27,7 @@ const Modal = ({ children, onClose }) => {
   );
 };
 
-// The component to display job details in the popup
-const JobDetails = ({ job, onClose }) => {
+const JobDetails = ({ job }) => {
   if (!job) return null;
 
   const formatDate = (dateString) => {
@@ -179,11 +165,12 @@ const JobDetails = ({ job, onClose }) => {
 };
 
 const JobGet = () => {
-  const SERVER_URI = import.meta.env.VITE_SERVER_URI || "http://localhost:5000";
   const [jobs, setJobs] = useState([]);
   const [showDetailsPopup, setShowDetailsPopup] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Filters
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
@@ -199,13 +186,15 @@ const JobGet = () => {
       } catch (err) {
         console.error(err);
         toast.error("Failed to fetch jobs");
+      } finally {
         setIsLoading(false);
       }
     };
     fetchJobs();
   }, []);
 
-  const filteredJobs = jobs.filter((job) => {
+  // Filtering
+  let filteredJobs = jobs.filter((job) => {
     const matchesSearch =
       job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
@@ -367,10 +356,7 @@ const JobGet = () => {
       {/* Job Details Popup */}
       {showDetailsPopup && selectedJob && (
         <Modal onClose={() => setShowDetailsPopup(false)}>
-          <JobDetails
-            job={selectedJob}
-            onClose={() => setShowDetailsPopup(false)}
-          />
+          <JobDetails job={selectedJob} />
         </Modal>
       )}
     </div>

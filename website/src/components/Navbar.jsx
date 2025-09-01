@@ -19,7 +19,7 @@ export default function Navbar({ className = "" }) {
           alt="IIITDM Kurnool"
           className="h-10 w-10 mr-2"
         />
-        <p className="md:block hidden">Placement Cell, IIITDM Kurnool</p>
+        <p className="md:block hidden">Training and Placement Cell, IIITDM Kurnool</p>
       </div>
 
       <button

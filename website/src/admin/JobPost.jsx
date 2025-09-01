@@ -54,7 +54,6 @@ import ModifyJobPopup from "./ModifyJobPopup";
 // };
 
 const JobPost = () => {
-  const SERVER_URI = import.meta.env.VITE_SERVER;
   const [jobs, setJobs] = useState([]);
   const [showPostPopup, setShowPostPopup] = useState(false);
   const [showModifyPopup, setShowModifyPopup] = useState(false);
@@ -85,6 +84,7 @@ const JobPost = () => {
         setIsLoading(false);
       }
     };
+
     fetchJobs();
   }, []);
 
