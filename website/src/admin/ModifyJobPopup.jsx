@@ -3,6 +3,7 @@ import { Dialog } from "@headlessui/react";
 
 const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
   const [formData, setFormData] = useState({
+    _id: "",
     company_name: "",
     website: "",
     linkedin_link: "",
@@ -39,6 +40,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
   useEffect(() => {
     if (job) {
       setFormData({
+        _id: job._id || "",
         company_name: job.company_name || "",
         website: job.website || "",
         linkedin_link: job.linkedin_link || "",
