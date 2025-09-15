@@ -93,11 +93,9 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
       className="fixed inset-0 z-50 overflow-y-auto bg-transparent bg-opacity-50"
     >
       <div className="flex items-center justify-center min-h-screen px-4">
-        <Dialog.Panel className="bg-white border-2 rounded-lg shadow-2xl w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
+        <div className="bg-white border-2 rounded-lg shadow-2xl w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
           <div className="flex justify-between items-start mb-4">
-            <Dialog.Title className="text-2xl font-bold text-gray-800">
-              Post a Job
-            </Dialog.Title>
+            <div className="text-2xl font-bold text-gray-800">Post a Job</div>
             <button
               onClick={onClose}
               className="text-gray-500 hover:text-gray-700 text-2xl"
@@ -443,7 +441,7 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
               </button>
             </div>
           </form>
-        </Dialog.Panel>
+        </div>
       </div>
     </Dialog>
   );

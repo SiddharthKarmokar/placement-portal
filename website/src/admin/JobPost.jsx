@@ -79,6 +79,7 @@ const JobPost = () => {
         });
         setJobs(Array.isArray(res.data) ? res.data : []);
         setIsLoading(false);
+        console.log(res.data);
       } catch (err) {
         console.error("Error fetching jobs:", err);
         toast.error("Failed to fetch jobs");
@@ -91,6 +92,7 @@ const JobPost = () => {
 
   const handlePostJob = async (jobData) => {
     try {
+      console.log(jobData);
       const token = localStorage.getItem("token");
       const res = await axios.post(`${API_URL}/api/jobs/create`, jobData, {
         headers: {
@@ -111,57 +113,33 @@ const JobPost = () => {
     try {
       const token = localStorage.getItem("token");
 
-      // Extract only the fields that the API expects in the request body
+      // Build the request body with all fields
       const requestBody = {
+        company_name: updatedJob.company_name || "",
+        website: updatedJob.website || "",
+        linkedin_link: updatedJob.linkedin_link || "",
+        address: updatedJob.address || "",
         batch: updatedJob.batch || [],
+        work_location: updatedJob.work_location || "",
+        job_designation: updatedJob.job_designation || "",
+        type_of_employment: updatedJob.type_of_employment || "",
+        eligibility_criteria: updatedJob.eligibility_criteria || "",
+        applicable_branch: updatedJob.applicable_branch || "",
+        stipend: updatedJob.stipend || "",
+        ctc: updatedJob.ctc || "",
+        other_benefits: updatedJob.other_benefits || "",
+        bond: updatedJob.bond || "",
+        job_description: updatedJob.job_description || "",
+        about_company: updatedJob.about_company || "",
         selection_process: updatedJob.selection_process || [],
+        form_link: updatedJob.form_link || "",
+        application_deadline: updatedJob.application_deadline || "",
       };
 
-      // Create query parameters for all other fields
-      const queryParams = new URLSearchParams();
-
-      // Add all the query parameters
-      if (updatedJob.company_name)
-        queryParams.append("company_name", updatedJob.company_name);
-      if (updatedJob.website) queryParams.append("website", updatedJob.website);
-      if (updatedJob.linkedin_link)
-        queryParams.append("linkedin_link", updatedJob.linkedin_link);
-      if (updatedJob.address) queryParams.append("address", updatedJob.address);
-      if (updatedJob.work_location)
-        queryParams.append("work_location", updatedJob.work_location);
-      if (updatedJob.job_designation)
-        queryParams.append("job_designation", updatedJob.job_designation);
-      if (updatedJob.type_of_employment)
-        queryParams.append("type_of_employment", updatedJob.type_of_employment);
-      if (updatedJob.eligibility_criteria)
-        queryParams.append(
-          "eligibility_criteria",
-          updatedJob.eligibility_criteria
-        );
-      if (updatedJob.applicable_branch)
-        queryParams.append("applicable_branch", updatedJob.applicable_branch);
-      if (updatedJob.stipend) queryParams.append("stipend", updatedJob.stipend);
-      if (updatedJob.ctc) queryParams.append("ctc", updatedJob.ctc);
-      if (updatedJob.other_benefits)
-        queryParams.append("other_benefits", updatedJob.other_benefits);
-      if (updatedJob.bond) queryParams.append("bond", updatedJob.bond);
-      if (updatedJob.job_description)
-        queryParams.append("job_description", updatedJob.job_description);
-      if (updatedJob.about_company)
-        queryParams.append("about_company", updatedJob.about_company);
-      if (updatedJob.form_link)
-        queryParams.append("form_link", updatedJob.form_link);
-      if (updatedJob.application_deadline)
-        queryParams.append(
-          "application_deadline",
-          updatedJob.application_deadline
-        );
-
-      // Make the PUT request with query parameters and request body
+      // Send PUT request
+      console.log(updatedJob._id);
       const res = await axios.put(
-        `${API_URL}/api/jobs/update/${
-          updatedJob._id
-        }?${queryParams.toString()}`,
+        `${API_URL}/api/jobs/update/${updatedJob._id}`,
         requestBody,
         {
           headers: {
@@ -171,11 +149,17 @@ const JobPost = () => {
         }
       );
 
-      setJobs(jobs.map((job) => (job._id === updatedJob._id ? res.data : job)));
+      // Update UI
+      setJobs((jobs) =>
+        jobs.map((job) => (job._id === updatedJob._id ? res.data : job))
+      );
       setShowModifyPopup(false);
       toast.success("Job updated successfully!");
     } catch (err) {
-      console.error("Error updating job:", err);
+      console.error(
+        "❌ Error updating job:",
+        err.response?.data || err.message
+      );
       toast.error("Failed to update job");
     }
   };
