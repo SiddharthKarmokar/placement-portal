@@ -14,6 +14,7 @@ export default function StudentLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    localStorage.clear();
     setLoading(true);
     console.log(API_URL)
     try {

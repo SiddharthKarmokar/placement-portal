@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Sidebar from "./SideNav";
 import LogoNav from "../components/LogoNav";
 import JobGet from "./JobGet";
 import "../css/scroll.css";
+import Sidebar from "../components/SideNav";
 
 const StudentHome = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [ChangePasswordOpen,setChangePasswordOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,6 +18,46 @@ const StudentHome = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  setFormData((prev) => ({ ...prev, [name]: value }));
+};
+
+  const handleSubmit = async (e)=>{
+  e.preventDefault();
+  
+    try {
+      const cleanedData = Object.fromEntries(
+        Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
+      );
+      const data = new URLSearchParams(cleanedData).toString();
+      console.log(API_URL+`/profile/student/update?${data}`);
+      const queryParams = Object.entries(cleanedData)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join("&");
+  
+      const response = await fetch(API_URL+`/profile/student/update?${queryParams}`, {
+        method: "PUT",
+        headers: {
+          "accept": "application/json",
+          "Authorization": `Bearer ${localStorage.getItem("token")}`, 
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error("Update failed");
+      }
+  
+      const updated = await response.json();
+      console.log("Update successful:", updated);
+      setProfile(updated); // update UI
+      setIsModalOpen(false); // close modal
+      console.log("agar 403 aye to smaj lena tumhara chnace gaya sale 1 baar hi edit kar sakte ho tum ");
+    } catch (err) {
+      console.error("Update error:", err);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -60,7 +101,12 @@ const StudentHome = () => {
             {/* Actions */}
             <div className="flex flex-col gap-4">
               {/* Change password */}
-              <button className="bg-white w-full rounded-2xl p-3 text-lg font-semibold shadow-md cursor-pointer flex items-center gap-3 justify-center hover:shadow-lg hover:scale-105 transition">
+              <button 
+               className="bg-white w-full rounded-2xl p-3 text-lg font-semibold shadow-md cursor-pointer flex items-center gap-3 justify-center hover:shadow-lg hover:scale-105 transition"
+               onClick={()=>{
+                setChangePasswordOpen(true);
+               }}
+               >
                 <svg
                   width="28"
                   height="28"
@@ -115,8 +161,52 @@ const StudentHome = () => {
           </div>
         </div>
       </div>
+       {isModalOpen && (
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
+            <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                "Old Password",
+                "New Password",
+              ].map((field) => (
+                <div key={field} className="flex flex-col">
+                  <label className="text-sm text-gray-600 capitalize">{field.replace(/_/g, " ")}</label>
+                  <input
+                    type="text"
+                    name={field}
+                    value={formData[field] || ""}
+                    onChange={handleChange}
+                    className="border rounded-lg px-3 py-2 mt-1 text-sm"
+                  />
+                </div>
+              ))}
+
+              <div className="col-span-2 flex justify-end gap-3 mt-4">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
+
+    
+
   );
+  
 };
 
 export default StudentHome;
