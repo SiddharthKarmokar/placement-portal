@@ -16,7 +16,6 @@ export default function StudentLogin() {
     e.preventDefault();
     localStorage.clear();
     setLoading(true);
-    console.log(API_URL)
     try {
       const tokenRes = await fetch(`${API_URL}/api/auth/token`, {
         method: "POST",
