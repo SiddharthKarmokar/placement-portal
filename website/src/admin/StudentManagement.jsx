@@ -1,13 +1,66 @@
-import React from "react";
+import React, { useState } from "react";
+import axios from "axios";
+import { toast } from "react-toastify";
 import StudentUpdates from "./StudentUpdates";
 import Sidebar from "../components/SideNav";
+import { FiEdit } from "react-icons/fi";
 
 const StudentManagement = () => {
+  const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
+  const [showStudentPopup, setShowStudentPopup] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [searchRollNumber, setSearchRollNumber] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleSearchStudent = async () => {
+    if (!searchRollNumber) {
+      toast.error("Please enter a roll number to search.");
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const response = await axios.get(
+        `${SERVER_URI}/profile/admin/student/${searchRollNumber}`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setSelectedStudent(response.data);
+      toast.success("Student found!");
+    } catch (error) {
+      // console.error("Error:", error);
+      if (error.response?.status === 404) {
+        toast.info("Student not found.");
+        setSelectedStudent(null); // ✅ don't display anything below
+      } else {
+        toast.error("Failed to fetch student profile.");
+        setSelectedStudent(null);
+      }
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setShowStudentPopup(false);
+    setSelectedStudent(null);
+    setSearchRollNumber("");
+  };
+
+  const handleEditClick = () => {
+    setShowStudentPopup(true);
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
-
       <div className="flex-1 flex flex-col">
+        {/* Header */}
         <header className="bg-white shadow-md p-4 flex items-center justify-center mt-5 w-[95%] mx-auto rounded-full">
           <div className="flex items-center gap-3">
             <img src="/logo.webp" alt="Institute Logo" className="h-10 w-10" />
@@ -17,9 +70,80 @@ const StudentManagement = () => {
           </div>
         </header>
 
+        {/* Main Content */}
         <main className="flex-1 p-6">
-          <StudentUpdates />
+          <div className="max-w-4xl mx-auto">
+            {/* Search Section */}
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+              <h2 className="text-xl font-semibold mb-4">Search Student</h2>
+              <div className="flex gap-4">
+                <input
+                  type="text"
+                  placeholder="Enter Roll Number"
+                  value={searchRollNumber}
+                  onChange={(e) => setSearchRollNumber(e.target.value)}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                />
+                <button
+                  onClick={handleSearchStudent}
+                  disabled={isSearching}
+                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  {isSearching ? "Searching..." : "Search"}
+                </button>
+              </div>
+            </div>
+
+            {/* Info Note */}
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 mb-6">
+              <p className="text-sm text-blue-800">
+                Note: Enter the student's roll number to search and update their
+                profile. If a student is found, their information will appear
+                below with an "Edit" button. If not, you can create a new
+                profile by searching for their roll number and then clicking on
+                the edit button.
+              </p>
+            </div>
+
+            {/* Student Info Display */}
+            {selectedStudent && (
+              <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-800">
+                    {selectedStudent.name || "New Student"}
+                  </h3>
+                  <p className="text-gray-600">
+                    Roll Number: {selectedStudent.roll_number}
+                  </p>
+                  {selectedStudent.branch && (
+                    <p className="text-gray-600">
+                      Branch: {selectedStudent.branch}
+                    </p>
+                  )}
+                </div>
+                <button
+                  onClick={handleEditClick}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                >
+                  <FiEdit size={18} /> {selectedStudent._id ? "Edit" : "Create"}
+                </button>
+              </div>
+            )}
+          </div>
         </main>
+
+        {/* Student Updates Popup */}
+        {showStudentPopup && selectedStudent && (
+          <div className="fixed inset-0 bg-[rgb(0,0,0,0.1)] bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <StudentUpdates
+                student={selectedStudent}
+                onClose={handleClosePopup}
+                onStudentFound={handleSearchStudent}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
