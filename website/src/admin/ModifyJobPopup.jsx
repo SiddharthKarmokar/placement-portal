@@ -26,15 +26,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
   });
 
   const employmentTypes = ["Full-time", "Part-time", "Internship", "Contract"];
-  const branches = [
-    "CSE",
-    "ECE",
-    "AIDS",
-    "MECH",
-    "EEE",
-    "Civil",
-    "All Branches",
-  ];
+  const branches = ["CSE", "ECE", "AIDS", "MECH", "All Branches"];
   const batches = [2025, 2026, 2027, 2028];
 
   useEffect(() => {
