@@ -11,7 +11,7 @@ from src import logger
 from src.config import secrets
 from src.routes.schemas import JobCreate, JobInDB, JobResponse
 from src.services import google_service
-
+from src.services.constants import GOOGLE_APPS_SCRIPT_TIMEOUT
 
 ist = pytz.timezone("Asia/Kolkata")
 APPS_SCRIPT_URL = secrets.APPS_SCRIPT_URL
@@ -260,7 +260,7 @@ def create_sheet_for_job(form_id: str, job_title: str) -> str:
         logger.info(
             "Creating sheet via %s with payload: %s", APPS_SCRIPT_URL, payload
         )
-        response = requests.post(APPS_SCRIPT_URL, json=payload, timeout=15)
+        response = requests.post(APPS_SCRIPT_URL, json=payload, timeout=GOOGLE_APPS_SCRIPT_TIMEOUT)
         logger.info(
             "Sheet creation response: %s, %s",
             response.status_code,
