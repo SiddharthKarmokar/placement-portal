@@ -63,7 +63,12 @@ const JobPost = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
-  const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
+  const [employmentFilter, setEmploymentFilter] = useState("all");
+  const [batchFilter, setBatchFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [ctcFilter, setCtcFilter] = useState("all");
+  const [deadlineFilter, setDeadlineFilter] = useState("all");
+
 
   const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
   useEffect(() => {
@@ -200,14 +205,67 @@ const JobPost = () => {
     }
   };
 
-  const filteredJobs = jobs.filter((job) => {
-    const matchesSearch =
-      job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesFilter =
-      filter === "all" || job.type_of_employment?.toLowerCase() === filter;
-    return matchesSearch && matchesFilter;
-  });
+ const filteredJobs = jobs.filter((job) => {
+  // --- 1. Search by designation OR company ---
+  const matchesSearch =
+    !searchTerm ||
+    job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+  // --- 2. Employment Type ---
+  const matchesEmployment =
+    employmentFilter === "all" ||
+    job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
+
+  // --- 3. Batch ---
+  const matchesBatch =
+    batchFilter === "all" || job.batch?.includes(Number(batchFilter));
+
+  // --- 4. Work Location ---
+  const matchesLocation =
+    locationFilter === "all" ||
+    job.work_location?.toLowerCase() === locationFilter.toLowerCase();
+
+  // --- 5. CTC Range ---
+  let matchesCtc = true;
+  if (ctcFilter !== "all" && job.ctc) {
+    const ctcValue = parseFloat(job.ctc); // assumes format like "8 LPA"
+    if (!isNaN(ctcValue)) {
+      if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
+      if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
+        matchesCtc = false;
+      if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
+    }
+  }
+
+  // --- 6. Deadline ---
+  let matchesDeadline = true;
+  if (deadlineFilter !== "all" && job.application_deadline) {
+    const now = new Date();
+    const deadline = new Date(job.application_deadline);
+
+    if (deadlineFilter === "active" && deadline < now) matchesDeadline = false;
+    if (
+      deadlineFilter === "soon" &&
+      (deadline < now ||
+        deadline > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000))
+    ) {
+      matchesDeadline = false;
+    }
+    if (deadlineFilter === "expired" && deadline >= now)
+      matchesDeadline = false;
+  }
+
+  // --- Final Decision ---
+  return (
+    matchesSearch &&
+    matchesEmployment &&
+    matchesBatch &&
+    matchesLocation &&
+    matchesCtc &&
+    matchesDeadline
+  );
+});
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -251,30 +309,88 @@ const JobPost = () => {
         <hr className="border-gray-300 mb-6" />
 
         {/* Search and Filter Section */}
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
-          <div className="relative flex-1">
-            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by designation or company..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors"
-            />
-          </div>
-          <select
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="w-full md:w-auto px-4 py-2 rounded-xl border-2 border-gray-300 focus:outline-none focus:border-blue-500 transition-colors"
-          >
-            <option value="all">All Job Types</option>
-            {jobTypes.map((type) => (
-              <option key={type} value={type.toLowerCase()}>
-                {type}
-              </option>
-            ))}
-          </select>
-        </div>
+<div className="flex flex-wrap gap-4 mb-8">
+
+  {/* Search */}
+  <div className="relative flex-1 min-w-[250px]">
+    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+    <input
+      type="text"
+      placeholder="Search by designation or company..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-gray-300 
+                 focus:outline-none focus:border-blue-500 transition-colors"
+    />
+  </div>
+
+  {/* Batch */}
+  <select
+    value={batchFilter}
+    onChange={(e) => setBatchFilter(e.target.value)}
+    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors"
+  >
+    <option value="all">All Batches</option>
+    <option value="2025">2025</option>
+    <option value="2026">2026</option>
+    <option value="2027">2027</option>
+  </select>
+
+  {/* Work Location */}
+  <select
+    value={locationFilter}
+    onChange={(e) => setLocationFilter(e.target.value)}
+    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors"
+  >
+    <option value="all">All Locations</option>
+    <option value="WFH">Remote</option>
+    <option value="Hybrid">Hybrid</option>
+    <option value="Onsite">On-site</option>
+  </select>
+
+  {/* Type of Employment */}
+  <select
+    value={employmentFilter}
+    onChange={(e) => setEmploymentFilter(e.target.value)}
+    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors"
+  >
+    <option value="all">All Types</option>
+    <option value="internship">Internship</option>
+    <option value="ppo">PPO</option>
+    <option value="fulltime">Full-time</option>
+  </select>
+
+  {/* CTC */}
+  <select
+    value={ctcFilter}
+    onChange={(e) => setCtcFilter(e.target.value)}
+    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors"
+  >
+    <option value="all">All CTC</option>
+    <option value="lt5">Less than 5 LPA</option>
+    <option value="5to10">5–10 LPA</option>
+    <option value="gt10">10+ LPA</option>
+  </select>
+
+  {/* Deadline */}
+  <select
+    value={deadlineFilter}
+    onChange={(e) => setDeadlineFilter(e.target.value)}
+    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors"
+  >
+    <option value="all">All Deadlines</option>
+    <option value="active">Active</option>
+    <option value="soon">Closing Soon</option>
+    <option value="expired">Expired</option>
+  </select>
+
+</div>
+
 
         {/* Job Cards */}
         <div className="space-y-6 mt-8">
