@@ -13,7 +13,7 @@ import { API_URL } from "../../env-config";
 
 const Modal = ({ children, onClose }) => {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl shadow-2xl border-2 p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto relative">
         <button
           onClick={onClose}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MapPin, Edit } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import LogoNav from "../components/LogoNav";
-import Sidebar from "./SideNav";
+import Sidebar from "../components/SideNav";
 import { API_URL } from "../../env-config";
 
 export default function Profile() {
@@ -10,7 +10,6 @@ export default function Profile() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
-
   useEffect(() => {
     try {
       const storedProfile = localStorage.getItem("user");
@@ -44,16 +43,18 @@ export default function Profile() {
     const cleanedData = Object.fromEntries(
       Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
     );
+    const data = new URLSearchParams(cleanedData).toString();
+    console.log(API_URL+`/profile/student/update?${data}`);
+    const queryParams = Object.entries(cleanedData)
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .join("&");
 
-    const response = await fetch("/profile/student/update", {
+    const response = await fetch(API_URL+`/profile/student/update?${queryParams}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
+        "accept": "application/json",
         "Authorization": `Bearer ${localStorage.getItem("token")}`, 
-        "email": profile.email,
-        "roll_number": profile.roll_number,
       },
-      body: JSON.stringify(cleanedData),
     });
 
     if (!response.ok) {
@@ -63,7 +64,8 @@ export default function Profile() {
     const updated = await response.json();
     console.log("Update successful:", updated);
     setProfile(updated); // update UI
-    setOpen(false); // close modal
+    setIsModalOpen(false); // close modal
+    console.log("agar 403 aye to smaj lena tumhara chnace gaya sale 1 baar hi edit kar sakte ho tum ");
   } catch (err) {
     console.error("Update error:", err);
   }
@@ -237,7 +239,7 @@ export default function Profile() {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
           <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
             <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
             <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">

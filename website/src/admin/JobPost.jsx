@@ -111,7 +111,7 @@ const JobPost = () => {
 
   const handleModifyJob = async (updatedJob) => {
     try {
-      const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token");
 
       // Build the request body with all fields
       const requestBody = {
