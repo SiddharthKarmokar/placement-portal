@@ -58,23 +58,15 @@ const Home = () => {
 
           <div className="w-full flex flex-col md:flex-row justify-center items-center gap-5">
             <Link to="/student/login" className="w-full md:w-auto">
-              <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
+              <button className="flex items-center justify-center gap-3 w-full md:w-90 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
                 <img src="/projectV1.png" alt="Student" className="w-5 h-5" />
                 Student Login
               </button>
             </Link>
-            <Link
-              to="https://docs.google.com/forms/d/e/1FAIpQLScmbLuoAeDym_5EhLRUBspbGtLqA5yjahxVJOmuiOK3aCv8gw/viewform"
-              className="w-full md:w-auto"
-            >
-              <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
-                <img src="/rec.png" alt="Recruiter" className="w-5 h-5" />
-                Recruiter Login
-              </button>
-            </Link>
+
 
             <Link to="/admin/login" className="w-full md:w-auto">
-              <button className="flex items-center justify-center gap-3 w-full md:w-60 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
+              <button className="flex items-center justify-center gap-3 w-full md:w-90 py-3 px-6 bg-white/20 border border-white/30 rounded-lg text-white backdrop-blur-md hover:bg-white/30 transition-all shadow-md">
                 <img src="/ad.png" alt="Admin" className="w-5 h-5" />
                 Admin Login
               </button>

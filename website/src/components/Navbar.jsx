@@ -13,14 +13,14 @@ export default function Navbar({ className = "" }) {
       className={`p-4 flex justify-between backdrop-blur-2xl items-center flex-wrap fixed top-0 w-full transition-all duration-300 z-50 ${className}`}
     >
       {/* Logo and Title */}
-      <div className="flex items-center text-white text-lg font-bold">
+      <a href="#" className="flex items-center text-white text-lg font-bold">
         <img
           src="https://upload.wikimedia.org/wikipedia/en/5/5f/Indian_Institute_of_Information_Technology_Design_and_Manufacturing%2C_Kurnool_logo.png"
           alt="IIITDM Kurnool"
           className="h-10 w-10 mr-2"
         />
         <p className="md:block hidden">Training and Placement Cell, IIITDM Kurnool</p>
-      </div>
+      </a>
 
       <button
         className="text-white md:hidden"
@@ -32,7 +32,7 @@ export default function Navbar({ className = "" }) {
       <div
         className={`${
           isOpen ? "block" : "hidden"
-        } w-full md:flex md:items-center md:w-auto md:space-x-6 text-white font-bold md:mr-10 mt-4 md:mt-0`}
+        } w-full md:flex md:items-center md:w-auto md:space-x-3 text-white font-bold md:mr-5 mt-4 md:mt-0`}
       >
         <a href="#overview" className={linkStyle}>
           Overview
@@ -45,6 +45,9 @@ export default function Navbar({ className = "" }) {
         </a>
         <a href="#process" className={linkStyle}>
           Placement Process
+        </a>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScmbLuoAeDym_5EhLRUBspbGtLqA5yjahxVJOmuiOK3aCv8gw/viewform">
+          Recuriter Form
         </a>
         <a href="#contact" className={linkStyle}>
           Contact Us
