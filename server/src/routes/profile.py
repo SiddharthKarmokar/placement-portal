@@ -95,7 +95,7 @@ async def get_admin_profile(current_user: dict = Depends(security.get_current_us
 
 @router.put("/admin/student_update/{roll_number}", response_model=UserResponseStudent)
 async def admin_update_student_profile(
-    update: StudentEditProfile = Depends(),
+    update: StudentEditProfile,
     roll_number: str = Path(..., description="Roll number of the student to update"),
     db: AsyncIOMotorDatabase = Depends(get_database),
     current_user: dict = Depends(security.get_current_user),
