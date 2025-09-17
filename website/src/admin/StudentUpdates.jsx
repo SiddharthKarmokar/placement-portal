@@ -34,8 +34,8 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  const branches = ["CSE", "ECE", "AIDS", "MECH"];
-  const courses = ["B.Tech", "Dual Degree", "M.Tech", "PhD"];
+  const branches = ["cse", "ece", "aids", "mech"];
+  const courses = ["BTech", "DualDegree", "MTech", "PhD"];
   const genders = ["male", "female", "other"];
   const careerPaths = ["Higher Studies", "Job", "Entrepreneurship"];
 
@@ -52,7 +52,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
           : "",
         phone_no: student.phone_no || "",
         username: student.username || "",
-        // roll_number: student.roll_number || "",
+        roll_number: student.roll_number || "",
         branch: student.branch || "",
         course: student.course || "",
         batch: student.batch || "",
@@ -133,7 +133,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
       onStudentFound();
       onClose();
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
       toast.error(
         error.response?.data?.message ||
           "Failed to save student profile. Please try again."
@@ -284,7 +284,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
                     </select>
                   ) : (
                     <input
-                      type={field.type || "text"}
+                      type={field.type}
                       name={field.name}
                       value={formData[field.name]}
                       onChange={handleChange}

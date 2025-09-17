@@ -19,6 +19,7 @@ const StudentManagement = () => {
     }
 
     setIsSearching(true);
+
     try {
       const response = await axios.get(
         `${SERVER_URI}/profile/admin/student/${searchRollNumber}`,
@@ -27,20 +28,24 @@ const StudentManagement = () => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
             "Content-Type": "application/json",
           },
+          validateStatus: (status) => true, // ✅ Accept all status codes
         }
       );
 
-      setSelectedStudent(response.data);
-      toast.success("Student found!");
-    } catch (error) {
-      // console.error("Error:", error);
-      if (error.response?.status === 404) {
+      if (response.status === 404) {
         toast.info("Student not found.");
-        setSelectedStudent(null); // ✅ don't display anything below
+        setSelectedStudent(null);
+      } else if (response.status >= 200 && response.status < 300) {
+        setSelectedStudent(response.data);
+        toast.success("Student found!");
       } else {
-        toast.error("Failed to fetch student profile.");
+        toast.error("Unexpected error occurred.");
         setSelectedStudent(null);
       }
+    } catch (error) {
+      // ✅ Only catches true network errors (e.g. no internet, CORS fail)
+      toast.error("Network error while fetching student profile.");
+      setSelectedStudent(null);
     } finally {
       setIsSearching(false);
     }

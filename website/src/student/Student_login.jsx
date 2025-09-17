@@ -32,10 +32,10 @@ export default function StudentLogin() {
         setLoading(false);
         return;
       }
-      console.log(tokenData)
+      // console.log(tokenData);
       const accessToken = tokenData.access_token;
       localStorage.setItem("token", accessToken);
-      localStorage.setItem("role", 'student');
+      localStorage.setItem("role", "student");
 
       const profileRes = await fetch(`${API_URL}/profile/student/me`, {
         method: "GET",
@@ -51,10 +51,11 @@ export default function StudentLogin() {
 
       localStorage.setItem("user", JSON.stringify(profileData));
       toast.success(`✅ Welcome, ${profileData.username || "User"}!`);
-      var student = (profileData.username).slice(0,(profileData.username).length - 12);
+      var student = profileData.roll_number;
+      // console.log(student);
       setTimeout(() => navigate(`/student/${student}`), 1000);
     } catch (err) {
-      console.error("Login Error:", err);
+      // console.error("Login Error:", err);
       toast.error("❌ Server error. Please try again.");
     } finally {
       setLoading(false);
@@ -107,12 +108,14 @@ export default function StudentLogin() {
             type="submit"
             disabled={loading}
             className={`${
-              loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#181204] hover:bg-black"
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#181204] hover:bg-black"
             } text-white py-3 rounded-lg transition`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-                    <div className="flex justify-between mt-4">
+          <div className="flex justify-between mt-4">
             <button
               type="button"
               onClick={() => navigate("/")}
