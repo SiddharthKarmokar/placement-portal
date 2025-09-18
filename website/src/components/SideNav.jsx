@@ -40,7 +40,8 @@ const Sidebar = () => {
             external: false,
           },
           { icon: ExternalLink, label: "Institute Site", dest: "https://iiitk.ac.in/", external: true },
-          { icon: FileText, label: "Placement Site", dest: "https://iiitk.ac.in/Placement-Statistics/page", external: true },
+          {icon : ExternalLink, label: "Placement Site" , dest: "/" , external: false},
+          { icon: FileText, label: "Placement Stats", dest: "https://iiitk.ac.in/Placement-Statistics/page", external: true },
         ];
 
   return (

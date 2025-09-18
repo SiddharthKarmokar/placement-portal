@@ -85,8 +85,7 @@
   .vector4,
   .vector3,
   .vector2,
-  .vector1,
-  .right-section {
+  .vector1 {
     display: none; /* hides completely */
   }
 }
