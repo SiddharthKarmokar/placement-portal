@@ -26,22 +26,56 @@ const Sidebar = () => {
   const menuItems =
     role === "admin"
       ? [
-          { icon: Home, label: "Dashboard", dest: `/admin/${user.name}`, external: false },
-          { icon: Users, label: "Student Management", dest: "/students", external: false },
-          { icon: FileText, label: "Placement Site", dest: "/", external: false },
-          { icon: ExternalLink, label: "Institute Site", dest: "https://iiitk.ac.in/", external: true },
+          {
+            icon: Home,
+            label: "Dashboard",
+            dest: `/admin/${user.name}`,
+            external: false,
+          },
+          {
+            icon: Users,
+            label: "Student Management",
+            dest: "/admin/management",
+            external: false,
+          },
+          {
+            icon: FileText,
+            label: "Placement Site",
+            dest: "/",
+            external: false,
+          },
+          {
+            icon: ExternalLink,
+            label: "Institute Site",
+            dest: "https://iiitk.ac.in/",
+            external: true,
+          },
         ]
       : [
-          { icon: Home, label: "Dashboard", dest: `/student/${user.name}`, external: false },
+          {
+            icon: Home,
+            label: "Dashboard",
+            dest: `/student/${user.name}`,
+            external: false,
+          },
           {
             icon: Users,
             label: "Profile",
             dest: `/student/profile/${user.roll_number}`,
             external: false,
           },
-          { icon: ExternalLink, label: "Institute Site", dest: "https://iiitk.ac.in/", external: true },
-          {icon : ExternalLink, label: "Placement Site" , dest: "/" , external: false},
-          { icon: FileText, label: "Placement Stats", dest: "https://iiitk.ac.in/Placement-Statistics/page", external: true },
+          {
+            icon: ExternalLink,
+            label: "Institute Site",
+            dest: "https://iiitk.ac.in/",
+            external: true,
+          },
+          {
+            icon: FileText,
+            label: "Placement Site",
+            dest: "https://iiitk.ac.in/Placement-Statistics/page",
+            external: true,
+          },
         ];
 
   return (
@@ -141,7 +175,9 @@ const Sidebar = () => {
             className={`${isOpen ? "flex flex-col" : "hidden"}`}
           >
             <span className="text-sm text-gray-500">Welcome back</span>
-            <span className="font-medium text-gray-800">{role === "admin" ? "Admin" : user.name || "Student"}</span>
+            <span className="font-medium text-gray-800">
+              {role === "admin" ? "Admin" : user.name || "Student"}
+            </span>
           </motion.div>
         </div>
       </div>

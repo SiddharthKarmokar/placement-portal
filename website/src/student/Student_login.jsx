@@ -32,10 +32,10 @@ export default function StudentLogin() {
         setLoading(false);
         return;
       }
-      console.log(tokenData)
+      // console.log(tokenData);
       const accessToken = tokenData.access_token;
       localStorage.setItem("token", accessToken);
-      localStorage.setItem("role", 'student');
+      localStorage.setItem("role", "student");
 
       const profileRes = await fetch(`${API_URL}/profile/student/me`, {
         method: "GET",
@@ -50,8 +50,10 @@ export default function StudentLogin() {
       }
 
       localStorage.setItem("user", JSON.stringify(profileData));
-      toast.success(`Welcome, ${profileData.name || "User"}!`);;
-      setTimeout(() => navigate(`/student/${profileData.name}`), 1000);
+      toast.success(`✅ Welcome, ${profileData.username || "User"}!`);
+      var student = profileData.roll_number;
+      // console.log(student);
+      setTimeout(() => navigate(`/student/${student}`), 1000);
     } catch (err) {
       console.error("Login Error:", err);
       toast.error("❌ Server error. Please try again.");
@@ -98,8 +100,62 @@ export default function StudentLogin() {
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-2 top-2 text-gray-500 hover:text-black"
         >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
+          <input
+            type="text"
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+            className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
+            required
+          />
+
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-2 text-gray-500 hover:text-black"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          <p className="text-sm text-gray-500 cursor-pointer">
+            Forgot Password?
+          </p>
+          <button
+            type="submit"
+            disabled={loading}
+            className={`${
+              loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#181204] hover:bg-black"
+            } text-white py-3 rounded-lg transition`}
+          >
+            {loading ? "Logging in..." : "Login"}
+          </button>
+          <div className="flex justify-between mt-4">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+            >
+              ⬅ Home
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/admin/login")}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+            >
+              Admin Login
+            </button>
+          </div>
+        </form>
       </div>
 
       <p className="text-sm text-gray-500 cursor-pointer">Forgot Password?</p>
