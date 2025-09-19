@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { FiUser, FiMail, FiHash, FiPhone, FiSave } from "react-icons/fi";
+import { API_URL } from "../../env-config";
 
 const StudentUpdates = ({ student, onClose, onStudentFound }) => {
-  const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
+  // const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
+  const SERVER_URI = API_URL;
 
   const [formData, setFormData] = useState({
     _id: "",

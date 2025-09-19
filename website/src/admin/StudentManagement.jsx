@@ -4,9 +4,10 @@ import { toast } from "react-toastify";
 import StudentUpdates from "./StudentUpdates";
 import Sidebar from "../components/SideNav";
 import { FiEdit } from "react-icons/fi";
-
+import { API_URL } from "../../env-config";
 const StudentManagement = () => {
-  const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
+  // const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
+  const SERVER_URI = API_URL;
   const [showStudentPopup, setShowStudentPopup] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [searchRollNumber, setSearchRollNumber] = useState("");
@@ -37,6 +38,7 @@ const StudentManagement = () => {
         setSelectedStudent(null);
       } else if (response.status >= 200 && response.status < 300) {
         setSelectedStudent(response.data);
+        console.log(selectedStudent);
         toast.success("Student found!");
       } else {
         toast.error("Unexpected error occurred.");
