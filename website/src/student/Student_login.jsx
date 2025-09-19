@@ -28,7 +28,7 @@ export default function StudentLogin() {
 
       const tokenData = await tokenRes.json();
       if (!tokenRes.ok) {
-        toast.error(`❌ ${tokenData.detail || "Invalid username or password"}`);
+        toast.error(`${tokenData.detail || "Invalid username or password"}`);
         setLoading(false);
         return;
       }
@@ -44,7 +44,7 @@ export default function StudentLogin() {
 
       const profileData = await profileRes.json();
       if (!profileRes.ok) {
-        toast.error("⚠️ Login succeeded, but failed to fetch profile.");
+        toast.error("Login succeeded, but failed to fetch profile.");
         setLoading(false);
         return;
       }
@@ -55,7 +55,7 @@ export default function StudentLogin() {
       // console.log(student);
       setTimeout(() => navigate(`/student/${student}`), 1000);
     } catch (err) {
-      // console.error("Login Error:", err);
+      console.error("Login Error:", err);
       toast.error("❌ Server error. Please try again.");
     } finally {
       setLoading(false);
@@ -84,22 +84,23 @@ export default function StudentLogin() {
             required
           />
 
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
-              className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
-              required
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-2 text-gray-500 hover:text-black"
-            >
-              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
+      {/* Password */}
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+          className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
+          required
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-2 top-2 text-gray-500 hover:text-black"
+        >
+          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+        </button>
+      </div>
 
           <p className="text-sm text-gray-500 cursor-pointer">
             Forgot Password?
@@ -108,14 +109,12 @@ export default function StudentLogin() {
             type="submit"
             disabled={loading}
             className={`${
-              loading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#181204] hover:bg-black"
+              loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#181204] hover:bg-black"
             } text-white py-3 rounded-lg transition`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
-          <div className="flex justify-between mt-4">
+                    <div className="flex justify-between mt-4">
             <button
               type="button"
               onClick={() => navigate("/")}
@@ -134,27 +133,29 @@ export default function StudentLogin() {
         </form>
       </div>
 
-      {/* Right Section */}
-      <div className="right-section flex flex-col w-1/2 justify-evenly items-center bg-[#181204] relative overflow-hidden">
-        <div className="z-20">
-          <h1 className="text-white text-5xl font-bold leading-tight">
-            Welcome to <br />
-            <span className="text-7xl font-extrabold">student portal</span>
-          </h1>
-          <p className="text-gray-300 mt-2 text-sm">
-            Login to access your account
-          </p>
-        </div>
-
-        <img
-          className="w-[500px] md:w-[700px] z-30"
-          src="/login.png"
-          alt="login"
-        />
-      </div>
-
-      {/* Toast Container */}
-      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+  {/* Right Section */}
+  <div className="right-section hidden md:flex md:flex-col w-full md:w-1/2 md:justify-center md:items-center bg-[#181204] md:relative overflow-hidden py-10 px-4">
+    <div className="z-20 text-center">
+      <h1 className="text-white text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight">
+        Welcome to <br />
+        <span className="text-4xl sm:text-6xl lg:text-7xl font-extrabold">
+          student portal
+        </span>
+      </h1>
+      <p className="text-gray-300 mt-2 text-xs sm:text-sm">
+        Login to access your account
+      </p>
     </div>
+
+    <img
+      className="max-h-[250px] sm:max-h-[350px] lg:max-h-[600px]  w-auto mt-6 z-30"
+      src="/login.png"
+      alt="login"
+    />
+  </div>
+
+  {/* Toast Container */}
+  <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+</div>
   );
 }

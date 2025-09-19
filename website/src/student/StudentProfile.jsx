@@ -4,6 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import LogoNav from "../components/LogoNav";
 import Sidebar from "../components/SideNav";
 import { API_URL } from "../../env-config";
+import { get } from "mongoose";
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
@@ -44,7 +45,6 @@ export default function Profile() {
       Object.entries(formData).filter(([_, v]) => v !== "" && v !== null)
     );
     const data = new URLSearchParams(cleanedData).toString();
-    console.log(API_URL+`/profile/student/update?${data}`);
     const queryParams = Object.entries(cleanedData)
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
       .join("&");
@@ -62,9 +62,33 @@ export default function Profile() {
     }
 
     const updated = await response.json();
-    console.log("Update successful:", updated);
-    setProfile(updated); // update UI
-    setIsModalOpen(false); // close modal
+    
+    setProfile(updated); 
+    toast.success("Profile Updated Successfully");
+    setIsModalOpen(false);
+    localStorage.clear(user);
+    try{
+
+      
+      const profileRes = await fetch(`${API_URL}/profile/student/me`, {
+        method: "GET",
+        headers: { "Authorization": `Bearer ${accessToken}` },
+      });
+
+      const profileData = await profileRes.json();
+      if (!profileRes.ok) {
+        toast.error("Login succeeded, but failed to fetch profile.");
+        setLoading(false);
+        return;
+      }
+      localStorage.setItem("user", JSON.stringify(profileData));
+      setProfile(profileData)
+      var student = profileData.roll_number;
+      setTimeout(() => navigate(`/student/${student}`), 1000);
+    } catch (err) {
+      console.error("Login Error:", err);
+      toast.error("Server error. Please try again.");
+    }
     console.log("agar 403 aye to smaj lena tumhara chnace gaya sale 1 baar hi edit kar sakte ho tum ");
   } catch (err) {
     console.error("Update error:", err);

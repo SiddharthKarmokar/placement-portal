@@ -29,7 +29,6 @@ const Modal = ({ children, onClose }) => {
 
 const JobDetails = ({ job }) => {
   if (!job) return null;
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -169,10 +168,10 @@ const JobGet = () => {
   const [showDetailsPopup, setShowDetailsPopup] = useState(false);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
   // Filters
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
+
 
   const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
 
