@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useAsyncError } from "react-router-dom";
 import {
   Home,
   Users,
@@ -154,12 +154,15 @@ const Sidebar = () => {
 
       {/* Footer Section */}
       <div>
-        <button
+        {
+          isOpen && 
+          <button
           onClick={handleNavigation}
           className="flex w-[80%] items-center mx-auto mb-7 justify-center gap-2 bg-red-700 hover:bg-red-500 active:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
-        >
+          >
           Logout
         </button>
+        }
 
         {/* Profile */}
         <div className="border-t pt-4 flex items-center gap-3">

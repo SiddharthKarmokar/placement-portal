@@ -154,7 +154,6 @@ const JobPost = () => {
         }
       );
 
-      // Update UI
       setJobs((jobs) =>
         jobs.map((job) => (job._id === updatedJob._id ? res.data : job))
       );
