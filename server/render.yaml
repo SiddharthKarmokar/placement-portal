@@ -16,7 +16,7 @@ services:
     name: myapp-celery
     env: docker
     plan: free
-    dockerCommand: celery -A myapp.celery_app worker --loglevel=info
+    dockerCommand: celery -A task.celery worker --loglevel=info
     envVars:
       - key: REDIS_URL
         fromService:
@@ -28,7 +28,7 @@ services:
     name: myapp-beat
     env: docker
     plan: free
-    dockerCommand: celery -A myapp.celery_app beat --loglevel=info
+    dockerCommand: celery -A task.celery beat --loglevel=info
     envVars:
       - key: REDIS_URL
         fromService:
