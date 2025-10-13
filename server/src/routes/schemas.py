@@ -56,6 +56,8 @@ class UserResponseStudent(BaseModel):
     linkedin_link: Optional[str] = Field(None, description="Link to LinkedIn profile")
     github_link: Optional[str] = Field(None, description="Link to GitHub profile")
     resume_link: Optional[str] = Field(None, description="Link to uploaded resume")
+    aadhar_card_link: Optional[str] = Field(None, description="Link to Aadhar card document")
+    pan_card_link: Optional[str] = Field(None, description="Link to PAN card document")
     role: str = Field("student", description="Role of the user, default is 'student'")
     career_path: Optional[str] = Field(None, description="Future career preference: Higher Studies or Placements")
     has_edited_profile: bool = Field(False, description="Indicates whether the student has edited their profile")
@@ -100,6 +102,7 @@ class JobCreate(BaseModel):
     job_designation: Optional[str] = Field(None) 
     type_of_employment: Optional[str] = Field(None)
     eligibility_criteria: Optional[str] = Field(None)
+    cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
     applicable_branch: Optional[str] = Field(None)
     stipend: Optional[str] = Field(None)
     ctc: Optional[str] = Field(None)
@@ -123,6 +126,7 @@ class JobUpdate(BaseModel):
     job_designation: Optional[str] = Field(None)  # multiple designations
     type_of_employment: Optional[str] = Field(None)
     eligibility_criteria: Optional[str] = Field(None)
+    cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
     applicable_branch: Optional[str] = Field(None)
     stipend: Optional[str] = Field(None)
     ctc: Optional[str] = Field(None)
@@ -163,6 +167,7 @@ class JobResponse(BaseModel):
     job_designation: Optional[str] = None
     type_of_employment: Optional[str] = None
     eligibility_criteria: Optional[str] = None
+    cgpa_eligibility: Optional[float] = None
     applicable_branch: Optional[str] = None
     stipend: Optional[str] = None
     ctc: Optional[str] = None
@@ -265,6 +270,8 @@ class StudentEditProfile(BaseModel):
     linkedin_link: Optional[str] = None
     github_link: Optional[str] = None
     resume_link: Optional[str] = None
+    aadhar_card_link: Optional[str] = None
+    pan_card_link: Optional[str] = None
     role: str = "student"
     career_path: Optional[str] = None
     
