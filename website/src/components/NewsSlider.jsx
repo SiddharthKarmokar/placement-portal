@@ -61,7 +61,7 @@ const NewsSlider = () => {
       {/* Heading */}
       <div className="text-center py-6 bg-gradient-to-r from-blue-900 to-gray-900 text-white">
         <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-          Latest <span className="text-blue-400">News</span>
+          Latest <span className="text-lime-500">News</span>
         </h2>
         <p className="text-gray-300 mt-2 text-base md:text-lg">
           Stay updated with the latest happenings
@@ -84,7 +84,7 @@ const NewsSlider = () => {
                 {/* Overlay caption */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
                   <div className="p-6 md:p-10 text-white transition duration-500 group-hover:translate-y-[-5px]">
-                    <h3 className="text-xl md:text-3xl font-bold group-hover:text-blue-300 transition-colors duration-300">
+                    <h3 className="text-xl md:text-3xl font-bold group-hover:text-lime-500 transition-colors duration-300">
                       News {index + 1}
                     </h3>
                     <p className="text-sm md:text-base text-gray-200 mt-2 max-w-xl group-hover:text-gray-100">
