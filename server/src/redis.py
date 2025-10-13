@@ -49,3 +49,5 @@ def cache_get(key: str):
 def cache_delete(key: str):
     """Delete a cache key."""
     redis.delete(key)
+
+celery.autodiscover_tasks(["src.services.utils"])    
