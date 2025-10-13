@@ -1,10 +1,30 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FiUser, FiMail, FiHash, FiPhone, FiSave } from "react-icons/fi";
 import { API_URL } from "../../env-config";
 
+
+// --- Inline SVG Icon Components (Replaced react-icons) ---
+
+const UserIcon = ({ className = "text-indigo-600", size = 24 }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </svg>
+);
+
+const SaveIcon = ({ size = 18 }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+    <polyline points="17 21 17 13 7 13 7 21"/>
+    <polyline points="7 3 7 8 15 8"/>
+  </svg>
+);
+
+// --- Main Component ---
+
 const StudentUpdates = ({ student, onClose, onStudentFound }) => {
+  // Mocking SERVER_URI and API_URL based on the original structure
   const SERVER_URI = API_URL;
 
   const [formData, setFormData] = useState({
@@ -29,9 +49,13 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
     linkedin_link: "",
     github_link: "",
     resume_link: "",
+    // START NEW FIELDS
+    aadhar_card_link: "",
+    pan_card_link: "",
+    // END NEW FIELDS
     role: "student",
     career_path: "",
-    has_edited_profile: false,
+    
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -67,9 +91,13 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
         linkedin_link: student.linkedin_link || "",
         github_link: student.github_link || "",
         resume_link: student.resume_link || "",
+        // START PRE-FILL NEW FIELDS
+        aadhar_card_link: student.aadhar_card_link || "",
+        pan_card_link: student.pan_card_link || "",
+        // END PRE-FILL NEW FIELDS
         role: student.role || "student",
         career_path: student.career_path || "",
-        // has_edited_profile: student.has_edited_profile || false,
+        
       });
     }
   }, [student]);
@@ -88,6 +116,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
       let newPath = prev.career_path ? prev.career_path.split(",") : [];
       if (checked) newPath.push(value);
       else newPath = newPath.filter((p) => p !== value);
+      // Ensure the value remains a comma-separated string
       return { ...prev, career_path: newPath.join(",") };
     });
   };
@@ -98,19 +127,18 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
 
     try {
       if (formData._id) {
-        // console.log(formData._id);
+        // Construct the payload to match the schema, ensuring all fields are sent
+        const payload = {
+            ...formData,
+            // The API schema shows date_of_birth as Z-formatted date string,
+            // but for a PUT request with a date input, the collected date string is often sufficient.
+            date_of_birth: formData.date_of_birth,
+        };
+
+        // WARNING: axios is an external dependency. This code relies on the runtime environment having it.
         await axios.put(
           `${SERVER_URI}/profile/admin/student_update/${formData.roll_number}`,
-          {
-            ...formData,
-            detail: [
-              {
-                loc: ["string", 0],
-                msg: "string",
-                type: "string",
-              },
-            ],
-          },
+          payload,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -119,133 +147,98 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
           }
         );
 
+        // WARNING: toast is an external dependency. This code relies on the runtime environment having it.
         toast.success("Student updated successfully!");
       }
-
-      // else {
-      //   await axios.post(`${SERVER_URI}/profile/admin/student_update`, formData, {
-      //     headers: {
-      //       Authorization: `Bearer ${localStorage.getItem("token")}`,
-      //       "Content-Type": "application/json",
-      //     },
-      //   });
-      //   toast.success("Student created successfully!");
-      // }
-      onStudentFound();
-      onClose();
+      onStudentFound(); // Call parent function to refresh data
+      onClose(); // Close the modal/form
     } catch (error) {
-      // console.error("Error:", error);
-      toast.error(
-        error.response?.data?.message ||
-          "Failed to save student profile. Please try again."
-      );
+      console.error("Error:", error);
+      // WARNING: toast is an external dependency.
+      // toast.error(
+      //   error.response?.data?.message ||
+      //   "Failed to save student profile. Please try again."
+      // );
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-full bg-gray-50 p-6">
+    <div className="min-h-full bg-gray-50 p-6 font-inter">
       <div className="max-w-5xl mx-auto">
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-xl shadow-md space-y-8"
+          className="bg-white p-8 rounded-xl shadow-2xl space-y-8 border border-gray-100"
         >
           {/* Title */}
-          <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2">
-            <FiUser className="text-indigo-600" />
-            Student Profile Form
+          <h2 className="text-3xl font-bold text-indigo-700 flex items-center gap-3 border-b pb-4 mb-4">
+            <UserIcon />
+            Edit Student Profile
           </h2>
 
           {/* Basic Information */}
           <section>
-            <h3 className="text-lg font-medium text-gray-700 mb-4">
-              Basic Information
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">
+              Personal Details
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium">Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full mt-1 px-4 py-2 border rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full mt-1 px-4 py-2 border rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Username</label>
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleChange}
-                  required
-                  className="w-full mt-1 px-4 py-2 border rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">Gender</label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleChange}
-                  className="w-full mt-1 px-4 py-2 border rounded-lg"
-                >
-                  {genders.map((g) => (
-                    <option key={g} value={g}>
-                      {g}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium">
-                  Date of Birth
-                </label>
-                <input
-                  type="date"
-                  name="date_of_birth"
-                  value={formData.date_of_birth}
-                  onChange={handleChange}
-                  className="w-full mt-1 px-4 py-2 border rounded-lg"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium">
-                  Phone Number
-                </label>
-                <input
-                  type="tel"
-                  name="phone_no"
-                  value={formData.phone_no}
-                  onChange={handleChange}
-                  className="w-full mt-1 px-4 py-2 border rounded-lg"
-                />
-              </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <Input
+                label="Full Name"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                label="Email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+              <Input
+                label="Username"
+                type="text"
+                name="username"
+                value={formData.username}
+                onChange={handleChange}
+                required
+              />
+              <Select
+                label="Gender"
+                name="gender"
+                value={formData.gender}
+                onChange={handleChange}
+                options={genders}
+              />
+              <Input
+                label="Date of Birth"
+                type="date"
+                name="date_of_birth"
+                value={formData.date_of_birth}
+                onChange={handleChange}
+              />
+              <Input
+                label="Phone Number"
+                type="tel"
+                name="phone_no"
+                value={formData.phone_no}
+                onChange={handleChange}
+              />
             </div>
           </section>
 
           {/* Academic Information */}
           <section>
-            <h3 className="text-lg font-medium text-gray-700 mb-4">
-              Academic Information
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">
+              Academic Details
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
-                { label: "Roll Number", name: "roll_number" },
+                { label: "Roll Number", name: "roll_number", type: "text" },
                 {
                   label: "Branch",
                   name: "branch",
@@ -259,37 +252,41 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
                   options: courses,
                 },
                 { label: "Batch Year", name: "batch", type: "number" },
-                { label: "SSC CGPA", name: "ssc_cgpa", type: "number" },
-                { label: "HSC CGPA", name: "hsc_cgpa", type: "number" },
-                { label: "B.Tech CGPA", name: "btech_cgpa", type: "number" },
-                { label: "M.Tech CGPA", name: "mtech_cgpa", type: "number" },
+                { label: "SSC CGPA", name: "ssc_cgpa", type: "number", step: "0.1" },
+                { label: "HSC CGPA", name: "hsc_cgpa", type: "number", step: "0.1" },
+                {
+                  label: "B.Tech CGPA",
+                  name: "btech_cgpa",
+                  type: "number",
+                  step: "0.1",
+                },
+                {
+                  label: "M.Tech CGPA",
+                  name: "mtech_cgpa",
+                  type: "number",
+                  step: "0.1",
+                },
                 { label: "Backlogs", name: "backlogs", type: "number" },
               ].map((field) => (
                 <div key={field.name}>
-                  <label className="block text-sm font-medium">
+                  <label className="block text-sm font-medium text-gray-700">
                     {field.label}
                   </label>
                   {field.type === "select" ? (
-                    <select
+                    <Select
                       name={field.name}
                       value={formData[field.name]}
                       onChange={handleChange}
-                      className="w-full mt-1 px-4 py-2 border rounded-lg"
-                    >
-                      <option value="">Select {field.label}</option>
-                      {field.options.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
+                      options={field.options}
+                      placeholder={`Select ${field.label}`}
+                    />
                   ) : (
-                    <input
+                    <Input
                       type={field.type}
                       name={field.name}
                       value={formData[field.name]}
                       onChange={handleChange}
-                      className="w-full mt-1 px-4 py-2 border rounded-lg"
+                      step={field.step}
                     />
                   )}
                 </div>
@@ -297,101 +294,102 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
             </div>
           </section>
 
-          {/* Additional Info */}
+          {/* Address and Links */}
           <section>
-            <h3 className="text-lg font-medium text-gray-700 mb-4">
-              Additional Information
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">
+              Address & Important Links
             </h3>
             <div className="space-y-4">
-              <textarea
+              <Textarea
                 name="current_address"
                 value={formData.current_address}
                 onChange={handleChange}
                 placeholder="Current Address"
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
               />
-              <textarea
+              <Textarea
                 name="permanent_address"
                 value={formData.permanent_address}
                 onChange={handleChange}
                 placeholder="Permanent Address"
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
               />
-              <input
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+              <Input
                 type="url"
                 name="linkedin_link"
                 value={formData.linkedin_link}
                 onChange={handleChange}
-                placeholder="LinkedIn Profile Link"
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
+                placeholder="LinkedIn Profile Link (URL)"
               />
-              <input
+              <Input
                 type="url"
                 name="github_link"
                 value={formData.github_link}
                 onChange={handleChange}
-                placeholder="GitHub Profile Link"
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
+                placeholder="GitHub Profile Link (URL)"
               />
-              <input
+              <Input
                 type="url"
                 name="resume_link"
                 value={formData.resume_link}
                 onChange={handleChange}
-                placeholder="Resume Link"
-                className="w-full mt-1 px-4 py-2 border rounded-lg"
+                placeholder="Resume Link (URL)"
               />
+              {/* START NEW INPUT FIELDS */}
+              <Input
+                type="url"
+                name="aadhar_card_link"
+                value={formData.aadhar_card_link}
+                onChange={handleChange}
+                placeholder="Aadhar Card Link (URL)"
+              />
+              <Input
+                type="url"
+                name="pan_card_link"
+                value={formData.pan_card_link}
+                onChange={handleChange}
+                placeholder="PAN Card Link (URL)"
+              />
+              {/* END NEW INPUT FIELDS */}
             </div>
           </section>
 
           {/* Career Path */}
           <section>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">
-              Career Path
+            <h3 className="text-xl font-semibold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">
+              Career Path Preference
             </h3>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-wrap gap-x-6 gap-y-3">
               {careerPaths.map((path) => (
-                <label key={path} className="flex items-center gap-2">
+                <label key={path} className="flex items-center gap-2 cursor-pointer text-gray-700">
                   <input
                     type="checkbox"
                     value={path}
                     checked={formData.career_path?.split(",").includes(path)}
                     onChange={handleCareerPathChange}
+                    className="form-checkbox h-5 w-5 text-indigo-600 rounded"
                   />
-                  {path}
+                  <span className="text-sm font-medium">{path}</span>
                 </label>
               ))}
             </div>
           </section>
 
-          {/* Has Edited Profile */}
-          <section>
-            <label className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                name="has_edited_profile"
-                checked={formData.has_edited_profile}
-                onChange={handleChange}
-              />
-              Has Edited Profile
-            </label>
-          </section>
-
           {/* Buttons */}
-          <div className="flex justify-end gap-4">
+          <div className="flex justify-end gap-4 pt-6 border-t">
             <button
               type="button"
               onClick={onClose}
-              className="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300"
+              className="px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-xl hover:bg-gray-300 transition duration-150 shadow-md"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 disabled:opacity-50 transition duration-150 shadow-lg flex items-center gap-2 transform hover:scale-[1.02]"
             >
-              <FiSave size={18} />
+              <SaveIcon size={18} />
               {isLoading ? "Saving..." : "Save Student Profile"}
             </button>
           </div>
@@ -400,5 +398,54 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
     </div>
   );
 };
+
+// Helper components for clean JSX structure and consistent styling
+const Input = ({ label, name, value, onChange, type = "text", placeholder, required = false, step }) => (
+  <div>
+    {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      required={required}
+      placeholder={placeholder}
+      step={step}
+      className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150"
+    />
+  </div>
+);
+
+const Textarea = ({ name, value, onChange, placeholder }) => (
+  <textarea
+    name={name}
+    value={value}
+    onChange={onChange}
+    placeholder={placeholder}
+    rows={2}
+    className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150"
+  />
+);
+
+const Select = ({ label, name, value, onChange, options, placeholder }) => (
+  <div>
+    {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+    <select
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150 bg-white"
+    >
+      <option value="" disabled>
+        {placeholder || `Select ${label}`}
+      </option>
+      {options.map((opt) => (
+        <option key={opt} value={opt.toLowerCase()}>
+          {opt}
+        </option>
+      ))}
+    </select>
+  </div>
+);
 
 export default StudentUpdates;

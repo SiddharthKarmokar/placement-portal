@@ -18,7 +18,7 @@ const OurTeam = () => {
   const developmentTeam = [
     {
       id: 1,
-      name: "Aryan Sharma",
+      name: "Arnav Sharda",
       role: "Full Stack Developer",
       specialization: "React.js & Node.js",
       image: "/team/aryan.jpg",

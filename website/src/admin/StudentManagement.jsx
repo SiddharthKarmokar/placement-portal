@@ -83,7 +83,7 @@ const StudentManagement = () => {
             {/* Search Section */}
             <div className="bg-white p-6 rounded-lg shadow-md mb-6">
               <h2 className="text-xl font-semibold mb-4">Search Student</h2>
-              <div className="flex gap-4">
+              <form className="flex gap-4">
                 <input
                   type="text"
                   placeholder="Enter Roll Number"
@@ -98,7 +98,7 @@ const StudentManagement = () => {
                 >
                   {isSearching ? "Searching..." : "Search"}
                 </button>
-              </div>
+              </form>
             </div>
 
             {/* Info Note */}

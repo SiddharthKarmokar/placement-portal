@@ -128,6 +128,7 @@ const JobPost = () => {
         job_designation: updatedJob.job_designation || "",
         type_of_employment: updatedJob.type_of_employment || "",
         eligibility_criteria: updatedJob.eligibility_criteria || "",
+        cgpa_eligibility: updatedJob.cgpa_eligibility || 6,
         applicable_branch: updatedJob.applicable_branch || "",
         stipend: updatedJob.stipend || "",
         ctc: updatedJob.ctc || "",
@@ -141,7 +142,7 @@ const JobPost = () => {
       };
 
       // Send PUT request
-      console.log(updatedJob._id);
+      // console.log(updatedJob._id);
       const res = await axios.put(
         `${API_URL}/api/jobs/update/${updatedJob._id}`,
         requestBody,
@@ -453,7 +454,7 @@ const JobPost = () => {
                           </span>
                         </div>
                       </div>
-
+                            <div className="flex flex-wrap">
                       {job.eligibility_criteria && (
                         <div className="bg-gray-50 p-3 rounded-lg">
                           <h4 className="font-semibold text-gray-700 mb-2">
@@ -464,6 +465,16 @@ const JobPost = () => {
                           </p>
                         </div>
                       )}
+                      {job.cgpa_eligibility && (
+                        <div className="bg-gray-50 p-3 rounded-lg">
+                          <h4 className="font-semibold text-gray-700 mb-2">
+                            CGPA Eligibility
+                          </h4>
+                          <p className="text-sm text-gray-600">
+                            {job.cgpa_eligibility}
+                          </p>
+                        </div>
+                      )}</div>
                     </div>
 
                     {/* Right Section - Actions and Additional Info */}
