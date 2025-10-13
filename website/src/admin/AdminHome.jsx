@@ -258,7 +258,7 @@ const AdminHome = () => {
             </div>
 
             {/* Logout Button */}
-            <button
+            {/* <button
               className="flex items-center gap-2 bg-red-500 text-white rounded-2xl px-6 py-3 shadow-md cursor-pointer hover:shadow-lg hover:scale-105 transition-all duration-200"
               onClick={() => {
                 localStorage.clear();
@@ -267,7 +267,7 @@ const AdminHome = () => {
             >
               <LogOut className="w-5 h-5" />
               <span className="font-medium">Logout</span>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

@@ -86,7 +86,7 @@ const Sidebar = () => {
     >
       {/* Logo + Toggle */}
       <div>
-        <div className="flex items-center gap-3 relative">
+        <div className="flex items-center gap-3 relative z-99">
           <img src="/logo.webp" alt="logo" className="w-12" />
           {isOpen && (
             <motion.span

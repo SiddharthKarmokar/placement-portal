@@ -13,6 +13,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
     job_designation: "",
     type_of_employment: "",
     eligibility_criteria: "",
+    cgpa_eligibility:6,
     applicable_branch: "",
     stipend: "",
     ctc: "",
@@ -42,6 +43,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
         job_designation: job.job_designation || "",
         type_of_employment: job.type_of_employment || "",
         eligibility_criteria: job.eligibility_criteria || "",
+        cgpa_eligibility:job.cgpa_eligibility || 6,
         applicable_branch: job.applicable_branch || "",
         stipend: job.stipend || "",
         ctc: job.ctc || "",
@@ -323,6 +325,19 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
                   rows={3}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="CGPA requirements, backlogs allowed, etc."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  CGPA Eligibility
+                </label>
+                <textarea
+                  name="cgpa_eligibility"
+                  value={formData.cgpa_eligibility}
+                  onChange={handleChange}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="CGPA requirements"
                 />
               </div>
 
