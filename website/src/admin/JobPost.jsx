@@ -160,13 +160,13 @@ const JobPost = () => {
       toast.success("Job updated successfully!");
     } catch (err) {
       console.error(
-        "❌ Error updating job:",
+        "Error updating job:",
         err.response?.data || err.message
       );
       toast.error("Failed to update job");
     }
   };
-
+  
   // const handleDeleteJob = async (jobId) => {
   //   try {
   //     const token = localStorage.getItem("token");
