@@ -1,119 +1,125 @@
-import { useState, useRef } from "react";
-import { 
-  Briefcase, Calendar, Users, FileText, CheckCircle, 
-  Search, Send, ListCheck, Clock, Award, Mail 
-} from "lucide-react";
-import { motion, useInView } from "framer-motion";
+import { Briefcase, Calendar, Users, FileText, CheckCircle } from "lucide-react";
 
 const icons = [
-  Search, Briefcase, Users, Send, ListCheck,
-  CheckCircle, Clock, Users, Award, Mail,
+  Briefcase,
+  Calendar,
+  Users,
+  FileText,
+  Briefcase,
+  CheckCircle,
+  Calendar,
+  Users,
+  CheckCircle,
+  FileText,
 ];
 
 const steps = [
-  { title: "Job Verification", description: "TPO verifies job details and remuneration." },
-  { title: "Job Posting", description: "Verified jobs are published by the Placement Office." },
-  { title: "Student Registration", description: "Students apply for available opportunities." },
-  { title: "Resume Sharing", description: "Applications are sent to companies." },
-  { title: "Assessment Process", description: "Companies conduct tests and screenings." },
-  { title: "Shortlisting", description: "Candidates are shortlisted for interviews." },
-  { title: "Interview Scheduling", description: "Dates finalized with Placement Office." },
-  { title: "Final Interviews", description: "Organizations conduct final rounds." },
-  { title: "Selection Notification", description: "Students accept or decline offers." },
-  { title: "Offer Letter Distribution", description: "Companies issue final offer letters." },
+  {
+    title: "Job Verification",
+    description:
+      "The TPO verifies job details, including remuneration and clarifies any ambiguities.",
+  },
+  {
+    title: "Job Posting",
+    description:
+      "Verified jobs are published online for students based on the schedule set by the Placement Office.",
+  },
+  {
+    title: "Student Registration",
+    description:
+      "Interested students apply for job postings to participate in the company's recruitment process.",
+  },
+  {
+    title: "Resume Sharing",
+    description:
+      "The Placement Office sends consolidated student application details to the respective companies.",
+  },
+  {
+    title: "Assessment Process",
+    description:
+      "Companies conduct tests or screenings as per the finalized schedule in coordination with the Placement Office.",
+  },
+  {
+    title: "Shortlisting",
+    description:
+      "Companies shortlist candidates for the final interview stage based on assessment results.",
+  },
+  {
+    title: "Interview Scheduling",
+    description:
+      "Interview dates are finalized jointly by the company and the Placement Office.",
+  },
+  {
+    title: "Final Interviews",
+    description:
+      "Organizations conduct final interviews and provide a list of selected students.",
+  },
+  {
+    title: "Selection Notification",
+    description:
+      "The Placement Office informs companies of students who have accepted their job offers.",
+  },
+  {
+    title: "Offer Letter Distribution",
+    description:
+      "Companies issue offer letters to selected candidates based on the verified job postings.",
+  },
 ];
 
-const StepCard = ({ step, index, isEven, isActive, onHover }) => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, threshold: 0.2 });
-  const IconComponent = icons[index];
-
-  return (
-    <motion.div
-      ref={ref}
-      className={`flex flex-col md:flex-row items-center ${
-        isEven ? "md:flex-row" : "md:flex-row-reverse"
-      } mb-6`}
-      initial={{ opacity: 0, y: 30 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5 }}
-      onMouseEnter={() => onHover(index)}
-      onMouseLeave={() => onHover(null)}
-    >
-      {/* Icon */}
-      <div className="md:w-1/3 flex justify-center mb-3 md:mb-0 relative">
-        <motion.div
-          className={`w-12 h-12 rounded-full bg-blue-900 text-white flex items-center justify-center shadow-md`}
-          whileHover={{ scale: 1.05 }}
-          animate={isActive ? { scale: 1.1 } : { scale: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <IconComponent className="w-5 h-5" />
-        </motion.div>
-        <div className="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-white border-2 border-lime-500 flex items-center justify-center text-xs font-bold text-blue-900 shadow">
-          {index + 1}
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="md:w-2/3 px-3">
-        <motion.div
-          className={`bg-white p-4 rounded-lg shadow-md border-l-4 ${
-            isEven ? "border-l-blue-900" : "border-l-lime-500"
-          } ${isActive ? "scale-[1.02]" : ""}`}
-          whileHover={{ y: -3 }}
-          
-        >
-          <h3
-            className={`text-lg font-semibold ${
-              isEven ? "text-blue-900" : "text-lime-500"
-            } mb-1`}
-          >
-            {step.title}
-          </h3>
-          <p className="text-gray-600 text-sm">{step.description}</p>
-        </motion.div>
-      </div>
-    </motion.div>
-  );
-};
-
 const PlacementProcess = () => {
-  const [activeStep, setActiveStep] = useState(null);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, threshold: 0.1 });
-
   return (
-    <section className="py-12 bg-gradient-to-br from-gray-50 to-lime-50/40" ref={ref}>
-      <div className="max-w-5xl mx-auto px-4">
-        {/* Header */}
-        <motion.div
-          className="text-center mb-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-900 to-lime-500 bg-clip-text text-transparent mb-2">
+    <section className="py-20 bg-[#f4f7ff]">
+      <div className="max-w-[80%] items-center mx-auto px-4">
+        <div className="w-full flex justify-center items-center">
+          <h1 className=" text-5xl font-bold bg-gradient-to-r from-blue-700 to-lime-500 bg-clip-text text-transparent mb-2">
             Placement Process
-          </h2>
-          <p className="text-base text-gray-600">
-            A simple 10-step journey from job verification to offer letters.
-          </p>
-        </motion.div>
+          </h1>
+          </div>
+        <div className="relative">
+          {/* Center line */}
+          <div className="hidden md:block absolute left-1/2 top-0 h-full w-1 bg-gradient-to-b from-[#31398A] via-[#029309] to-[#31398A] opacity-20 transform -translate-x-1/2" />
 
-        {/* Steps */}
-        <div>
-          {steps.map((step, index) => (
-            <StepCard
-              key={index}
-              step={step}
-              index={index}
-              isEven={index % 2 === 0}
-              isActive={activeStep === index}
-              onHover={setActiveStep}
-              transition={{ duration: 1 }}
-            />
-          ))}
+          <div className="space-y-0">
+            {steps.map((step, index) => {
+              const Icon = icons[index % icons.length];
+              const isEven = index % 2 === 0;
+
+              return (
+                <div
+                  key={index}
+                  className={`flex flex-col md:flex-row items-center ${
+                    isEven ? "md:flex-row" : "md:flex-row-reverse"
+                  }`}
+                >
+                  {/* Connector Icon */}
+                  <div className="md:w-1/2 flex justify-center mb-2 md:mb-0">
+                    <div
+                      className={`w-14 h-14 rounded-full ${
+                        isEven ? "bg-[#31398A]" : "bg-[#029309]"
+                      } text-white flex items-center justify-center shadow-lg`}
+                    >
+                      <Icon className="w-6 h-6" />
+                    </div>
+                  </div>
+
+                  {/* Card */}
+                  <div className="md:w-1/2 px-6">
+                    <div className="bg-white/70 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100">
+                      <h3 
+                      className={`text-xl font-semibold ${
+                        isEven ? "text-[#31398A]" : "text-[#029309]"
+                      } mb-2`}
+                        
+                        >
+                        {step.title}
+                      </h3>
+                      <p className="text-gray-700 text-sm">{step.description}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

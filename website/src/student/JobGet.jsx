@@ -30,6 +30,7 @@ const Modal = ({ children, onClose }) => {
 
 const JobDetails = ({ job }) => {
   if (!job) return null;
+
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -40,8 +41,13 @@ const JobDetails = ({ job }) => {
     });
   };
 
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const cgpa = userData?.btech_cgpa || 0;
+  const eligible = cgpa >= (job.cgpa_eligibility || 0);
+
   return (
     <div className="space-y-4">
+      {/* Title & Company */}
       <div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">
           {job.job_designation}
@@ -51,6 +57,7 @@ const JobDetails = ({ job }) => {
         </h3>
       </div>
 
+      {/* Details Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
         <div className="flex items-center gap-2">
           <FiMapPin className="text-gray-400" />
@@ -98,6 +105,7 @@ const JobDetails = ({ job }) => {
         </div>
       </div>
 
+      {/* Optional Sections */}
       {job.eligibility_criteria && (
         <div className="bg-gray-50 p-4 rounded-lg">
           <h4 className="font-semibold text-gray-800 mb-2">
@@ -148,16 +156,33 @@ const JobDetails = ({ job }) => {
         </div>
       )}
 
+      {/* ✅ Apply Button Logic */}
       {job.form_link && (
         <div className="text-center mt-6">
-          <a
-            href={job.form_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Apply Now
-          </a>
+          {eligible ? (
+            <a
+              href={job.form_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Apply Now
+            </a>
+          ) : (
+            <>
+              <button
+                disabled
+                className="inline-block bg-gray-400 text-white px-6 py-2 rounded-lg cursor-not-allowed opacity-70"
+                title="You are not eligible (CGPA too low)"
+              >
+                Apply Now
+              </button>
+              <p className="text-red-600 text-sm mt-2 font-medium">
+                 You are not eligible — CGPA below required minimum (
+                {cgpa} / {job.cgpa_eligibility})
+              </p>
+            </>
+          )}
         </div>
       )}
     </div>
