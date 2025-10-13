@@ -1,6 +1,6 @@
-from pydantic import BaseModel, EmailStr, Field
-from typing import Optional, List,Union
-from datetime import date,datetime
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
+from typing import Optional, List, Union
+from datetime import datetime
 import pytz
 from bson import ObjectId
 
@@ -31,7 +31,6 @@ class TokenResponse(BaseModel):
 class TokenRequest(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=6)
-
 
 
 class UserResponseStudent(BaseModel):
@@ -92,6 +91,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+
 class JobCreate(BaseModel):
     company_name: str = Field(..., min_length=2, max_length=200)
     website: Optional[str] = Field(None)
@@ -99,7 +99,7 @@ class JobCreate(BaseModel):
     address: Optional[str] = Field(None)
     batch: List[int] = Field(..., min_items=1)
     work_location: Optional[str] = Field(None)
-    job_designation: Optional[str] = Field(None) 
+    job_designation: Optional[str] = Field(None)
     type_of_employment: Optional[str] = Field(None)
     eligibility_criteria: Optional[str] = Field(None)
     cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
@@ -113,7 +113,6 @@ class JobCreate(BaseModel):
     selection_process: Optional[List[str]] = Field(None, min_items=1)
     form_link: Optional[str] = Field(None)
     application_deadline: Optional[datetime] = None
-
 
 
 class JobUpdate(BaseModel):
@@ -123,7 +122,7 @@ class JobUpdate(BaseModel):
     address: Optional[str] = Field(None)
     batch: List[int] = Field(..., min_items=1)
     work_location: Optional[str] = Field(None)
-    job_designation: Optional[str] = Field(None)  # multiple designations
+    job_designation: Optional[str] = Field(None)
     type_of_employment: Optional[str] = Field(None)
     eligibility_criteria: Optional[str] = Field(None)
     cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
@@ -137,6 +136,7 @@ class JobUpdate(BaseModel):
     selection_process: Optional[List[str]] = Field(None, min_items=1)
     form_link: Optional[str] = Field(None)
     application_deadline: Optional[datetime] = None
+
 
 class JobInDB(JobCreate):
     id: str = Field(alias="_id")
@@ -148,12 +148,11 @@ class JobInDB(JobCreate):
     master_sheet_link: str
     synced: bool = False
 
-    class Config:
-        populate_by_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {
-            ObjectId: str
-        }
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str},
+    )
 
 
 class JobResponse(BaseModel):
@@ -186,17 +185,11 @@ class JobResponse(BaseModel):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
 
-    class Config:
-        populate_by_name = True
-        arbitrary_types_allowed = True
-        json_encoders = {
-            ObjectId: str
-        }
-
-
-
-class JobMetricsRequest(BaseModel):
-    job_id: str = Field(..., min_length=1, description="Unique Job ID")
+    model_config = ConfigDict(
+        populate_by_name=True,
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str},
+    )
 
 
 class MasterSheetInDB(BaseModel):
@@ -226,9 +219,6 @@ class AdminEditStudentProfile(BaseModel):
     branch: Optional[str] = None
 
 
-
-  
-
 class StudentEditProfile(BaseModel):
     name: Optional[str] = None
     gender: Optional[str] = None
@@ -242,12 +232,16 @@ class StudentEditProfile(BaseModel):
     )
     roll_number: str
     branch: Optional[str] = Field(
-        None, min_length=2, max_length=100,
-        description="Write the Branch name in full, e.g., Computer Science and Engineering"
+        None,
+        min_length=2,
+        max_length=100,
+        description="Write the Branch name in full, e.g., Computer Science and Engineering",
     )
     course: Optional[str] = Field(
-        None, min_length=2, max_length=100,
-        description="Write the Course name in full, e.g., Bachelor of Technology"
+        None,
+        min_length=2,
+        max_length=100,
+        description="Write the Course name in full, e.g., Bachelor of Technology",
     )
     batch: Optional[int] = Field(
         None, ge=2000, le=2100, description="Batch year is your year of graduation"
@@ -274,4 +268,3 @@ class StudentEditProfile(BaseModel):
     pan_card_link: Optional[str] = None
     role: str = "student"
     career_path: Optional[str] = None
-    

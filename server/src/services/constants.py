@@ -31,3 +31,4 @@ GOOGLE_SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/forms.responses.readonly",
 ]
+GOOGLE_APPS_SCRIPT_TIMEOUT = 60
