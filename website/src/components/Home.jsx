@@ -33,8 +33,9 @@ const Home = () => {
     <div className="w-full custom-scroll">
       <Navbar
         className={`transition-all duration-300 ${
-          isScrolled ? "bg-blue-600 shadow-md" : "bg-transparent"
+          isScrolled ? "bg-blue-900 shadow-md" : "bg-transparent"
         }`}
+        navcol={isScrolled?"text-lime-500":""}
       />
 
       <div
@@ -94,12 +95,13 @@ const Home = () => {
       <div id="process" className="scroll-mt-24">
         <PlacementProcess />
       </div>
-      <CompanySlider />
+      
       <AdminStaff />
       <Coordinators />
       <div id="contact" className="scroll-mt-24">
         <ContactUs />
       </div>
+      <CompanySlider />
       <Footer />
     </div>
   );

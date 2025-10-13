@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 
-export default function Navbar({ className = "" }) {
+export default function Navbar({ className = "" ,navcol}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const linkStyle =
@@ -19,7 +19,7 @@ export default function Navbar({ className = "" }) {
           alt="IIITDM Kurnool"
           className="h-10 w-10 mr-2"
         />
-        <p className="md:block hidden">Training and Placement Cell, IIITDM Kurnool</p>
+        <p className="md:block hidden">Training and Placement Cell, <span className={navcol}>IIITDM Kurnool</span></p>
       </a>
 
       <button

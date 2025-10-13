@@ -5,6 +5,8 @@ import StudentProfile from "./student/StudentProfile.jsx";
 import AdminStaff from "./components/AdminStaff";
 import StudentForm from "./components/detailform";
 import Home from "./components/Home";
+import OurTeam from "./components/OurTeam"
+
 
 import JobPost from "./admin/JobPost.jsx";
 import JobGet from "./student/JobGet.jsx";
@@ -27,6 +29,7 @@ const App = () => {
         <Route path="/a" element={<StudentForm />} />
         <Route path="/student/login" element={<StudentLogin />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/ourteam" element={<OurTeam />} />
 
         {/* Student routes (protected) */}
         <Route

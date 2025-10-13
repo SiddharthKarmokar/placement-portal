@@ -4,7 +4,7 @@ import "./slider.css";
 const CompanySlider = () => {
   return (
     <>
-      <div className="bg-[#f4f7ff]">
+      <div className="bg-[#f4f7ff] pb-10">
         <div
           className="slider"
           style={{ "--width": "196px", "--height": "98px", "--quantity": "30" }}

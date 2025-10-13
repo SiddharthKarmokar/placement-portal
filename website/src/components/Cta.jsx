@@ -8,7 +8,7 @@ const Cta = () => {
     >
       {/* Header Section */}
       <div className="text-center max-w-4xl mx-auto mb-12 mt-12 ">
-        <h1 className="text-3xl sm:text-4xl font-bold mb-4">Why Recruit</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-4 text-lime-500">Why Recruit</h1>
         <p className="text-sm text-justify sm:text-base leading-relaxed">
           Established in 2015, as an institute of national importance, IIITDM
           Kurnool is recognized worldwide as a leader in the field of research
@@ -58,10 +58,10 @@ const Cta = () => {
           >
             <div>
               <div className="text-3xl mb-4">{icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{title}</h3>
+              <h3 className="text-xl font-semibold mb-2 text-lime-500">{title}</h3>
               <p className="text-sm">{desc}</p>
             </div>
-            <button className="mt-6 bg-white text-blue-900 font-bold py-2 px-4 rounded hover:bg-gray-200 transition">
+            <button className="mt-6 bg-white text-blue-900 font-bold py-2 px-4 rounded hover:bg-blue-800 cursor-pointer hover:text-lime-500 transition">
               Know more
             </button>
           </div>
