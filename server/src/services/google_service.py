@@ -207,7 +207,7 @@ def create_sheet(admin_doc: dict, title: str, roll_numbers: list[str]) -> str:
         roll_values = [[r] for r in roll_numbers]
         sheets_service.spreadsheets().values().update(
             spreadsheetId=spreadsheet_id,
-            range=f"Sheet1!A2:A{len(roll_numbers)+1}",
+            range=f"Sheet1!A2:A{len(roll_numbers) + 1}",
             valueInputOption="RAW",
             body={"values": roll_values},
         ).execute()
