@@ -273,47 +273,80 @@ const AdminHome = () => {
       </div>
       {/* modal here */}
       {Modal && (
-        <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50">
-          <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6 overflow-y-auto max-h-[90vh]">
-            <h2 className="text-xl font-semibold mb-4">Edit Profile</h2>
+  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50 z-121 transition-all duration-300">
+    <div className="relative bg-white text-black rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg p-8 transform scale-100 animate-fadeIn">
+      {/* Close Button */}
+      <button
+        onClick={() => setModal(false)}
+        className="absolute top-4 right-4 text-black hover:text-gray-800 dark:hover:text-gray-800 transition-colors"
+      >
+        ✕
+      </button>
 
-            <form
-              onSubmit={handleSubmit}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+      {/* Header */}
+      <h2 className="text-2xl font-semibold text-gray-800 dark:text-black mb-6 text-center">
+        Upload Your CSV File
+      </h2>
+      <p className="text-sm text-gray-500 dark:text-black mb-8 text-center">
+        Easily import your data with a clean and formatted CSV file.
+      </p>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* File Upload */}
+        <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-8 hover:border-blue-500 transition-all cursor-pointer bg-gray-50 dark:bg-gray-900/30">
+          <label className="flex flex-col items-center space-y-2 cursor-pointer">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-10 h-10 text-black"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              {/* CSV File Upload */}
-              <div className="col-span-2 flex flex-col">
-                <label className="text-sm text-gray-600">Upload CSV File</label>
-                <input
-                  type="file"
-                  accept=".csv"
-                  name="csv_file"
-                  onChange={(e) =>
-                    setFormData({ ...formData, csv_file: e.target.files[0] })
-                  }
-                  className="border rounded-lg px-3 py-2 mt-1 text-sm"
-                />
-              </div>
-
-              <div className="col-span-2 flex justify-end gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => setModal(false)}
-                  className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M12 16v-8m0 0l-3 3m3-3l3 3m6 5a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span className="text-gray-600 dark:text-black font-medium">
+              Click to upload or drag and drop
+            </span>
+            <span className="text-xs text-black">.csv only (max 5MB)</span>
+            <input
+              type="file"
+              accept=".csv"
+              name="csv_file"
+              onChange={(e) =>
+                setFormData({ ...formData, csv_file: e.target.files[0] })
+              }
+              className="hidden"
+            />
+          </label>
         </div>
-      )}
+
+        {/* Buttons */}
+        <div className="flex justify-end gap-4">
+          <button
+            type="button"
+            onClick={() => setModal(false)}
+            className="px-5 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-black dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 transition-all font-medium"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-6 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md hover:shadow-lg transition-all"
+          >
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+)}
+
       ;
       <Toaster position="top-right" reverseOrder={false} />
     </div>
