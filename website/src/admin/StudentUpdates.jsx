@@ -72,9 +72,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
         name: student.name || "",
         gender: student.gender || "other",
         email: student.email || "",
-        date_of_birth: student.date_of_birth
-          ? student.date_of_birth.split("T")[0]
-          : "",
+        date_of_birth: student.date_of_birth || "",
         phone_no: student.phone_no || "",
         username: student.username || "",
         roll_number: student.roll_number || "",
