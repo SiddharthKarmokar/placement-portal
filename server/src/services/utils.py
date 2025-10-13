@@ -42,7 +42,7 @@ def generate_random_password(length: int = 10) -> str:
     return ''.join(random.choice(chars) for _ in range(length))
 
 
-@celery.task
+@celery.task(name="src.services.utils.send_email_task")
 def send_email_task(email: str, subject: str, body: str) -> None:
     """
     Celery task to send an email asynchronously.
