@@ -16,9 +16,9 @@ class Secrets(BaseSettings):
     MAIL_PASSWORD: str = "password"
     MAIL_USERNAME: str = "test@example.com"
     APPS_SCRIPT_URL: str = "https://script.google.com/macros/s/abc/exec"
-    PUSHER_APP_ID: str
-    PUSHER_KEY: str
-    PUSHER_SECRET: str
+    PUSHER_APP_ID:str = "212345"
+    PUSHER_KEY:str = "xbjcvjfcvjcbaxvbcjvb"
+    PUSHER_SECRET:str = "bcjzvcjzvxcjvbsjhcbv"
 
     class Config:
         env_file = ".env"
