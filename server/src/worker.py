@@ -41,10 +41,12 @@ def on_connect(data):
 # --- Patch host manually for older Pusher versions ---
 pusherclient.Pusher.host = "ws-ap2.pusher.com"
 
+
 # Initialize Pusher client
 pusher_client = pusherclient.Pusher(key=secrets.PUSHER_KEY)
 pusher_client.connection.bind("pusher:connection_established", on_connect)
 pusher_client.connect()
+
 
 # Run event loop indefinitely
 try:
