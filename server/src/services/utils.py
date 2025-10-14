@@ -7,7 +7,6 @@ import pydantic
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from fastapi import HTTPException, status
 
-from src.redis import celery
 from src import logger
 from src.config import secrets
 from src.services.constants import (
