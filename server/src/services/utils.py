@@ -2,15 +2,11 @@ import random
 import string
 import pytz
 import pusher
-# There is nothing more permanent than a temporary fix --- Siddharth Karmokar
 import pydantic
-if not hasattr(pydantic.BaseModel, "Config"):
-    class _Compat:
-        arbitrary_types_allowed = True
-    pydantic.BaseModel.Config = _Compat
 
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
 from fastapi import HTTPException, status
+
 from src import logger
 from src.config import secrets
 from src.services.constants import (
@@ -60,6 +56,15 @@ pusher_client = pusher.Pusher(
     ssl=True,
 )
 
+# Pusher configuration
+pusher_client = pusher.Pusher(
+    app_id=secrets.PUSHER_APP_ID,
+    key=secrets.PUSHER_KEY,
+    secret=secrets.PUSHER_SECRET,
+    cluster="ap2",
+    ssl=True,
+)
+
 
 def generate_random_password(length: int = 10) -> str:
     """
@@ -78,6 +83,11 @@ def generate_random_password(length: int = 10) -> str:
 def send_email_task(email: str, subject: str, body: str) -> None:
     """
     Push an email event to Pusher.
+
+    Args:
+        email (str): Recipient email.
+        subject (str): Email subject.
+        body (str): Email content.
     """
     pusher_client.trigger(
         "email-channel",
@@ -85,8 +95,8 @@ def send_email_task(email: str, subject: str, body: str) -> None:
         {
             "email": email,
             "subject": subject,
-            "body": body
-        }
+            "body": body,
+        },
     )
 
 
@@ -114,7 +124,10 @@ async def send_email_to_student(email: str, subject: str, body: str) -> None:
 
     except Exception as exc:
         logger.error(f"[Worker] Detailed error while sending email to {email}: {exc}")
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to send email to {email}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to send email to {email}",
+        )
 
 
 async def send_email(to_email: str, subject: str, body: str) -> None:

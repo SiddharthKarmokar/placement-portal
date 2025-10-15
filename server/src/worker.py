@@ -16,14 +16,13 @@ def on_connect(data):
 
     def email_handler(event_data):
         """
-        Handles 'send-email-to-student' events from the Pusher channel.
-
-        Args:
-            event_data (str): JSON-encoded event payload containing
-                'email', 'subject', and 'body' fields.
+        Handles incoming 'send-email-to-student' events.
+        Parses payload and sends email asynchronously.
         """
         try:
+            # Parse the JSON payload sent by Pusher
             payload = json.loads(event_data)
+
             asyncio.run(
                 send_email_to_student(
                     payload["email"],
