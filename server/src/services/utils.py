@@ -17,10 +17,20 @@ from src.services.constants import (
     ACCOUNT_CREATION_EMAIL_FROM_NAME,
     ACCOUNT_CREATION_EMAIL_SERVER,
     ACCOUNT_CREATION_EMAIL_PORT,
-    ACCOUNT_CREATION_EMAIL_FROM
+    ACCOUNT_CREATION_EMAIL_FROM,
 )
-ist = pytz.timezone('Asia/Kolkata')
 
+# Compatibility for older versions of Pydantic
+if not hasattr(pydantic.BaseModel, "Config"):
+    class _Compat:
+        arbitrary_types_allowed = True
+
+    pydantic.BaseModel.Config = _Compat
+
+# Timezone configuration
+ist = pytz.timezone("Asia/Kolkata")
+
+# Email configuration
 conf = ConnectionConfig(
     MAIL_USERNAME=secrets.MAIL_USERNAME,
     MAIL_PASSWORD=secrets.MAIL_PASSWORD,
@@ -41,14 +51,22 @@ pusher_client = pusher.Pusher(
     ssl=True
 )
 
+# Pusher configuration
+pusher_client = pusher.Pusher(
+    app_id=secrets.PUSHER_APP_ID,
+    key=secrets.PUSHER_KEY,
+    secret=secrets.PUSHER_SECRET,
+    cluster="ap2",
+    ssl=True,
+)
+
 
 def generate_random_password(length: int = 10) -> str:
     """
-    Generate a random password containing letters, digits,
-    and special characters.
+    Generate a random password containing letters, digits, and special characters.
 
     Args:
-        length (int): Desired password length (default is 10).
+        length (int): Desired password length. Default is 10.
 
     Returns:
         str: Randomly generated password.
@@ -82,10 +100,9 @@ async def send_email_to_student(email: str, subject: str, body: str) -> None:
         body (str): Email body text.
 
     Raises:
-        RuntimeError: If sending fails due to mail server issues.
+        HTTPException: If sending fails due to mail server issues.
     """
     try:
-
         message = MessageSchema(
             subject=subject,
             recipients=[email],
@@ -100,12 +117,20 @@ async def send_email_to_student(email: str, subject: str, body: str) -> None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to send email to {email}")
 
 
-async def send_email(to_email: str, subject: str, body: str):
+async def send_email(to_email: str, subject: str, body: str) -> None:
+    """
+    Send an email using the configured FastMail connection.
+
+    Args:
+        to_email (str): Recipient email address.
+        subject (str): Email subject.
+        body (str): Email content.
+    """
     message = MessageSchema(
         subject=subject,
         recipients=[to_email],
         body=body,
-        subtype="plain"
+        subtype="plain",
     )
     fm = FastMail(conf)
     await fm.send_message(message)
