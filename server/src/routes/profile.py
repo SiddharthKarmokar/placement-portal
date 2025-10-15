@@ -34,6 +34,7 @@ async def get_student_profile(current_user: dict = Depends(security.get_current_
 
     profile = {
         "_id": str(current_user.get("_id")),
+        "profile_pic_link": current_user.get("profile_pic_link"),
         "name": current_user.get("name"),
         "gender": current_user.get("gender"),
         "email": current_user.get("email"),
@@ -126,6 +127,7 @@ async def admin_update_student_profile(
     )
     profile_response = {
         "_id": str(updated_student["_id"]),
+        "profile_pic_link": updated_student.get("profile_pic_link"),
         "name": updated_student.get("name"),
         "gender": updated_student.get("gender"),
         "email": updated_student.get("email"),
@@ -200,6 +202,7 @@ async def update_student_profile(
     )
     profile_response = {
         "_id": str(updated_student["_id"]),
+        "profile_pic_link": updated_student.get("profile_pic_link"),
         "name": updated_student.get("name"),
         "gender": updated_student.get("gender"),
         "email": updated_student.get("email"),
@@ -248,6 +251,7 @@ async def get_student_profile_by_admin(
 
     profile_response = {
         "_id": str(student["_id"]),
+        "profile_pic_link": student.get("profile_pic_link"),
         "name": student.get("name"),
         "gender": student.get("gender"),
         "email": student.get("email"),

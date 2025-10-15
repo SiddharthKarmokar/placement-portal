@@ -2,4 +2,7 @@
 
 python -V
 
-gunicorn -c gunicorn_conf.py
+python -m src.worker &
+
+gunicorn -c gunicorn_conf.py 
+

@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-  server: 
+  server:
     build:
       context: ./server
       dockerfile: Dockerfile
     ports:
-      - 8000:8000
+      - "8000:8000"
     volumes:
       - ./server:/app
     command: [ "sh", "-c", "chmod +x ./run.sh && ./run.sh" ]
@@ -14,19 +14,20 @@ services:
       - ENV=dev
     networks:
       - app-net
-  
-  # website:
-  #   build:
-  #     context: ./website
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 3000:80
-  #   volumes:
-  #     - ./website:/app
-  #   networks:
-  #     - app-net
-  #   depends_on:
-  #     - server
+
+  worker:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: python -m src.worker
+    volumes:
+      - ./server:/app
+    environment:
+      - ENV=dev
+    networks:
+      - app-net
+    depends_on:
+      - server
 
 networks:
   app-net:

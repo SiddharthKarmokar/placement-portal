@@ -1,0 +1,54 @@
+import asyncio
+import json
+import pusherclient
+from src.config import secrets
+from src.services.utils import send_email_to_student
+
+
+def on_connect(data):
+    """
+    Callback function triggered when Pusher successfully connects.
+
+    Args:
+        data: Connection data provided by Pusher.
+    """
+    print("[Worker] Connected to Pusher")
+    channel = pusher_client.subscribe("email-channel")
+
+    def email_handler(event_data):
+        """
+        Handles 'send-email-to-student' events from the Pusher channel.
+
+        Args:
+            event_data (str): JSON-encoded event payload containing
+                'email', 'subject', and 'body' fields.
+        """
+        try:
+            payload = json.loads(event_data)
+            asyncio.run(
+                send_email_to_student(
+                    payload["email"],
+                    payload["subject"],
+                    payload["body"]
+                )
+            )
+        except Exception as exc:
+            print("[Worker] Error processing event:", exc)
+
+    channel.bind("send-email-to-student", email_handler)
+    print("[Worker] Bound to send-email-to-student")
+
+
+# --- Pusher Host Configuration ---
+pusherclient.Pusher.host = "ws-ap2.pusher.com"  # Works even for old versions
+
+# --- Initialize Pusher Client ---
+pusher_client = pusherclient.Pusher(key=secrets.PUSHER_KEY)
+pusher_client.connection.bind("pusher:connection_established", on_connect)
+pusher_client.connect()
+
+# --- Keep Worker Running ---
+try:
+    asyncio.get_event_loop().run_forever()
+except KeyboardInterrupt:
+    print("[Worker] Stopped manually")

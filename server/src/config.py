@@ -15,7 +15,10 @@ class Secrets(BaseSettings):
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/auth/google/callback"
     MAIL_PASSWORD: str = "password"
     MAIL_USERNAME: str = "test@example.com"
-    APPS_SCRIPT_URL: str = "https://script.google.com/macros/s/abc/exec"
+    APPS_SCRIPT_URL : str = "https://script.google.com/macros/s/abc/exec"
+    PUSHER_APP_ID : str
+    PUSHER_KEY : str
+    PUSHER_SECRET : str
 
     class Config:
         env_file = ".env"
