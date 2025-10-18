@@ -73,11 +73,11 @@ const MessageCard = ({
   // Handle the update action
   const handleUpdate = () => {
     // This is where you would typically send data to an API
-    console.log("Updating message:", {
-      title,
-      image,
-      message,
-    });
+    // console.log("Updating message:", {
+    //   title,
+    //   image,
+    //   message,
+    // });
     toast.success(`${title} updated successfully!`);
     // After a successful update, you could reset the 'changed' state
     // For this example, we'll keep the changes to demonstrate persistence

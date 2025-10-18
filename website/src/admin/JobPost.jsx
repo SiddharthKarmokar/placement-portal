@@ -83,7 +83,7 @@ const JobPost = () => {
         });
         setJobs(Array.isArray(res.data) ? res.data : []);
         setIsLoading(false);
-        console.log(res.data);
+        // console.log(res.data);
       } catch (err) {
         console.error("Error fetching jobs:", err);
         toast.error("Failed to fetch jobs");
@@ -290,19 +290,19 @@ const JobPost = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header with Title and Create Button */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-gray-800">Job Postings</h1>
+          <h1 className="text-2xl font-bold text-gray-800 sm:text-2xl">Job Postings</h1>
           <div className="flex justify-between items-center gap-5">
             <button
               onClick={handleSyncJobs}
               className="flex items-center gap-2 px-4 py-2 bg-[#57C62B] text-white rounded-xl shadow-lg hover:bg-[#4da72a] transition-colors"
             >
-              Sync Jobs
+              Sync
             </button>
             <button
               onClick={() => setShowPostPopup(true)}
               className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl shadow-lg hover:bg-gray-900 transition-colors"
             >
-              <span className="text-xl">+</span> Post a Job
+              <span className="text-xl">+</span> Post 
             </button>
           </div>
         </div>
@@ -523,7 +523,7 @@ const JobPost = () => {
                           <a
                             href={job.responses_sheet_link}
                             target="_blank"
-                            className="flex items-center w-[40%] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                            className="flex items-center mx-[2px] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
                           >
                             <img
                               src="/excel-logo.png"

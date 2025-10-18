@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import StudentUpdates from "./StudentUpdates";
 import Sidebar from "../components/SideNav";
 import { FiEdit } from "react-icons/fi";
+import LogoNav from "../components/LogoNav";
 import { API_URL } from "../../env-config";
 const StudentManagement = () => {
   // const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
@@ -38,7 +39,7 @@ const StudentManagement = () => {
         setSelectedStudent(null);
       } else if (response.status >= 200 && response.status < 300) {
         setSelectedStudent(response.data);
-        console.log(selectedStudent);
+        // console.log(selectedStudent);
         toast.success("Student found!");
       } else {
         toast.error("Unexpected error occurred.");
@@ -65,17 +66,12 @@ const StudentManagement = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-      <Sidebar />
+      <div className="hidden md:block">
+        <Sidebar />
+      </div>
       <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="bg-white shadow-md p-4 flex items-center justify-center mt-5 w-[95%] mx-auto rounded-full">
-          <div className="flex items-center gap-3">
-            <img src="/logo.webp" alt="Institute Logo" className="h-10 w-10" />
-            <h1 className="text-xl font-semibold">
-              Training & Placement Cell, IIITDM Kurnool
-            </h1>
-          </div>
-        </header>
+        <LogoNav/>
 
         {/* Main Content */}
         <main className="flex-1 p-6">
