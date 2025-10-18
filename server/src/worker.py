@@ -1,7 +1,6 @@
 import asyncio
 import json
 import pusherclient
-
 from src.config import secrets
 from src.services.utils import send_email_to_student
 

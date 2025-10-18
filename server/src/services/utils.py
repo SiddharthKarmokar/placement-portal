@@ -39,6 +39,22 @@ conf = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
 )
+pusher_client = pusher.Pusher(
+    app_id=secrets.PUSHER_APP_ID,
+    key=secrets.PUSHER_KEY,
+    secret=secrets.PUSHER_SECRET,
+    cluster="ap2",
+    ssl=True
+)
+
+# Pusher configuration
+pusher_client = pusher.Pusher(
+    app_id=secrets.PUSHER_APP_ID,
+    key=secrets.PUSHER_KEY,
+    secret=secrets.PUSHER_SECRET,
+    cluster="ap2",
+    ssl=True,
+)
 
 # Pusher configuration
 pusher_client = pusher.Pusher(
@@ -101,7 +117,7 @@ async def send_email_to_student(email: str, subject: str, body: str) -> None:
             subject=subject,
             recipients=[email],
             body=body,
-            subtype="plain",
+            subtype="plain"
         )
         fm = FastMail(conf)
         await fm.send_message(message)
