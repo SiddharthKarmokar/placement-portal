@@ -102,6 +102,7 @@ const Home = () => {
         <ContactUs />
       </div>
       <CompanySlider />
+
       <Footer />
     </div>
   );

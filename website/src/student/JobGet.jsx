@@ -203,7 +203,8 @@ const JobGet = () => {
   const [ctcFilter, setCtcFilter] = useState("all");
   const [deadlineFilter, setDeadlineFilter] = useState("all");
   
-
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const cgpa = userData?.btech_cgpa || 0;
 
   const jobTypes = ["Full-time", "Part-time", "Internship", "Contract"];
 
@@ -308,7 +309,7 @@ const JobGet = () => {
   };
 
   return (
-    <div className="bg-[#DED9D9] min-h-screen p-8 font-[Figtree]">
+    <div className="bg-[#DED9D9] h-full p-8 font-[Figtree] overflow-y-auto">
       <div className="max-w-6xl mx-auto">
         {/* Header with Title */}
         <div className="flex justify-between items-center mb-6">
@@ -471,12 +472,22 @@ const JobGet = () => {
 
                     {/* Action Buttons */}
                     <div className="flex flex-col gap-3 min-w-[120px]">
-                      <button
-                        onClick={() => handleApply(job)}
-                        className="flex items-center justify-center gap-2 bg-[#029309] text-white px-4 py-2 rounded-lg hover:bg-[#03b40c] transition-colors"
-                      >
-                        Apply
-                      </button>
+{cgpa >= (job.eligibility_criteria || 0) ? (
+    <button
+      onClick={() => handleApply(job)}
+      className="flex items-center justify-center gap-2 bg-[#029309] text-white px-4 py-2 rounded-lg hover:bg-[#03b40c] transition-colors"
+    >
+      Apply
+    </button>
+  ) : (
+    <button
+      disabled
+      className="flex items-center justify-center gap-2 bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed opacity-70"
+      title={`Not eligible — CGPA ${cgpa} / ${job.cgpa_eligibility}`}
+    >
+      Apply
+    </button>
+  )}
                       <button
                         onClick={() => handleDetails(job)}
                         className="flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
