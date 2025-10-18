@@ -523,7 +523,7 @@ const JobPost = () => {
                           <a
                             href={job.responses_sheet_link}
                             target="_blank"
-                            className="flex items-center w-[40%] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                            className="flex items-center mx-[2px] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
                           >
                             <img
                               src="/excel-logo.png"

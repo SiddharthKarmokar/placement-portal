@@ -158,7 +158,7 @@ const LogoNav = () => {
               alt="logo"
             />
             <span className="text-lg sm:text-xl lg:text-2xl font-semibold text-gray-900 whitespace-nowrap">
-              {isMobile ? "Training & Placement" : "Training & Placement Cell, IIITDM Kurnool"}
+              {isMobile ? "" : "Training & Placement Cell, IIITDM Kurnool"}
             </span>
           </div>
 
