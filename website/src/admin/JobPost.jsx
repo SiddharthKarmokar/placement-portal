@@ -83,7 +83,7 @@ const JobPost = () => {
         });
         setJobs(Array.isArray(res.data) ? res.data : []);
         setIsLoading(false);
-        console.log(res.data);
+        // console.log(res.data);
       } catch (err) {
         console.error("Error fetching jobs:", err);
         toast.error("Failed to fetch jobs");

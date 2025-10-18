@@ -38,7 +38,7 @@ const StudentManagement = () => {
         setSelectedStudent(null);
       } else if (response.status >= 200 && response.status < 300) {
         setSelectedStudent(response.data);
-        console.log(selectedStudent);
+        // console.log(selectedStudent);
         toast.success("Student found!");
       } else {
         toast.error("Unexpected error occurred.");

@@ -77,7 +77,7 @@ const PlacementAdministration = () => {
   // Handles updating an employee's details
   const handleUpdateEmployee = (id) => {
     // This is where you'd implement the API call to update the employee
-    console.log(`Updating employee with ID: ${id}`);
+    // console.log(`Updating employee with ID: ${id}`);
     toast.success("Employee details updated!");
   };
 

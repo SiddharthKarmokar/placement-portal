@@ -1,6 +1,12 @@
 import React, { useState } from "react";
-import { Home, FileText, Settings, Bell, Info, Users, Menu, X } from "lucide-react";
+import { Home, FileText, Settings, Bell, Info, Users, Menu, X , 
 
+  Upload,
+  
+  ChevronLeft,
+  ChevronRight,
+  ExternalLink,} from "lucide-react";
+import { motion } from "framer-motion";
 const LogoNav = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
