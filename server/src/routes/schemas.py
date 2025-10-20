@@ -35,6 +35,7 @@ class TokenRequest(BaseModel):
 
 class UserResponseStudent(BaseModel):
     id: Optional[str] = Field(default=None, alias="_id", description="Unique identifier for the student")
+    profile_pic_link: Optional[str] = Field(None, description="Link to the student's profile picture")
     name: str = Field(..., description="Full name of the student")
     gender: Optional[str] = Field(None, description="Gender of the student")
     email: EmailStr = Field(..., description="Email address of the student")
@@ -220,6 +221,7 @@ class AdminEditStudentProfile(BaseModel):
 
 
 class StudentEditProfile(BaseModel):
+    profile_pic_link: Optional[str] = None
     name: Optional[str] = None
     gender: Optional[str] = None
     email: EmailStr

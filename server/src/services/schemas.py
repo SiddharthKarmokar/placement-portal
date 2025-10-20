@@ -19,6 +19,7 @@ class StudentCreate(BaseModel):
 
 class StudentInDB(BaseModel):
     id: Optional[str] = Field(default=None, alias="_id")
+    profile_pic_link: Optional[str] = None
     name: str
     gender: Optional[str] = None
     email: EmailStr
