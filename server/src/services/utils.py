@@ -1,9 +1,18 @@
 import random
 import string
 import pytz
-import asyncio
+import pusher
+################### There is nothing more permanent than a temporary fix --- Siddharth Karmokar
+import pydantic
+if not hasattr(pydantic.BaseModel, "Config"):
+    class _Compat:
+        arbitrary_types_allowed = True
+    pydantic.BaseModel.Config = _Compat
+
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig
+from fastapi import HTTPException, status
 from src.redis import celery
+from src import logger
 from src.config import secrets
 from src.services.constants import (
     ACCOUNT_CREATION_EMAIL_FROM_NAME,
@@ -25,6 +34,13 @@ conf = ConnectionConfig(
     USE_CREDENTIALS=True,
     VALIDATE_CERTS=True,
 )
+pusher_client = pusher.Pusher(
+    app_id=secrets.PUSHER_APP_ID,
+    key=secrets.PUSHER_KEY,
+    secret=secrets.PUSHER_SECRET,
+    cluster="ap2",
+    ssl=True
+)
 
 
 def generate_random_password(length: int = 10) -> str:
@@ -42,17 +58,19 @@ def generate_random_password(length: int = 10) -> str:
     return ''.join(random.choice(chars) for _ in range(length))
 
 
-@celery.task(name="src.services.utils.send_email_task")
 def send_email_task(email: str, subject: str, body: str) -> None:
     """
-    Celery task to send an email asynchronously.
-
-    Args:
-        email (str): Recipient's email address.
-        subject (str): Email subject.
-        body (str): Email body text.
+    Push an email event to Pusher.
     """
-    asyncio.run(send_email_to_student(email, subject, body))
+    pusher_client.trigger(
+        "email-channel",
+        "send-email-to-student",
+        {
+            "email": email,
+            "subject": subject,
+            "body": body
+        }
+    )
 
 
 async def send_email_to_student(email: str, subject: str, body: str) -> None:
@@ -73,14 +91,14 @@ async def send_email_to_student(email: str, subject: str, body: str) -> None:
             subject=subject,
             recipients=[email],
             body=body,
-            subtype="plain",
+            subtype="plain"
         )
-
         fm = FastMail(conf)
         await fm.send_message(message)
 
     except Exception as exc:
-        raise RuntimeError(f"Failed to send email to {email}") from exc
+        logger.error(f"[Worker] Detailed error while sending email to {email}: {exc}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Failed to send email to {email}")
 
 
 async def send_email(to_email: str, subject: str, body: str):
