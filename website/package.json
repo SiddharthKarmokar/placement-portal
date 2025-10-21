@@ -19,6 +19,7 @@
     "express": "^5.1.0",
     "framer-motion": "^12.23.12",
     "jest": "^30.0.5",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^0.537.0",
     "mongoose": "^8.17.1",
     "react": "^19.1.0",
