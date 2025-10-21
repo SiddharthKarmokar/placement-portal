@@ -1,10 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import React from "react";
+import { Eye, EyeOff } from "lucide-react";
 import "../css/student_login.css";
 import { API_URL } from "../../env-config";
 import toast, { Toaster } from "react-hot-toast";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function AdminLogin() {
   const [Password, setPassword] = useState("");
@@ -15,8 +14,8 @@ export default function AdminLogin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    localStorage.clear();
     setLoading(true);
-
     try {
       const tokenRes = await fetch(`${API_URL}/api/auth/token`, {
         method: "POST",
@@ -29,7 +28,7 @@ export default function AdminLogin() {
 
       const tokenData = await tokenRes.json();
       if (!tokenRes.ok) {
-        toast.error(`❌ ${tokenData.detail || "Login failed"}`);
+        toast.error(`${tokenData.detail || "Invalid username or password"}`);
         setLoading(false);
         return;
       }
@@ -45,14 +44,15 @@ export default function AdminLogin() {
 
       const profileData = await profileRes.json();
       if (!profileRes.ok) {
-        toast.error("⚠️ Login succeeded, but failed to fetch profile.");
+        toast.error("Login succeeded, but failed to fetch profile.");
         setLoading(false);
         return;
       }
 
       localStorage.setItem("user", JSON.stringify(profileData));
       toast.success(`✅ Welcome, ${profileData.username || "Admin"}!`);
-      navigate(`/admin/${profileData.username}`);
+      const admin = profileData.username;
+      setTimeout(() => navigate(`/admin/${admin}`), 2000);
     } catch (err) {
       console.error("Login Error:", err);
       toast.error("❌ Server error. Please try again.");
@@ -62,112 +62,117 @@ export default function AdminLogin() {
   };
 
   return (
-<div className="flex flex-col md:flex-row min-h-screen">
-  <Toaster position="top-right" />
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden relative font-[Figtree]">
+      {/* --- Fullscreen Loader --- */}
+      {loading && (
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
+          <img
+            src="/Loader2-unscreen.gif"
+            alt="Loading animation"
+            className="w-80 h-80 sm:w-96 sm:h-96 object-contain rounded-lg shadow-2xl"
+          />
+          <p className="text-white text-lg sm:text-xl mt-6 tracking-wide animate-pulse drop-shadow-lg">
+            Logging you in...
+          </p>
+        </div>
+      )}
 
-  {/* Left Section */}
-  <div className="flex flex-col w-full md:w-1/2 justify-center items-center bg-[#181204] relative overflow-hidden py-10 px-4">
-    <div className="z-20 text-center">
-      <h1 className="text-white font-bold leading-tight text-[clamp(1.8rem,4vw,3rem)]">
-        Welcome to <br />
-        <span className="font-extrabold text-[clamp(2.5rem,6vw,4rem)]">
-          Admin Portal
-        </span>
-      </h1>
-      <p className="text-gray-300 mt-2 text-sm sm:text-base">
-        Login to access your account
-      </p>
-    </div>
-
-    <img
-      className="mt-6 max-h-[220px] sm:max-h-[350px] md:max-h-[500px] w-auto z-30"
-      src="/login.png"
-      alt="login"
-    />
-  </div>
-
-  {/* Right Section */}
-  <div className="flex-1 bg-white w-full md:w-1/2 flex flex-col justify-start px-6 sm:px-12 py-6 overflow-y-auto">
-    <img
-      className="w-[120px] sm:w-[180px] mx-auto mb-10 sm:mb-20 mt-6 sm:mt-12"
-      src="/logo.webp"
-      alt="logo"
-    />
-    <h2 className="text-xl sm:text-2xl md:text-3xl mx-auto font-bold mb-6">
-      Login
-    </h2>
-
-    <form
-      onSubmit={handleLogin}
-      className="flex w-full sm:w-2/3 mx-auto flex-col gap-4 sm:gap-5"
-    >
-      {/* Username */}
-      <input
-        type="text"
-        placeholder="Username"
-        value={Username}
-        onChange={(e) => setUsername(e.target.value)}
-        className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
-        required
-      />
-
-      {/* Password with eye toggle */}
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          placeholder="Password"
-          value={Password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
-          required
+      {/* --- RIGHT SECTION (Mirrored) --- */}
+      <div className="hidden md:flex md:flex-1 bg-[rgba(0,0,0,0.9)] justify-center items-center relative overflow-hidden order-2 md:order-1">
+        <img
+          src="https://images.unsplash.com/photo-1596495577886-d920f1fb7238?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1200"
+          alt="Admin workspace"
+          className="absolute inset-0 w-full h-full object-cover opacity-40"
         />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-2 top-2 text-gray-500 hover:text-black"
-        >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/50"></div>
+        <div className="z-20 text-center px-6">
+          <h1 className="text-white text-6xl font-extrabold mb-2 leading-snug drop-shadow-lg">
+            Welcome Back
+          </h1>
+          <p className="text-gray-200 text-xl sm:text-base">
+            Manage users, courses, and reports efficiently.
+          </p>
+        </div>
       </div>
 
-      <p className="text-sm text-gray-500 cursor-pointer">
-        Forgot Password?
-      </p>
+      {/* --- LEFT SECTION (Form) --- */}
+      <div className="flex-1 bg-white flex flex-col justify-center px-8 sm:px-12 py-8 order-1 md:order-2">
+        <img
+          className="w-[160px] sm:w-[200px] mx-auto mb-12 sm:mb-20"
+          src="/logo.webp"
+          alt="logo"
+        />
+        <h2 className="text-2xl sm:text-3xl text-center font-bold mb-8">
+          Admin Login
+        </h2>
 
-      {/* Login Button */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-[#181204] text-white py-3 rounded-lg hover:bg-black transition flex items-center justify-center gap-2"
-      >
-        {loading ? (
-          <>
-            <Loader2 className="animate-spin" size={20} /> Logging in...
-          </>
-        ) : (
-          "Login"
-        )}
-      </button>
+        <form
+          className="flex flex-col gap-5 w-full sm:w-2/3 mx-auto"
+          onSubmit={handleLogin}
+        >
+          {/* Username */}
+          <input
+            type="text"
+            placeholder="Username"
+            onChange={(e) => setUsername(e.target.value)}
+            className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
+            required
+          />
 
-      {/* Extra buttons */}
-      <div className="flex flex-col sm:flex-row justify-between mt-4 gap-2">
-        <button
-          type="button"
-          onClick={() => navigate("/")}
-          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
-        >
-          ⬅ Home
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate("/student/login")}
-          className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
-        >
-          Student Login
-        </button>
+          {/* Password */}
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-2 text-gray-500 hover:text-black"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+
+          <p className="text-sm text-gray-500 cursor-pointer text-right">
+            Forgot Password?
+          </p>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`${
+              loading ? "bg-gray-700 cursor-not-allowed" : "bg-[#181204] hover:bg-black"
+            } text-white py-3 rounded-lg transition-all duration-300`}
+          >
+            Login
+          </button>
+
+          <div className="flex justify-between mt-4">
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm sm:text-base"
+            >
+              Home
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/student/login")}
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm sm:text-base"
+            >
+              Student Login
+            </button>
+          </div>
+        </form>
       </div>
-    </form>
-  </div>
-</div>
+
+      {/* Toast Container */}
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
+    </div>
   );
 }
