@@ -187,7 +187,13 @@ const handleSubmit = async (e) => {
                 )}
                 {loading ? "Updating..." : "Save"}
               </motion.button>
-              
+                 <button
+              type="button"
+              onClick={() => setIsModalOpen(false)}
+              className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
+            >
+              Cancel
+            </button>
                 </form>
               </div>
             </div>

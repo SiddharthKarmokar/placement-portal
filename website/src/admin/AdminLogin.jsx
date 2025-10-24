@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import "../css/student_login.css";
 import { API_URL } from "../../env-config";
 import toast, { Toaster } from "react-hot-toast";
+import MotionPath from "../components/transition";
 
 export default function AdminLogin() {
   const [Password, setPassword] = useState("");
@@ -64,33 +65,38 @@ export default function AdminLogin() {
   return (
     <div className="flex flex-col md:flex-row h-screen overflow-hidden relative font-[Figtree]">
       {/* --- Fullscreen Loader --- */}
-      {loading && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
-          <img
-            src="/Loader2-unscreen.gif"
-            alt="Loading animation"
-            className="w-80 h-80 sm:w-96 sm:h-96 object-contain rounded-lg shadow-2xl"
-          />
-          <p className="text-white text-lg sm:text-xl mt-6 tracking-wide animate-pulse drop-shadow-lg">
-            Logging you in...
-          </p>
-        </div>
-      )}
+ {loading && (
+  <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-md overflow-hidden">
+    {/* Animated Motion Path */}
+    <div className="flex items-center justify-center w-full h-full opacity-40">
+      <MotionPath />
+    </div>
 
+    {/* Center text content */}
+    <div className="relative z-10 flex flex-col items-center justify-center">
+      <p className="text-white text-2xl sm:text-3xl font-semibold mb-6 animate-pulse drop-shadow-lg">
+        Logging you in...
+      </p>
+      <p className="text-gray-300 text-sm sm:text-base">
+        Please wait while we fetch your dashboard
+      </p>
+    </div>
+  </div>
+)}
       {/* --- RIGHT SECTION (Mirrored) --- */}
-      <div className="hidden md:flex md:flex-1 bg-[rgba(0,0,0,0.9)] justify-center items-center relative overflow-hidden order-2 md:order-1">
+      <div className="hidden md:flex md:flex-1 justify-center items-center relative overflow-hidden order-2 md:order-1">
         <img
-          src="https://images.unsplash.com/photo-1596495577886-d920f1fb7238?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1200"
+          src="/admin_login.svg"
           alt="Admin workspace"
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          className="absolute inset-0 w-full h-full object-cover "
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/50"></div>
-        <div className="z-20 text-center px-6">
-          <h1 className="text-white text-6xl font-extrabold mb-2 leading-snug drop-shadow-lg">
+        {/* <div className="absolute inset-0 "></div> */}
+        <div className="z-20 text-center px-6 absolute top-10">
+          <h1 className="text-6xl font-extrabold mb-2 leading-snug drop-shadow-lg">
             Welcome Back
           </h1>
-          <p className="text-gray-200 text-xl sm:text-base">
-            Manage users, courses, and reports efficiently.
+          <p className=" text-xl sm:text-base">
+            Your control center for talent and opportunities  
           </p>
         </div>
       </div>
@@ -145,9 +151,8 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className={`${
-              loading ? "bg-gray-700 cursor-not-allowed" : "bg-[#181204] hover:bg-black"
-            } text-white py-3 rounded-lg transition-all duration-300`}
+            className={`${loading ? "bg-gray-700 cursor-not-allowed" : "bg-[#181204] hover:bg-black"
+              } text-white py-3 rounded-lg transition-all duration-300`}
           >
             Login
           </button>

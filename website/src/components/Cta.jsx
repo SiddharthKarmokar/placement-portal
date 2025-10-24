@@ -149,6 +149,7 @@ const Cta = () => {
 
             <motion.a
               href={href}
+              target="blank"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{
                 opacity: 1,

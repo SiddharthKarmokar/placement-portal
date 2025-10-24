@@ -4,13 +4,13 @@ import { Eye, EyeOff } from "lucide-react";
 import "../css/student_login.css";
 import { API_URL } from "../../env-config";
 import toast, { Toaster } from "react-hot-toast";
+import MotionPath from "../components/transition";
 
 export default function StudentLogin() {
   const [Password, setPassword] = useState("");
   const [Username, setUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [welcome, setWelcome] = useState(false); 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -53,12 +53,9 @@ export default function StudentLogin() {
 
       localStorage.setItem("user", JSON.stringify(profileData));
       toast.success(`✅ Welcome, ${profileData.username || "User"}!`);
+      const student = JSON.parse(localStorage.getItem("user")).name;
+      navigate(`/student/${student}`);
 
-      setWelcome(true);
-      setTimeout(() => {
-        const student = profileData.roll_number;
-        navigate(`/student/${student}`);
-      }, 4500);
     } catch (err) {
       console.error("Login Error:", err);
       toast.error("❌ Server error. Please try again.");
@@ -71,31 +68,25 @@ export default function StudentLogin() {
     <div className="flex flex-col md:flex-row h-screen overflow-hidden relative font-[Figtree]">
 
       {/* --- Fullscreen Loader --- */}
-      {loading && !welcome && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm">
-          <img
-            src="/Loader2-unscreen.gif"
-            alt="Loading animation"
-            className="w-40 h-40 sm:w-64 sm:h-64 object-contain rounded-lg shadow-2xl"
-          />
-          <p className="text-white text-lg sm:text-xl mt-6 tracking-wide animate-pulse drop-shadow-lg">
-            Logging you in...
-          </p>
-        </div>
-      )}
+ {loading && (
+  <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-md overflow-hidden">
+    {/* Animated Motion Path */}
+    <div className="flex items-center justify-center w-full h-full opacity-40">
+      <MotionPath />
+    </div>
 
-      {/* --- Welcome Screen --- */}
-      {welcome && (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md transition-all duration-700">
-<img
-  src="/welcome.gif"
-  className="w-56 h-56 sm:w-80 sm:h-80 object-contain rounded-2xl shadow-2xl"
-/>
-          <p className="text-white text-xl sm:text-2xl mt-6 tracking-wide drop-shadow-lg font-semibold animate-pulse">
-            Welcome to your dashboard 
-          </p>
-        </div>
-      )}
+    {/* Center text content */}
+    <div className="relative z-10 flex flex-col items-center justify-center">
+      <p className="text-white text-2xl sm:text-3xl font-semibold mb-6 animate-pulse drop-shadow-lg">
+        Logging you in...
+      </p>
+      <p className="text-gray-300 text-sm sm:text-base">
+        Please wait while we fetch your dashboard
+      </p>
+    </div>
+  </div>
+)}
+
 
       {/* LEFT SECTION */}
       <div className="flex-1 bg-white flex flex-col justify-center px-8 sm:px-12 py-8">
@@ -115,7 +106,7 @@ export default function StudentLogin() {
           <input
             type="text"
             placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value.toLowerCase())}
             className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
             required
           />
@@ -143,9 +134,9 @@ export default function StudentLogin() {
 
           <button
             type="submit"
-            disabled={loading || welcome}
+            disabled={loading}
             className={`${
-              loading || welcome
+              loading 
                 ? "bg-gray-700 cursor-not-allowed"
                 : "bg-[#181204] hover:bg-black"
             } text-white py-3 rounded-lg transition-all duration-300`}
@@ -173,20 +164,19 @@ export default function StudentLogin() {
       </div>
 
       {/* RIGHT SECTION */}
-      <div className="hidden md:flex md:flex-1 bg-[rgba(0,0,0,0.9)] justify-center items-center relative overflow-hidden">
+      <div className="hidden md:flex md:flex-1 justify-center items-center relative overflow-hidden">
         <img
-          src="https://images.unsplash.com/photo-1600695268275-1a6468700bd5?ixlib=rb-4.1.0&auto=format&fit=crop&q=80&w=1171"
+          src="/student_signin.svg"
           alt="students coding together"
-          className="absolute inset-0 w-full h-full object-cover opacity-40"
+          className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/50"></div>
-        <div className="z-20 text-center px-6">
-          <h1 className="text-white text-6xl font-extrabold mb-2 leading-snug drop-shadow-lg">
+        <div className="z-20 absolute top-10 text-center px-6">
+          <h1 className="text-6xl font-extrabold mb-2 leading-snug drop-shadow-lg">
             Welcome Back
           </h1>
-          <p className="text-gray-200 text-xl sm:text-base">
-            Access your courses, grades, and resources seamlessly.
-          </p>
+          <p className=" text-xl sm:text-base">
+            Connect. Explore. Succeed.        
+              </p>
         </div>
       </div>
 
