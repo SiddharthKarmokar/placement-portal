@@ -273,7 +273,7 @@ const AdminHome = () => {
       </div>
       {/* modal here */}
       {Modal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50 z-121 transition-all duration-300">
+  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50  transition-all duration-300">
     <div className="relative bg-white text-black rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg p-8 transform scale-100 animate-fadeIn">
       {/* Close Button */}
       <button

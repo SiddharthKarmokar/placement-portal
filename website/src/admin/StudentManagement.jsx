@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { toast } from "react-toastify";
+import toast, { Toaster } from "react-hot-toast";
 import StudentUpdates from "./StudentUpdates";
 import Sidebar from "../components/SideNav";
 import { FiEdit } from "react-icons/fi";
@@ -148,6 +148,7 @@ const StudentManagement = () => {
           </div>
         )}
       </div>
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
     </div>
   );
 };
