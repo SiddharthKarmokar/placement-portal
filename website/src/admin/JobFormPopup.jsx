@@ -72,12 +72,21 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Clean up the data before submitting
     const payload = {
       ...formData,
+      // Ensure arrays are properly formatted
+      batch: formData.batch || [],
+      applicable_branch: formData.applicable_branch || [],
       selection_process: formData.selection_process.filter(
         (step) => step.trim() !== ""
       ),
+      // Ensure numeric values are properly formatted
+      cgpa_eligibility: Number(formData.cgpa_eligibility) || 6,
     };
+    
+    console.log("Submitting job data:", payload);
     onSubmit(payload);
     onClose();
   };

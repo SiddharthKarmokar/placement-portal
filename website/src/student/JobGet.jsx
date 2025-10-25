@@ -74,7 +74,13 @@ const JobDetails = ({ job }) => {
         <div className="flex items-center gap-2">
           <FiUser className="text-gray-400" />
           <span>
-            <strong>Branch:</strong> {job.applicable_branch || "All branches"}
+            <strong>Branch:</strong> {
+              Array.isArray(job.applicable_branch) 
+                ? job.applicable_branch.length > 0 
+                  ? job.applicable_branch.join(", ")
+                  : "All branches"
+                : job.applicable_branch || "All branches"
+            }
           </span>
         </div>
         <div className="flex items-center gap-2">
