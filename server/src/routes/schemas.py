@@ -104,7 +104,7 @@ class JobCreate(BaseModel):
     type_of_employment: Optional[str] = Field(None)
     eligibility_criteria: Optional[str] = Field(None)
     cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
-    applicable_branch: Optional[str] = Field(None)
+    applicable_branch: List[str] = Field(....,min_items=1)
     stipend: Optional[str] = Field(None)
     ctc: Optional[str] = Field(None)
     other_benefits: Optional[str] = Field(None)
@@ -127,7 +127,7 @@ class JobUpdate(BaseModel):
     type_of_employment: Optional[str] = Field(None)
     eligibility_criteria: Optional[str] = Field(None)
     cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
-    applicable_branch: Optional[str] = Field(None)
+    applicable_branch: List[str] = Field(....,min_items=1)
     stipend: Optional[str] = Field(None)
     ctc: Optional[str] = Field(None)
     other_benefits: Optional[str] = Field(None)
@@ -168,7 +168,7 @@ class JobResponse(BaseModel):
     type_of_employment: Optional[str] = None
     eligibility_criteria: Optional[str] = None
     cgpa_eligibility: Optional[float] = None
-    applicable_branch: Optional[str] = None
+    applicable_branch: List[str] = Field(....,min_items=1)
     stipend: Optional[str] = None
     ctc: Optional[str] = None
     other_benefits: Optional[str] = None
