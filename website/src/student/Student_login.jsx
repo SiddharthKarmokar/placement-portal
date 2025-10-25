@@ -17,7 +17,6 @@ export default function StudentLogin() {
     e.preventDefault();
     localStorage.clear();
     setLoading(true);
-
     try {
       const tokenRes = await fetch(`${API_URL}/api/auth/token`, {
         method: "POST",
@@ -36,9 +35,9 @@ export default function StudentLogin() {
       }
 
       const accessToken = tokenData.access_token;
+      
       localStorage.setItem("token", accessToken);
       localStorage.setItem("role", "student");
-
       const profileRes = await fetch(`${API_URL}/profile/student/me`, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -46,7 +45,8 @@ export default function StudentLogin() {
 
       const profileData = await profileRes.json();
       if (!profileRes.ok) {
-        toast.error("Login succeeded, but failed to fetch profile.");
+        toast.error("Login failed.");
+        localStorage.clear();
         setLoading(false);
         return;
       }
