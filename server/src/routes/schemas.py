@@ -1,11 +1,13 @@
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
-from typing import Optional, List, Union
 from datetime import datetime
+from typing import Optional, List, Union
+
 import pytz
 from bson import ObjectId
+from pydantic import BaseModel, EmailStr, Field, ConfigDict
 
 
-def ist():
+def ist() -> datetime:
+    """Return the current time in Asia/Kolkata timezone."""
     tz = pytz.timezone("Asia/Kolkata")
     return datetime.now(tz)
 
@@ -95,47 +97,47 @@ class Token(BaseModel):
 
 class JobCreate(BaseModel):
     company_name: str = Field(..., min_length=2, max_length=200)
-    website: Optional[str] = Field(None)
-    linkedin_link: Optional[str] = Field(None)
-    address: Optional[str] = Field(None)
+    website: Optional[str] = None
+    linkedin_link: Optional[str] = None
+    address: Optional[str] = None
     batch: List[int] = Field(..., min_items=1)
-    work_location: Optional[str] = Field(None)
-    job_designation: Optional[str] = Field(None)
-    type_of_employment: Optional[str] = Field(None)
-    eligibility_criteria: Optional[str] = Field(None)
+    work_location: Optional[str] = None
+    job_designation: Optional[str] = None
+    type_of_employment: Optional[str] = None
+    eligibility_criteria: Optional[str] = None
     cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
-    applicable_branch: List[str] = Field(....,min_items=1)
-    stipend: Optional[str] = Field(None)
-    ctc: Optional[str] = Field(None)
-    other_benefits: Optional[str] = Field(None)
-    bond: Optional[str] = Field(None)
-    job_description: Optional[str] = Field(None)
-    about_company: Optional[str] = Field(None)
+    applicable_branch: List[str] = Field(..., min_items=1)
+    stipend: Optional[str] = None
+    ctc: Optional[str] = None
+    other_benefits: Optional[str] = None
+    bond: Optional[str] = None
+    job_description: Optional[str] = None
+    about_company: Optional[str] = None
     selection_process: Optional[List[str]] = Field(None, min_items=1)
-    form_link: Optional[str] = Field(None)
+    form_link: Optional[str] = None
     application_deadline: Optional[datetime] = None
 
 
 class JobUpdate(BaseModel):
     company_name: str = Field(..., min_length=2, max_length=200)
-    website: Optional[str] = Field(None)
-    linkedin_link: Optional[str] = Field(None)
-    address: Optional[str] = Field(None)
+    website: Optional[str] = None
+    linkedin_link: Optional[str] = None
+    address: Optional[str] = None
     batch: List[int] = Field(..., min_items=1)
-    work_location: Optional[str] = Field(None)
-    job_designation: Optional[str] = Field(None)
-    type_of_employment: Optional[str] = Field(None)
-    eligibility_criteria: Optional[str] = Field(None)
+    work_location: Optional[str] = None
+    job_designation: Optional[str] = None
+    type_of_employment: Optional[str] = None
+    eligibility_criteria: Optional[str] = None
     cgpa_eligibility: Optional[float] = Field(None, ge=0.0, le=10.0)
-    applicable_branch: List[str] = Field(....,min_items=1)
-    stipend: Optional[str] = Field(None)
-    ctc: Optional[str] = Field(None)
-    other_benefits: Optional[str] = Field(None)
-    bond: Optional[str] = Field(None)
-    job_description: Optional[str] = Field(None)
-    about_company: Optional[str] = Field(None)
+    applicable_branch: List[str] = Field(..., min_items=1)
+    stipend: Optional[str] = None
+    ctc: Optional[str] = None
+    other_benefits: Optional[str] = None
+    bond: Optional[str] = None
+    job_description: Optional[str] = None
+    about_company: Optional[str] = None
     selection_process: Optional[List[str]] = Field(None, min_items=1)
-    form_link: Optional[str] = Field(None)
+    form_link: Optional[str] = None
     application_deadline: Optional[datetime] = None
 
 
@@ -168,7 +170,7 @@ class JobResponse(BaseModel):
     type_of_employment: Optional[str] = None
     eligibility_criteria: Optional[str] = None
     cgpa_eligibility: Optional[float] = None
-    applicable_branch: List[str] = Field(....,min_items=1)
+    applicable_branch: List[str] = Field(..., min_items=1)
     stipend: Optional[str] = None
     ctc: Optional[str] = None
     other_benefits: Optional[str] = None
