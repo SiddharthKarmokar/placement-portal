@@ -7,25 +7,25 @@ const Cta = () => {
       icon: "🔗",
       title: "Alumni",
       desc: "Our alumni have excelled globally across diverse professions, forming a powerful network that enriches our community.",
-      href: "#alumni",
+      href: "https://alumni.iiitk.ac.in/home.dz",
     },
     {
       icon: "⭐",
       title: "Rankings",
       desc: "AAAA-rated by Careers360 — a mark of distinction recognizing our pursuit of excellence and holistic development.",
-      href: "#rankings",
+      href: "https://www.careers360.com/university/indian-institute-of-information-technology-design-and-manufacturing-kurnool",
     },
     {
       icon: "🎓",
       title: "Admission Process",
       desc: "Our students are selected through a rigorous screening process, ensuring that IIITDM Kurnool nurtures India’s brightest minds.",
-      href: "#admissions",
+      href: "https://iiitk.ac.in/Undergraduate/page",
     },
     {
       icon: "🌱",
       title: "All Round Development",
       desc: "We emphasize skill, aptitude, and perception to foster multi-dimensional growth and leadership qualities among our students.",
-      href: "#growth",
+      href: "https://iiitk.ac.in/About-IIITDM-Kurnool/page",
     },
   ];
 
@@ -149,6 +149,7 @@ const Cta = () => {
 
             <motion.a
               href={href}
+              target="blank"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{
                 opacity: 1,

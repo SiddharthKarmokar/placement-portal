@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { motion } from "framer-motion";
+import { X } from 'lucide-react';
 import toast, { Toaster } from "react-hot-toast";
 import {
   MapPin,
@@ -325,13 +326,17 @@ function EditModal({
   setUploading,
 }) {
   return (
-    <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-[rgba(0,0,0,0.5)] flex items-center justify-center z-500 p-4">
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         className="bg-white rounded-xl shadow-2xl w-full max-w-3xl p-6 overflow-y-auto max-h-[90vh]"
       >
+<X
+  onClick={() => setIsModalOpen(false)}
+  className="relative top-4 left-[700px] z-600 h-6 w-6 cursor-pointer text-gray-500 hover:text-red-600 transition"
+/>
         <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
           <FileSignature size={20} /> Edit Profile
         </h2>
