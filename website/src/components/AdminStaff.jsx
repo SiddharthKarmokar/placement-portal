@@ -1,4 +1,6 @@
 import React from 'react';
+import { motion } from 'framer-motion';
+import { Mail, Phone, User, Building2, Sparkles } from 'lucide-react';
 
 const administrativeStaff = [
   {
@@ -15,43 +17,70 @@ const administrativeStaff = [
   },
 ];
 
-const StaffCard = ({ name, role, phone, email }) => (
-  <div className="bg-white shadow-md p-6 rounded-lg flex flex-col sm:flex-row items-center sm:items-start space-y-4 sm:space-y-0 sm:space-x-6 w-full">
-    <div className="w-24 h-24 bg-gray-200 flex-shrink-0 rounded-full overflow-hidden">
-      <img src="/adm.png" alt={name} className="object-cover w-full h-full" />
-    </div>
-    <div className="text-center sm:text-left">
-      <h3 className="text-lg font-semibold">{name}</h3>
-      <p className="text-gray-600">{role}</p>
-      <div className="text-gray-500 mt-2 text-sm space-y-1">
-        <div className="flex items-center justify-center sm:justify-start space-x-2">
-          <span className="material-icons text-base">phone</span>
-          <a href={`tel:${phone}`} className="hover:underline">{phone}</a>
-        </div>
-        <div className="flex items-center justify-center sm:justify-start space-x-2">
-          <span className="material-icons text-base">email</span>
-          <a href={`mailto:${email}`} className="hover:underline break-all">{email}</a>
+const StaffCard = ({ name, role, phone, email, index }) => (
+  <motion.div 
+    className="bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition-all duration-300 border border-gray-100"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ 
+      duration: 0.5, 
+      delay: index * 0.1,
+      ease: "easeOut"
+    }}
+    whileHover={{ 
+      y: -5,
+      transition: { duration: 0.3 }
+    }}
+  >
+    <div className="flex items-center gap-4">
+      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#31398A] to-[#029309] p-0.5">
+        <img
+          src="/adm.png"
+          alt={name}
+          className="w-full h-full rounded-full object-cover"
+        />
+      </div>
+      
+      <div className="flex-1">
+        <h3 className="text-lg font-bold text-[#31398A] mb-1">{name}</h3>
+        <p className="text-sm text-gray-600 mb-3">{role}</p>
+        
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4 text-[#029309]" />
+            <a href={`tel:${phone}`} className="text-sm text-gray-700 hover:text-[#31398A] transition-colors">
+              {phone}
+            </a>
+          </div>
+          <div className="flex items-center gap-2">
+            <Mail className="w-4 h-4 text-[#029309]" />
+            <a href={`mailto:${email}`} className="text-sm text-gray-700 hover:text-[#31398A] transition-colors break-all">
+              {email}
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </motion.div>
 );
 
 const AdminStaff = () => (
-  <div className="bg-gray-100 py-12 px-4 sm:px-6 lg:px-12">
-    <h1 className="text-3xl font-bold text-center mb-10">Administration</h1>
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-      {administrativeStaff.map((staff, index) => (
-        <StaffCard
-          key={index}
-          name={staff.name}
-          role={staff.role}
-          phone={staff.phone}
-          email={staff.email}
-        />
-      ))}
+  <section className="bg-[#f4f7ff] px-4 py-16 md:px-10 lg:px-16">
+    <div className="max-w-7xl mx-auto">
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h2 className="text-3xl font-bold text-[#31398A] mb-4">Administration</h2>
+        <div className="w-16 h-0.5 bg-[#029309] mx-auto"></div>
+      </div>
+
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {administrativeStaff.map((staff, index) => (
+          <StaffCard key={index} {...staff} index={index} />
+        ))}
+      </div>
     </div>
-  </div>
+  </section>
 );
 
 export default AdminStaff;

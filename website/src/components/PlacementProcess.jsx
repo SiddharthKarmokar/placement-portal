@@ -71,10 +71,10 @@ const PlacementProcess = () => {
     <section className="py-20 bg-[#f4f7ff]">
       <div className="max-w-[80%] items-center mx-auto px-4">
         <div className="w-full flex justify-center items-center">
-          <h1 className=" text-5xl font-bold bg-gradient-to-r from-blue-700 to-lime-500 bg-clip-text text-transparent mb-2">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-700 to-lime-500 bg-clip-text text-transparent mb-2">
             Placement Process
           </h1>
-          </div>
+        </div>
         <div className="relative">
           {/* Center line */}
           <div className="hidden md:block absolute left-1/2 top-0 h-full w-1 bg-gradient-to-b from-[#31398A] via-[#029309] to-[#31398A] opacity-20 transform -translate-x-1/2" />
@@ -96,30 +96,47 @@ const PlacementProcess = () => {
                     <div
                       className={`w-14 h-14 rounded-full ${
                         isEven ? "bg-[#31398A]" : "bg-[#029309]"
-                      } text-white flex items-center justify-center shadow-lg`}
+                      } text-white flex items-center justify-center shadow-lg hover:scale-110 transition-transform duration-300`}
                     >
                       <Icon className="w-6 h-6" />
                     </div>
                   </div>
 
                   {/* Card */}
-                  <div className="md:w-1/2 px-6">
-                    <div className="bg-white/70 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-lg transition-all border border-gray-100">
+                  <div className="md:w-1/2 px-6 mb-8">
+                    <div className="bg-white/70 backdrop-blur-md p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 border border-gray-100 hover:scale-[1.02] group">
                       <h3 
-                      className={`text-xl font-semibold ${
-                        isEven ? "text-[#31398A]" : "text-[#029309]"
-                      } mb-2`}
-                        
-                        >
+                        className={`text-xl font-semibold ${
+                          isEven ? "text-[#31398A]" : "text-[#029309]"
+                        } mb-2 group-hover:translate-x-1 transition-transform`}
+                      >
                         {step.title}
                       </h3>
-                      <p className="text-gray-700 text-sm">{step.description}</p>
+                      <p className="text-gray-700 text-sm leading-relaxed">{step.description}</p>
                     </div>
                   </div>
                 </div>
               );
             })}
           </div>
+        </div>
+
+        {/* Bottom CTA */}
+        <div className="mt-16 text-center bg-[#1c398e] rounded-2xl p-8 shadow-xl">
+          <p className="text-white text-lg font-medium mb-4">
+            Ready to recruit from IIITDM Kurnool?
+          </p>
+          <a 
+            href="https://docs.google.com/forms/d/e/1FAIpQLScmbLuoAeDym_5EhLRUBspbGtLqA5yjahxVJOmuiOK3aCv8gw/viewform"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 bg-white text-[#31398A] font-bold px-8 py-3 rounded-lg hover:bg-gray-100 hover:text-[#029309] transition-all duration-300 shadow-lg hover:shadow-xl"
+          >
+            <span>Submit Recruitment Form</span>
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </a>
         </div>
       </div>
     </section>
