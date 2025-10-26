@@ -17,10 +17,14 @@ const Sidebar = () => {
 
   const user = JSON.parse(localStorage.getItem("user") || "{}");
   const role = user.role || "student"; // fallback to student if not found
-
+  var img = user.profile_pic_link || "https://cdn-icons-png.flaticon.com/512/6997/6997662.png";
   const handleNavigation = () => {
     localStorage.clear();
-    navigate("/admin/login");
+    if(role === "admin") {
+      navigate("/admin/login");
+    } else {
+      navigate("/student/login");
+    }
   };
 
   const menuItems =
@@ -167,7 +171,7 @@ const Sidebar = () => {
         {/* Profile */}
         <div className="border-t pt-4 flex items-center gap-3">
           <img
-            src="/profile.png"
+            src={img}
             alt="profile"
             className="w-10 h-10 rounded-full cursor-pointer"
           />

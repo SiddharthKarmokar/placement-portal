@@ -4,20 +4,22 @@ import { Mail, Phone, User, Building2, Sparkles } from 'lucide-react';
 
 const administrativeStaff = [
   {
+    name: 'Dr.Pavan Kumar M V N R.',
+    role: 'Training and Placement Officer',
+    phone: '+91-9876543210',
+    email: 'ravi.admin@iiitk.ac.in',
+    image: '/tpo.jpeg'
+  },
+  {
     name: 'P. Chaithanya Deepak',
     role: 'Assist. Placement Officer',
     phone: '+91-9553151357',
     email: 'placementcell@iiitk.ac.in',
-  },
-  {
-    name: 'Ravi Kumar',
-    role: 'Office Admin',
-    phone: '+91-9876543210',
-    email: 'ravi.admin@iiitk.ac.in',
+    image: '/adm.png',
   },
 ];
 
-const StaffCard = ({ name, role, phone, email, index }) => (
+const StaffCard = ({ name, role, phone, image,email, index }) => (
   <motion.div 
     className="bg-white shadow-lg rounded-xl p-6 hover:shadow-xl transition-all duration-300 border border-gray-100"
     initial={{ opacity: 0, y: 20 }}
@@ -35,7 +37,7 @@ const StaffCard = ({ name, role, phone, email, index }) => (
     <div className="flex items-center gap-4">
       <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#31398A] to-[#029309] p-0.5">
         <img
-          src="/adm.png"
+          src={image}
           alt={name}
           className="w-full h-full rounded-full object-cover"
         />

@@ -190,7 +190,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
       {/* Sidebar - Sticky */}
-      <div className="hidden lg:block sticky top-0 h-screen">
+      <div className="hidden md:block sticky top-0 h-screen">
         <Sidebar />
       </div>
 

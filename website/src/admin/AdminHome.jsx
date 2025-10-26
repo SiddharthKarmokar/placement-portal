@@ -62,27 +62,27 @@ const AdminHome = () => {
   };
 
   return (
-    <div className="h-screen flex bg-[#EEEEEE]">
+    <div className="h-screen w-full flex bg-[#EEEEEE]">
       {/* Sidebar - collapses on small screens */}
-      <div className="hidden lg:block">
+      <div className="hidden md:block">
         <Sidebar />
       </div>
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         <LogoNav className="shadow-md sticky top-0 z-10" />
-        <div className="flex flex-1 flex-col lg:flex-row gap-6 p-4 md:p-6 overflow-y-auto">
+        <div className="flex flex-1 flex-col xl:flex-row gap-3 sm:gap-4 md:gap-6 p-2 sm:p-4 md:p-6 overflow-y-auto">
           {/* Job Post Section */}
-          <div className="flex-1 rounded-3xl md:overflow-y-auto custom-scroll">
+          <div className="flex-1 rounded-2xl md:rounded-3xl md:overflow-y-auto custom-scroll">
             <JobPost />
           </div>
 
-          {/* Right Side Actions */}
-          <div className="w-full lg:w-[280px] hidden flex-col justify-evenly items-center lg:flex gap-4">
+          {/* Right Side Actions - Only visible on larger screens */}
+          <div className="hidden xl:flex flex-col justify-center items-center gap-4 md:gap-6 w-full xl:w-[280px] xl:min-w-[280px]">
             {/* Update Brochure */}
-            <NavLink to="/admin/management">
-              <button className="relative w-60 h-60 bg-gradient-to-br from-orange-400 to-red-500 cursor-pointer rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95">
+            <NavLink to="/admin/management" className="w-full sm:w-auto">
+              <button className="relative w-full sm:w-48 sm:h-48 md:w-52 md:h-52 lg:w-56 lg:h-56 xl:w-60 xl:h-60 bg-gradient-to-br from-orange-400 to-red-500 cursor-pointer rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 overflow-hidden">
                 <svg
-                  className="absolute w-[120px] -left-3.5 top-1"
+                  className="absolute w-[60%] sm:w-[55%] md:w-[52%] lg:w-[50%] xl:w-[50%] -left-3 sm:-left-2 top-1"
                   viewBox="0 0 127 74"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -110,9 +110,7 @@ const AdminHome = () => {
                 </svg>
 
                 <svg
-                  width="85"
-                  height="49"
-                  className="absolute top-6 right-5"
+                  className="absolute w-[45%] sm:w-[40%] md:w-[38%] lg:w-[35%] xl:w-[35%] top-3 sm:top-4 md:top-4 lg:top-5 xl:top-5 right-2 sm:right-3 md:right-4 lg:right-5 xl:right-5"
                   viewBox="0 0 85 49"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -139,9 +137,9 @@ const AdminHome = () => {
                   />
                 </svg>
 
-                <div className="absolute bottom-2 right-2 w-20 h-20 bg-red-600/20 rounded-full"></div>
-                <div className="relative z-10 flex flex-col items-start justify-end h-full p-6">
-                  <h3 className="text-white text-left text-3xl font-bold leading-tight">
+                <div className="absolute bottom-2 right-2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 xl:w-20 xl:h-20 bg-red-600/20 rounded-full"></div>
+                <div className="relative z-10 flex flex-col items-start justify-end h-full p-3 sm:p-4 md:p-4 lg:p-5 xl:p-6">
+                  <h3 className="text-white text-left text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl font-bold leading-tight">
                     Student
                     <br />
                     Management
@@ -149,16 +147,16 @@ const AdminHome = () => {
                 </div>
               </button>
             </NavLink>
-            <div className="flex w-full justify-evenly items-start">
+            <div className="flex w-full justify-center items-center">
               {/* csv upload */}
               <button
-                className="relative w-60 h-60 bg-gradient-to-br from-sky-400 to-blue-600 cursor-pointer rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95"
+                className="relative w-full sm:w-48 sm:h-48 md:w-52 md:h-52 lg:w-56 lg:h-56 xl:w-60 xl:h-60 bg-gradient-to-br from-sky-400 to-blue-600 cursor-pointer rounded-2xl shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105 active:scale-95 overflow-hidden"
                 onClick={() => {
                   setModal(true);
                 }}
               >
                 <svg
-                  className="absolute w-[120px] -left-3.5 top-1"
+                  className="absolute w-[60%] sm:w-[55%] md:w-[52%] lg:w-[50%] xl:w-[50%] -left-3 sm:-left-2 top-1"
                   viewBox="0 0 127 74"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -215,9 +213,7 @@ const AdminHome = () => {
                   />
                 </svg>
                 <svg
-                  width="85"
-                  height="49"
-                  className="absolute top-6 right-5"
+                  className="absolute w-[45%] sm:w-[40%] md:w-[38%] lg:w-[35%] xl:w-[35%] top-3 sm:top-4 md:top-4 lg:top-5 xl:top-5 right-2 sm:right-3 md:right-4 lg:right-5 xl:right-5"
                   viewBox="0 0 85 49"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
@@ -244,9 +240,9 @@ const AdminHome = () => {
                   />
                 </svg>
 
-                <div className="absolute bottom-2 right-2 w-20 h-20 bg-red-600/20 rounded-full"></div>
-                <div className="relative z-10 flex flex-col items-start justify-end h-full p-6">
-                  <h3 className="text-white text-left text-3xl font-bold leading-tight">
+                <div className="absolute bottom-2 right-2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 lg:w-18 lg:h-18 xl:w-20 xl:h-20 bg-red-600/20 rounded-full"></div>
+                <div className="relative z-10 flex flex-col items-start justify-end h-full p-3 sm:p-4 md:p-4 lg:p-5 xl:p-6">
+                  <h3 className="text-white text-left text-xl sm:text-2xl md:text-2xl lg:text-3xl xl:text-3xl font-bold leading-tight">
                     Add
                     <br />
                     Student
@@ -273,7 +269,7 @@ const AdminHome = () => {
       </div>
       {/* modal here */}
       {Modal && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm z-50  transition-all duration-300">
+  <div className="flex items-center justify-center bg-black/40 backdrop-blur-sm z-50  transition-all duration-300">
     <div className="relative bg-white text-black rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 w-full max-w-lg p-8 transform scale-100 animate-fadeIn">
       {/* Close Button */}
       <button

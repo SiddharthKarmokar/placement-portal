@@ -105,12 +105,7 @@ const LogoNav = () => {
             dest: "/student/jobs",
             external: false,
           },
-          {
-            icon: Bell,
-            label: "Notifications",
-            dest: "/student/notifications",
-            external: false,
-          },
+          
           {
             icon: Info,
             label: "Placement Process",

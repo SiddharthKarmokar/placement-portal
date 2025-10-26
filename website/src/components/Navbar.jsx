@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 export default function Navbar({ className = "" ,navcol}) {
   const [isOpen, setIsOpen] = useState(false);
-
+  const navigate = useNavigate();
   const linkStyle =
     "block md:inline hover:text-gray-200 px-2 py-1 transition-colors duration-200";
   const activeStyle = "text-gray-300 underline";
@@ -52,6 +52,8 @@ export default function Navbar({ className = "" ,navcol}) {
         <a href="#contact" className={linkStyle}>
           Contact Us
         </a>
+        <button onClick={() => navigate("/ourteam")} className={linkStyle}>Our Team</button>
+      
       </div>
     </nav>
   );
