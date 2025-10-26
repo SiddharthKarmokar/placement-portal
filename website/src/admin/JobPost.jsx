@@ -155,29 +155,30 @@ const JobPost = () => {
       toast.error("Failed to post job");
     }
   };
-  const handleGetMetrics = async (jobId) => {
+const handleGetMetrics = async (jobId) => {
   try {
     const token = localStorage.getItem("token");
 
     const res = await axios.get(
       `${API_URL}/api/jobs/job_metrics`,
       {
-        params: { jobid: jobId }, // this translates to ?jobid=...
+        params: { jobid: jobId },
         headers: {
+          Accept: "application/json",
           Authorization: `Bearer ${token}`,
-          "Accept": "application/json",
         },
       }
     );
 
-    setJobs([...jobs, res.data]);
-    setShowPostPopup(false);
+    console.log("Metrics response:", res.data);
+
     toast.success("Metrics fetched successfully!");
   } catch (err) {
     console.error("Error fetching metrics:", err);
     toast.error("Failed to get metrics");
   }
 };
+
 
 
   const handleModifyJob = async (updatedJob) => {
@@ -653,7 +654,8 @@ const JobPost = () => {
                         </div>
                         <div className="flex flex-wrap justify-between items-center">
                           <button
-                            onClick={handleGetMetrics(job._id)}
+                            onClick={() => handleGetMetrics(job._id)}
+
                             
                             className="flex items-center mx-[2px] w-fit justify-center gap-2 bg-[#57C62B]  hover:bg-[#4da72a]  text-white px-4 py-2 rounded-lg transition-colors"
                           >

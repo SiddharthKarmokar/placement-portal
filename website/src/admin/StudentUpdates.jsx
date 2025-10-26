@@ -204,7 +204,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
             
             {/* Profile Picture Upload */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+              <label className=" text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
                 <UserCircle2 size={18} className="text-indigo-600" />
                 Profile Picture
               </label>

@@ -74,23 +74,23 @@ const StudentManagement = () => {
         <LogoNav/>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 sm:p-6">
           <div className="max-w-4xl mx-auto">
             {/* Search Section */}
-            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-6">
               <h2 className="text-xl font-semibold mb-4">Search Student</h2>
-              <form className="flex gap-4">
+              <form className="flex flex-col sm:flex-row gap-4">
                 <input
                   type="text"
                   placeholder="Enter Roll Number"
                   value={searchRollNumber}
                   onChange={(e) => setSearchRollNumber(e.target.value)}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 w-full"
                 />
                 <button
                   onClick={handleSearchStudent}
                   disabled={isSearching}
-                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
+                  className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50 whitespace-nowrap"
                 >
                   {isSearching ? "Searching..." : "Search"}
                 </button>
@@ -110,9 +110,9 @@ const StudentManagement = () => {
 
             {/* Student Info Display */}
             {selectedStudent && (
-              <div className="bg-white p-6 rounded-lg shadow-md mt-6 flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">
+              <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mt-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold text-gray-800 truncate">
                     {selectedStudent.name || "New Student"}
                   </h3>
                   <p className="text-gray-600">
@@ -126,7 +126,7 @@ const StudentManagement = () => {
                 </div>
                 <button
                   onClick={handleEditClick}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2 whitespace-nowrap w-full sm:w-auto justify-center"
                 >
                   <FiEdit size={18} /> {selectedStudent._id ? "Edit" : "Create"}
                 </button>
