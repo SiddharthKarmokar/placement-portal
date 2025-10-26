@@ -251,9 +251,23 @@ const JobGet = () => {
         job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
       // --- 2. Employment Type ---
-      const matchesEmployment =
-        employmentFilter === "all" ||
-        job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
+      let matchesEmployment = employmentFilter === "all";
+      
+      if (!matchesEmployment && job.type_of_employment) {
+        const jobType = job.type_of_employment.toLowerCase();
+        const filterType = employmentFilter.toLowerCase();
+        
+        // Map filter values to actual job type values
+        const filterMap = {
+          "internship": "internship",
+          "ppo": "ppo",
+          "fulltime": "full-time",
+          "parttime": "part-time",
+          "contract": "contract"
+        };
+        
+        matchesEmployment = jobType === filterMap[filterType];
+      }
 
       // --- 3. Batch ---
       const matchesBatch =
@@ -362,6 +376,7 @@ const JobGet = () => {
             <option value="2025">2025</option>
             <option value="2026">2026</option>
             <option value="2027">2027</option>
+            <option value="2028">2028</option>
           </select>
 
           {/* Work Location */}
@@ -388,6 +403,8 @@ const JobGet = () => {
             <option value="internship">Internship</option>
             <option value="ppo">PPO</option>
             <option value="fulltime">Full-time</option>
+            <option value="parttime">Part-time</option>
+            <option value="contract">Contract</option>
           </select>
 
           {/* CTC */}

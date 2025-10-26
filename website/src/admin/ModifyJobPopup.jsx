@@ -14,7 +14,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
     type_of_employment: "",
     eligibility_criteria: "",
     cgpa_eligibility:6,
-    applicable_branch: "",
+    applicable_branch: [],
     stipend: "",
     ctc: "",
     other_benefits: "",
@@ -44,7 +44,7 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
         type_of_employment: job.type_of_employment || "",
         eligibility_criteria: job.eligibility_criteria || "",
         cgpa_eligibility:job.cgpa_eligibility || 6,
-        applicable_branch: job.applicable_branch || "",
+        applicable_branch: Array.isArray(job.applicable_branch) ? job.applicable_branch : (job.applicable_branch ? [job.applicable_branch] : []),
         stipend: job.stipend || "",
         ctc: job.ctc || "",
         other_benefits: job.other_benefits || "",
@@ -71,6 +71,13 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
         batch: checked
           ? [...prev.batch, numericValue]
           : prev.batch.filter((year) => year !== numericValue),
+      }));
+    } else if (type === "checkbox" && name === "applicable_branch") {
+      setFormData((prev) => ({
+        ...prev,
+        applicable_branch: checked
+          ? [...prev.applicable_branch, value]
+          : prev.applicable_branch.filter((branch) => branch !== value),
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -228,30 +235,37 @@ const ModifyJobPopup = ({ job, onClose, onSubmit }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Work Location
                   </label>
-                  <input
+                  <select
                     name="work_location"
                     value={formData.work_location}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Select Location</option>
+                    <option value="WFH">Remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="Onsite">On-site</option>
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Applicable Branch
+                    Applicable Branches
                   </label>
-                  <select
-                    name="applicable_branch"
-                    value={formData.applicable_branch}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Branch</option>
+                  <div className="flex flex-wrap gap-3 mt-2">
                     {branches.map((branch) => (
-                      <option key={branch} value={branch}>
-                        {branch}
-                      </option>
+                      <label key={branch} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          name="applicable_branch"
+                          value={branch}
+                          checked={formData.applicable_branch.includes(branch)}
+                          onChange={handleChange}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span className="text-sm text-gray-700">{branch}</span>
+                      </label>
                     ))}
-                  </select>
+                  </div>
                 </div>
               </div>
             </div>

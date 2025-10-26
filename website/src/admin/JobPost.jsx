@@ -85,7 +85,7 @@ const JobPost = () => {
         setIsLoading(false);
         // console.log(res.data);
       } catch (err) {
-        console.error("Error fetching jobs:", err);
+        // console.error("Error fetching jobs:", err);
         toast.error("Failed to fetch jobs");
         setIsLoading(false);
       }
@@ -93,6 +93,27 @@ const JobPost = () => {
 
     fetchJobs();
   }, []);
+  const handleUpdateMetrics = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      `${API_URL}/api/jobs/update-all-metrics`,
+      {}, // empty body since -d '' in curl
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      }
+    );
+
+    toast.success("Job Metrics Updated Successfully!");
+  } catch (e) {
+    console.error(e);
+    toast.error("Failed to Update Job Metrics");
+  }
+};
 
   const handlePostJob = async (jobData) => {
     try {
@@ -130,18 +151,35 @@ const JobPost = () => {
       setShowPostPopup(false);
       toast.success("Job posted successfully!");
     } catch (err) {
-      console.error("Error posting job:", err);
-      if (err.response?.status === 401) {
-        toast.error("Authentication failed. Please login again.");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("role");
-        // Optionally redirect to login
-      } else {
-        toast.error(`Failed to post job: ${err.response?.data?.detail || err.message}`);
-      }
+      // console.error("Error posting job:", err);
+      toast.error("Failed to post job");
     }
   };
+const handleGetMetrics = async (jobId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      `${API_URL}/api/jobs/job_metrics`,
+      {
+        params: { jobid: jobId },
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    console.log("Metrics response:", res.data);
+
+    toast.success("Metrics fetched successfully!");
+  } catch (err) {
+    console.error("Error fetching metrics:", err);
+    toast.error("Failed to get metrics");
+  }
+};
+
+
 
   const handleModifyJob = async (updatedJob) => {
     try {
@@ -190,30 +228,14 @@ const JobPost = () => {
       setShowModifyPopup(false);
       toast.success("Job updated successfully!");
     } catch (err) {
-      console.error(
-        "Error updating job:",
-        err.response?.data || err.message
-      );
+      // console.error(
+      //   "Error updating job:",
+      //   err.response?.data || err.message
+      // );
       toast.error("Failed to update job");
     }
   };
-  
-  // const handleDeleteJob = async (jobId) => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     await axios.delete(`${SERVER_URI}/api/jobs/${jobId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     setJobs(jobs.filter((job) => job._id !== jobId));
-  //     setShowDeleteModal(false);
-  //     toast.success("Job deleted successfully!");
-  //   } catch (err) {
-  //     console.error("Error deleting job:", err);
-  //     toast.error("Failed to delete job");
-  //   }
-  // };
+
 
   const handleSyncJobs = async () => {
     try {
@@ -229,50 +251,49 @@ const JobPost = () => {
       );
       toast.success("Jobs synced successfully!");
     } catch (err) {
-      console.error("Error syncing jobs:", err);
+
       toast.error("Failed to sync jobs");
     }
   };
 
-  const filteredJobs = jobs
-    .filter((job) => {
-      // --- 1. Search by designation OR company ---
-      const matchesSearch =
-        !searchTerm ||
-        job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredJobs = jobs.filter((job) => {
 
-      // --- 2. Employment Type ---
-      const matchesEmployment =
-        employmentFilter === "all" ||
-        job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
+    const matchesSearch =
+      !searchTerm ||
+      job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
-      // --- 3. Batch ---
-      const matchesBatch =
-        batchFilter === "all" || job.batch?.includes(Number(batchFilter));
+  
+    const matchesEmployment =
+      employmentFilter === "all" ||
+      job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
 
-      // --- 4. Work Location ---
-      const matchesLocation =
-        locationFilter === "all" ||
-        job.work_location?.toLowerCase() === locationFilter.toLowerCase();
 
-      // --- 5. CTC Range ---
-      let matchesCtc = true;
-      if (ctcFilter !== "all" && job.ctc) {
-        const ctcValue = parseFloat(job.ctc); // assumes format like "8 LPA"
-        if (!isNaN(ctcValue)) {
-          if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
-          if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
-            matchesCtc = false;
-          if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
-        }
+    const matchesBatch =
+      batchFilter === "all" || job.batch?.includes(Number(batchFilter));
+
+
+    const matchesLocation =
+      locationFilter === "all" ||
+      job.work_location?.toLowerCase() === locationFilter.toLowerCase();
+
+  
+    let matchesCtc = true;
+    if (ctcFilter !== "all" && job.ctc) {
+      const ctcValue = parseFloat(job.ctc); 
+      if (!isNaN(ctcValue)) {
+        if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
+        if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
+          matchesCtc = false;
+        if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
       }
+    }
 
-      // --- 6. Deadline ---
-      let matchesDeadline = true;
-      if (deadlineFilter !== "all" && job.application_deadline) {
-        const now = new Date();
-        const deadline = new Date(job.application_deadline);
+  
+    let matchesDeadline = true;
+    if (deadlineFilter !== "all" && job.application_deadline) {
+      const now = new Date();
+      const deadline = new Date(job.application_deadline);
 
         if (deadlineFilter === "active" && deadline < now)
           matchesDeadline = false;
@@ -324,49 +345,55 @@ const JobPost = () => {
   };
 
   return (
-    <div className="bg-[#F5F7FC] min-h-screen p-8 font-[Figtree]">
+    <div className="bg-[#F5F7FC] min-h-screen p-2 sm:p-4 md:p-8 font-[Figtree]">
       <div className="max-w-6xl mx-auto">
         {/* Header with Title and Create Button */}
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 sm:text-2xl">Job Postings</h1>
-          <div className="flex justify-between items-center gap-5">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800">Job Postings</h1>
+          <div className="flex sm:flex-row sm:justify-between items-stretch sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <button
+              onClick={handleUpdateMetrics}
+              className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-[#10793F] text-white rounded-xl shadow-lg hover:bg-white hover:text-black transition-colors text-sm sm:text-base"
+            >
+            ↻Metrics
+            </button>
             <button
               onClick={handleSyncJobs}
-              className="flex items-center gap-2 px-4 py-2 bg-[#57C62B] text-white rounded-xl shadow-lg hover:bg-[#4da72a] transition-colors"
+              className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-[#57C62B] text-white rounded-xl shadow-lg hover:bg-[#4da72a] transition-colors text-sm sm:text-base"
             >
               Sync
             </button>
             <button
               onClick={() => setShowPostPopup(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-black text-white rounded-xl shadow-lg hover:bg-gray-900 transition-colors"
+              className="flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-black text-white rounded-xl shadow-lg hover:bg-gray-900 transition-colors text-sm sm:text-base"
             >
-              <span className="text-xl">+</span> Post 
+              <span className="text-lg sm:text-xl">+</span> Post 
             </button>
           </div>
         </div>
-        <hr className="border-gray-300 mb-6" />
+        <hr className="border-gray-300 mb-4 sm:mb-6" />
 
         {/* Search and Filter Section */}
-        <div className="flex flex-wrap gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-6 sm:mb-8">
           {/* Search */}
-          <div className="relative flex-1 min-w-[250px]">
+          <div className="relative flex-1 min-w-full sm:min-w-[250px]">
             <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search by designation or company..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-gray-300 
+              className="w-full pl-10 pr-4 py-2 text-sm sm:text-base rounded-xl border-2 border-gray-300 
                  focus:outline-none focus:border-blue-500 transition-colors"
             />
           </div>
-
+<div className="flex flex-wrap gap-3 sm:gap-4">
           {/* Batch */}
           <select
             value={batchFilter}
             onChange={(e) => setBatchFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl border-2 border-gray-300 
-               focus:outline-none focus:border-blue-500 transition-colors"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors w-fit sm:w-auto"
           >
             <option value="all">All Batches</option>
             <option value="2025">2025</option>
@@ -378,8 +405,8 @@ const JobPost = () => {
           <select
             value={locationFilter}
             onChange={(e) => setLocationFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl border-2 border-gray-300 
-               focus:outline-none focus:border-blue-500 transition-colors"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors w-fit sm:w-auto"
           >
             <option value="all">All Locations</option>
             <option value="WFH">Remote</option>
@@ -391,8 +418,8 @@ const JobPost = () => {
           <select
             value={employmentFilter}
             onChange={(e) => setEmploymentFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl border-2 border-gray-300 
-               focus:outline-none focus:border-blue-500 transition-colors"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors w-fit sm:w-auto"
           >
             <option value="all">All Types</option>
             <option value="internship">Internship</option>
@@ -404,8 +431,8 @@ const JobPost = () => {
           <select
             value={ctcFilter}
             onChange={(e) => setCtcFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl border-2 border-gray-300 
-               focus:outline-none focus:border-blue-500 transition-colors"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors w-fit sm:w-auto"
           >
             <option value="all">All CTC</option>
             <option value="lt5">Less than 5 LPA</option>
@@ -417,14 +444,15 @@ const JobPost = () => {
           <select
             value={deadlineFilter}
             onChange={(e) => setDeadlineFilter(e.target.value)}
-            className="px-4 py-2 rounded-xl border-2 border-gray-300 
-               focus:outline-none focus:border-blue-500 transition-colors"
+            className="px-3 sm:px-4 py-2 text-sm sm:text-base rounded-xl border-2 border-gray-300 
+               focus:outline-none focus:border-blue-500 transition-colors w-fit sm:w-auto"
           >
             <option value="all">All Deadlines</option>
             <option value="active">Active</option>
             <option value="soon">Closing Soon</option>
             <option value="expired">Expired</option>
           </select>
+          </div>
         </div>
 
         {/* Job Cards */}
@@ -447,33 +475,33 @@ const JobPost = () => {
               {filteredJobs.map((job) => (
                 <div
                   key={job._id}
-                  className="bg-white rounded-3xl border-2 border-gray-200 p-6 shadow-lg hover:shadow-xl transition-shadow"
+                  className="bg-white rounded-2xl sm:rounded-3xl border-2 border-gray-200 p-4 sm:p-6 shadow-lg hover:shadow-xl transition-shadow"
                 >
-                  <div className="flex flex-col lg:flex-row gap-6">
+                  <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
                     {/* Left Section - Company and Job Details */}
-                    <div className="flex-1 space-y-4">
-                      <div className="flex items-start justify-between">
+                    <div className="flex-1 space-y-3 sm:space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2">
                         <div>
-                          <h2 className="text-2xl font-bold text-gray-900">
+                          <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
                             {job.job_designation}
                           </h2>
-                          <p className="text-lg font-semibold text-gray-700">
+                          <p className="text-base sm:text-lg font-semibold text-gray-700">
                             {job.company_name}
                           </p>
                         </div>
-                        <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                        <span className="bg-blue-100 text-blue-800 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium w-fit sm:w-auto">
                           {job.type_of_employment}
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <FiMapPin className="text-gray-400" />
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <div className="flex items-center gap-2 text-sm sm:text-base text-gray-600">
+                          <FiMapPin className="text-gray-400 flex-shrink-0" />
                           <span>{job.work_location || "Not specified"}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <FiUser className="text-gray-400" />
-                          <span>
+                        <div className="flex items-center gap-2 text-sm sm:text-base text-gray-600">
+                          <FiUser className="text-gray-400 flex-shrink-0" />
+                          <span className="break-words">
                             {Array.isArray(job.applicable_branch) 
                               ? job.applicable_branch.length > 0 
                                 ? job.applicable_branch.join(", ")
@@ -482,9 +510,9 @@ const JobPost = () => {
                             }
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <FiDollarSign className="text-gray-400" />
-                          <span>
+                        <div className="flex items-center gap-2 text-sm sm:text-base text-gray-600">
+                          <FiDollarSign className="text-gray-400 flex-shrink-0" />
+                          <span className="break-words">
                             {job.ctc
                               ? `CTC: ${job.ctc}`
                               : job.stipend
@@ -492,8 +520,8 @@ const JobPost = () => {
                               : "Salary not specified"}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-600">
-                          <FiCalendar className="text-gray-400" />
+                        <div className="flex items-center gap-2 text-sm sm:text-base text-gray-600">
+                          <FiCalendar className="text-gray-400 flex-shrink-0" />
                           <span>
                             Batch: {job.batch?.join(", ") || "Not specified"}
                           </span>
@@ -523,15 +551,15 @@ const JobPost = () => {
                     </div>
 
                     {/* Right Section - Actions and Additional Info */}
-                    <div className="lg:w-80 space-y-4">
+                    <div className="lg:w-80 space-y-3 sm:space-y-4">
                       {/* Application Deadline */}
                       {job.application_deadline && (
-                        <div className="bg-red-50 p-3 rounded-lg">
-                          <div className="flex items-center gap-2 text-red-700">
-                            <FiClock className="text-red-500" />
+                        <div className="bg-red-50 p-2 sm:p-3 rounded-lg">
+                          <div className="flex items-center gap-2 text-sm sm:text-base text-red-700">
+                            <FiClock className="text-red-500 flex-shrink-0" />
                             <span className="font-semibold">Apply before:</span>
                           </div>
-                          <p className="text-sm text-red-600 mt-1">
+                          <p className="text-xs sm:text-sm text-red-600 mt-1">
                             {formatDateTime(job.application_deadline)}
                           </p>
                         </div>
@@ -540,13 +568,13 @@ const JobPost = () => {
                       {/* Selection Process */}
                       {job.selection_process &&
                         job.selection_process.length > 0 && (
-                          <div className="bg-green-50 p-3 rounded-lg">
-                            <h4 className="font-semibold text-green-700 mb-2">
+                          <div className="bg-green-50 p-2 sm:p-3 rounded-lg">
+                            <h4 className="font-semibold text-sm sm:text-base text-green-700 mb-2">
                               Selection Process
                             </h4>
-                            <ol className="list-decimal list-inside text-sm text-green-600 space-y-1">
+                            <ol className="list-decimal list-inside text-xs sm:text-sm text-green-600 space-y-1">
                               {job.selection_process.map((step, index) => (
-                                <li key={index}>{step}</li>
+                                <li key={index} className="break-words">{step}</li>
                               ))}
                             </ol>
                           </div>
@@ -559,37 +587,42 @@ const JobPost = () => {
                             setSelectedJob(job);
                             setShowModifyPopup(true);
                           }}
-                          className="flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg transition-colors"
+                          className="flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white px-3 sm:px-4 py-2 text-sm sm:text-base rounded-lg transition-colors"
                         >
-                          <FiEdit2 size={16} />
+                          <FiEdit2 size={14} className="sm:w-4 sm:h-4" />
                           Edit
                         </button>
-                        <div className="flex justify-around items-center">
+                        <div className="flex justify-around items-center gap-2">
+                          
                           <a
                             href={job.responses_sheet_link}
                             target="_blank"
-                            className="flex items-center mx-[2px] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                            className="flex items-center justify-center gap-1 sm:gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg transition-colors flex-1"
                           >
                             <img
                               src="/excel-logo.png"
-                              width={24}
-                              height={24}
+                              width={16}
+                              height={16}
+                              className="sm:w-6 sm:h-6"
                               alt=""
                             />
-                            Response
+                            <span className="hidden sm:inline">Response</span>
+                            <span className="sm:hidden">Resp</span>
                           </a>
                           <a
                             href={job.master_sheet_link}
                             target="_blank"
-                            className="flex items-center w-[40%] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                            className="flex items-center justify-center gap-1 sm:gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg transition-colors flex-1"
                           >
                             <img
                               src="/excel-logo.png"
-                              width={24}
-                              height={24}
+                              width={16}
+                              height={16}
+                              className="sm:w-6 sm:h-6"
                               alt=""
                             />
-                            Master
+                            <span className="hidden sm:inline">Master</span>
+                            <span className="sm:hidden">Mstr</span>
                           </a>
                         </div>
                         {/* <button
@@ -616,12 +649,27 @@ const JobPost = () => {
                       </div>
 
                       {/* Created Info */}
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs flex flex-wrap justify-evenly items-center  text-gray-500">
+                        <div className="">
+
                         <p>Created: {formatDate(job.created_at)}</p>
                         {job.updated_at && (
                           <p>Updated: {formatDate(job.updated_at)}</p>
                         )}
+                        </div>
+                        <div className="flex flex-wrap justify-between items-center">
+                          <button
+                            onClick={() => handleGetMetrics(job._id)}
+
+                            
+                            className="flex items-center mx-[2px] w-fit justify-center gap-2 bg-[#57C62B]  hover:bg-[#4da72a]  text-white px-4 py-2 rounded-lg transition-colors"
+                          >
+                            
+                            Get Metrics
+                          </button>
+                        </div>
                       </div>
+                      
                     </div>
                   </div>
                 </div>

@@ -14,94 +14,121 @@ import {
   Globe
 } from 'lucide-react';
 
-const OurTeam = () => {
+ const OurTeam = () => {
   const developmentTeam = [
     {
       id: 1,
+      name: "Rushikesh Iche",
+      role: "Full Stack Developer",
+      specialization: "React.Js, API, Node.Js",
+      image: "/Team/rushikesh.png",
+      email: "123cs0035@iiitk.ac.in",
+      github: "https://github.com/RushikeshIche",
+      linkedin: "https://www.linkedin.com/in/rushikesh-iche-aa395b289/",
+      bio: "Aspiring Software Engineer | Full Stack & Web3 Developer | Machine Learning",
+      skills: ["Next.JS", "Python", "C++"],
+      contributions: ["Frontend Development", "API Routing"],
+      projects: 10
+    },
+    {
+      id: 2,
       name: "Arnav Sharda",
       role: "Full Stack Developer",
       specialization: "React.js & Node.js",
-      image: "/team/aryan.jpg",
-      email: "aryan.sharma@iiitdmk.ac.in",
-      github: "https://github.com/aryansharma",
-      linkedin: "https://linkedin.com/in/aryansharma",
+      image: "/Team/arnav.png",
+      email: "asharda7898@gmail.com",
+      github: "https://github.com/arnav7897",
+      linkedin: "https://www.linkedin.com/in/arnav-sharda-bb281725a/",
       bio: "Lead developer with expertise in modern web technologies and system architecture. Passionate about creating scalable and user-friendly applications.",
       skills: ["React", "Node.js", "MongoDB", "Express", "TypeScript"],
       contributions: ["System Architecture", "Frontend Development", "API Design"],
       projects: 15
     },
     {
-      id: 2,
-      name: "Priya Patel",
-      role: "Frontend Developer",
-      specialization: "React & UI/UX Design",
-      image: "/team/priya.jpg",
-      email: "priya.patel@iiitdmk.ac.in",
-      github: "https://github.com/priyapatel",
-      linkedin: "https://linkedin.com/in/priyapatel",
-      bio: "Creative frontend developer specializing in responsive design and user experience. Loves turning complex problems into intuitive interfaces.",
-      skills: ["React", "Tailwind CSS", "Framer Motion", "Figma", "JavaScript"],
-      contributions: ["UI/UX Design", "Component Library", "Responsive Design"],
-      projects: 12
-    },
-    {
       id: 3,
-      name: "Rahul Verma",
+      name: "Dhruv Singh",
       role: "Backend Developer",
-      specialization: "Database & API Development",
-      image: "/team/rahul.jpg",
-      email: "rahul.verma@iiitdmk.ac.in",
-      github: "https://github.com/rahulverma",
-      linkedin: "https://linkedin.com/in/rahulverma",
-      bio: "Backend specialist focused on building robust APIs and efficient database architectures. Ensures system reliability and performance.",
-      skills: ["Node.js", "MongoDB", "PostgreSQL", "Redis", "Docker"],
-      contributions: ["Database Design", "API Development", "System Security"],
-      projects: 10
+      specialization: "Python and FastAPI",
+      image: "/Team/dhruv.jpeg",
+      email: "523cs0009@iiitk.ac.in",
+      github: "https://github.com/Vurhd0",
+      linkedin: "https://linkedin.com/in/dhruvsingh03",
+      bio: "Computer Science Student | Focused on Deep Learning & Computer Vision | Growing in Project Management & Teamwork.",
+      skills: ["Python", "C++", "MongoDB", "GCP", "Flask"],
+      contributions: ["System Architecture", "Backend Development", "API Design"],
+      projects: 5
     },
     {
       id: 4,
-      name: "Neha Gupta",
-      role: "UI/UX Designer & Developer",
-      specialization: "Design Systems",
-      image: "/team/neha.jpg",
-      email: "neha.gupta@iiitdmk.ac.in",
-      github: "https://github.com/nehagupta",
-      linkedin: "https://linkedin.com/in/nehagupta",
-      bio: "Bridge between design and development. Creates beautiful, accessible interfaces while ensuring technical feasibility.",
-      skills: ["Figma", "Adobe XD", "React", "CSS", "User Research"],
-      contributions: ["Design System", "User Research", "Prototyping"],
-      projects: 8
+      name: "Siddharth Karmokar",
+      role: "DevOps and Testing",
+      specialization: "Cloud and Containerization",
+      image: "/Team/siddharth.jpeg",
+      email: "siddkarmokar@gmail.com",
+      github: "https://github.com/SiddharthKarmokar/placement-portal",
+      linkedin: "https://www.linkedin.com/in/siddkarmokar/",
+      bio: "DevOps engineer focused on scalable deployments, testing, and CI/CD pipelines.",
+      skills: ["Python", "React.js", "Docker", "AWS"],
+      contributions: ["EC2 + DockerHub", "CICD", "Unit, Integration and Load Testing", "Container Orchestration", "System Design"], 
+      projects: 12
     },
     {
       id: 5,
-      name: "Karan Singh",
-      role: "DevOps & Mobile Developer",
-      specialization: "Deployment & Cross-platform",
-      image: "/team/karan.jpg",
-      email: "karan.singh@iiitdmk.ac.in",
-      github: "https://github.com/karansingh",
-      linkedin: "https://linkedin.com/in/karansingh",
-      bio: "Handles deployment, CI/CD pipelines and mobile responsiveness. Ensures smooth operation across all platforms.",
-      skills: ["Docker", "AWS", "React Native", "Git", "Nginx"],
-      contributions: ["Deployment", "Mobile Optimization", "Performance"],
-      projects: 11
+      name: "Rineet Pandey",
+      role: "System Analyst and Technical Writer",
+      specialization: "Design Analysis & Latex",
+      image: "/Team/rineet.jpeg",
+      email: "123cs0009@iiitk.ac.in",
+      github: "https://github.com/rineet",
+      linkedin: "https://www.linkedin.com/in/rineet-pandey-8aa4112a8/",
+      bio: "Creates clear, concise, and comprehensive documentation to communicate complex technical information.",
+      skills: ["Figma", "Latex", "Design Analysis"],
+      contributions: ["Frontend Design", "System Analysis and Documentation"],
+      projects: 5
     },
     {
       id: 6,
-      name: "Sneha Reddy",
-      role: "Quality Assurance & Testing",
-      specialization: "Testing & Documentation",
-      image: "/team/sneha.jpg",
-      email: "sneha.reddy@iiitdmk.ac.in",
-      github: "https://github.com/snehareddy",
-      linkedin: "https://linkedin.com/in/snehareddy",
-      bio: "Ensures code quality and system reliability through comprehensive testing. Creates detailed documentation for maintainability.",
-      skills: ["Jest", "Cypress", "Postman", "Documentation", "Debugging"],
-      contributions: ["Testing Suite", "Documentation", "Code Review"],
-      projects: 9
+      name: "Paarth Batra",
+      role: "Backend Developer",
+      specialization: "Python and FastAPI",
+      image: "/Team/paarth.jpeg",
+      email: "paarth.batra007@gmail.com",
+      github: "https://github.com/hydro-7",
+      linkedin: "https://linkedin.com/in/paarth7",
+      bio: "Backend developer with a focus on scalable architectures and Python applications.",
+      skills: ["Python", "C++", "MongoDB", "Flask"],
+      contributions: ["System Architecture", "Backend Development", "Documentation"],
+      projects: 5
+    },
+    {
+      id: 7,
+      name: "Gaurav Singh",
+      role: "Frontend Designer",
+      specialization: ["React.js", "JavaScript","Bootstrap"],
+      image: "/Team/gaurav.jpeg",
+      email: "game092003@gmail.com",
+      github: "https://github.com/Loverki",
+      linkedin: "https://linkedin.com/in/gaurav092003",
+      bio: "Frontend Designer skilled in React.js, JavaScript, and Bootstrap, focused on building clean, responsive web interfaces.",
+      skills: ["React", "Bootstrap","Node.js", "MongoDB", "Express.js"],
+      contributions: ["Frontend Development"],
+      projects: 4
+    },
+    {
+      id: 8,
+      name: "Ayush Rahate",
+      role: "Frontend Developer and Documentation",
+      specialization: "Python and Figma",
+      image: "/Team/ayush.jpeg",
+      email: "123cs0006@iiitk.ac.in",
+      github: "https://github.com/ayushr27",
+      linkedin: "https://www.linkedin.com/in/ayushrahate27/",
+      bio: "Computer Science Student | Applying Deep Learning within the SDLC | Growing in Product Management.",
+      skills: ["Python", "C++", "Figma", "Latex"],
+      contributions: ["System Architecture", "Documentation", "UI Interface"],
+      projects: 4
     }
   ];
-
   const techStack = [
     { name: "React", icon: Code, color: "text-blue-500" },
     { name: "Node.js", icon: Server, color: "text-green-500" },
@@ -112,8 +139,8 @@ const OurTeam = () => {
   ];
 
   const projectStats = [
-    { number: "6", label: "Developers" },
-    { number: "65+", label: "Total Features" },
+    { number: "8", label: "Developers" },
+    { number: "20+", label: "Total Features" },
     { number: "12k+", label: "Lines of Code" },
     { number: "99.9%", label: "Uptime" }
   ];

@@ -22,16 +22,21 @@ import LogoNav from "../components/LogoNav";
 import Sidebar from "../components/SideNav";
 import { API_URL } from "../../env-config";
 import { useNotification, NotificationContainer } from "../components/notification";
+import { useCloudinaryUpload, UploadStatus, FileUploadInput } from "../components/CloudinaryUpload";
 
 export default function Profile() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
+  const [uploadedFields, setUploadedFields] = useState({});
   const [activeTab, setActiveTab] = useState("personal");
   
   // Custom notification hook
   const { notifications, removeNotification, showSuccess, showError } = useNotification();
+  
+  // Cloudinary upload hook
+  const { uploadImageFile, uploading, error } = useCloudinaryUpload();
 
  useEffect(() => {
   const fetchProfileData = async () => {
@@ -86,13 +91,46 @@ export default function Profile() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Section navigation
+  const tabs = ["personal", "academic", "address", "documents", "links"];
+  const currentTabIndex = tabs.indexOf(activeTab);
+  const isLastTab = currentTabIndex === tabs.length - 1;
+
+  const handleNextSection = () => {
+    if (currentTabIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentTabIndex + 1]);
+    }
+  };
+
+  const handlePreviousSection = () => {
+    if (currentTabIndex > 0) {
+      setActiveTab(tabs[currentTabIndex - 1]);
+    }
+  };
+
+  const handleFileUpload = async (name, file) => {
+    if (!file) return;
+    
+    const result = await uploadImageFile(file);
+    if (result.url && !result.error) {
+      setUploadedFields((prev) => ({ ...prev, [name]: result.url }));
+      setFormData((prev) => ({ ...prev, [name]: result.url }));
+      showSuccess(`${name.replace(/_/g, ' ')} uploaded successfully!`, "Upload Success!");
+    } else if (result.error) {
+      showError(`Failed to upload: ${result.error}`, "Upload Failed");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      // Merge uploaded Cloudinary URLs with form data
+      const finalData = { ...formData, ...uploadedFields };
+      
       // Remove empty, null, and undefined values
       const cleanedData = Object.fromEntries(
-        Object.entries(formData).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
+        Object.entries(finalData).filter(([_, v]) => v !== "" && v !== null && v !== undefined)
       );
 
       const queryParams = Object.entries(cleanedData)
@@ -121,6 +159,8 @@ export default function Profile() {
       localStorage.setItem("user", JSON.stringify(updated));
       showSuccess("Profile Updated Successfully", "Profile Updated!");
       setIsModalOpen(false);
+      setActiveTab("personal");
+      setUploadedFields({});
     } catch (err) {
       console.error("Update error:", err);
       showError("Profile update failed.", "Update Failed");
@@ -150,7 +190,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
       {/* Sidebar - Sticky */}
-      <div className="hidden lg:block sticky top-0 h-screen overflow-y-auto">
+      <div className="hidden md:block sticky top-0 h-screen">
         <Sidebar />
       </div>
 
@@ -158,9 +198,7 @@ export default function Profile() {
       <div className="flex-1 overflow-y-auto">
         {/* Custom Notification Container */}
         <NotificationContainer notifications={notifications} removeNotification={removeNotification} />
-        <div className="sticky top-0 z-10 bg-white shadow-sm">
         <LogoNav />
-        </div>
 
         <div className="p-4 md:p-6 max-w-7xl mx-auto">
           {/* Hero Profile Header */}
@@ -435,6 +473,7 @@ export default function Profile() {
                 onClick={() => {
                   setIsModalOpen(false);
                   setActiveTab("personal");
+                  setUploadedFields({});
                 }}
                 className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
                 aria-label="Close modal"
@@ -528,15 +567,19 @@ export default function Profile() {
                     icon={<UserCircle2 size={18} />}
                     disabled
                   />
-                  <InputField
-                    label="Profile Picture Link"
-                    name="profile_pic_link"
-                    value={formData.profile_pic_link}
-                    onChange={handleChange}
-                    icon={<FileText size={18} />}
-                    type="url"
-                    placeholder="https://example.com/image.jpg"
-                  />
+                  <div className="md:col-span-2">
+                    <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                      <UserCircle2 size={18} className="text-[#003d82]" />
+                      Profile Picture
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <FileUploadInput
+                      onFileSelect={(file) => handleFileUpload('profile_pic_link', file)}
+                      uploading={uploading}
+                      currentValue={formData.profile_pic_link}
+                    />
+                    <UploadStatus uploading={uploading} error={error} success={uploadedFields.profile_pic_link} />
+                  </div>
                 </div>
               )}
 
@@ -600,7 +643,10 @@ export default function Profile() {
                         value={formData.ssc_cgpa}
                         onChange={handleChange}
                         type="number"
-                        step="0.01"
+                        step={0.01}
+                        min={0}
+                        max={10}
+                        placeholder="0.00 - 10.00"
                       />
                       <InputField
                         label="HSC CGPA"
@@ -608,7 +654,10 @@ export default function Profile() {
                         value={formData.hsc_cgpa}
                         onChange={handleChange}
                         type="number"
-                        step="0.01"
+                        step={0.01}
+                        min={0}
+                        max={10}
+                        placeholder="0.00 - 10.00"
                       />
                     </div>
                   </div>
@@ -705,8 +754,8 @@ export default function Profile() {
                     value={formData.career_path}
                     onChange={handleChange}
                     icon={<Briefcase size={18} />}
-                    type="textarea"
-                    placeholder="Describe your career interests..."
+                    type="select"
+                    options={["Job", "Entrepreneurship", "Higher Studies"]}
                   />
                 </div>
               )}
@@ -715,7 +764,7 @@ export default function Profile() {
             {/* Footer with Actions */}
             <div className="bg-gray-50 border-t border-gray-200 p-6 flex justify-between items-center">
               <p className="text-sm text-gray-500">
-                Tab {["personal", "academic", "address", "documents", "links"].indexOf(activeTab) + 1} of 5
+                Section {["personal", "academic", "address", "documents", "links"].indexOf(activeTab) + 1} of 5
               </p>
               <div className="flex gap-3">
                 <button
@@ -723,17 +772,42 @@ export default function Profile() {
                   onClick={() => {
                     setIsModalOpen(false);
                     setActiveTab("personal");
+                    setUploadedFields({});
                   }}
                   className="px-6 py-2.5 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium transition-colors"
                 >
                   Cancel
                 </button>
-                <button
-                  onClick={handleSubmit}
-                  className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-[#003d82] to-[#0056b3] text-white font-medium hover:shadow-lg transition-all"
-                >
-                  Save Changes
-                </button>
+                
+                {/* Show Previous button if not on first section */}
+                {currentTabIndex > 0 && (
+                  <button
+                    type="button"
+                    onClick={handlePreviousSection}
+                    className="px-6 py-2.5 rounded-lg bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium transition-colors"
+                  >
+                    Previous
+                  </button>
+                )}
+                
+                {/* Show Next button for intermediate sections or Save Changes for last section */}
+                {!isLastTab ? (
+                  <button
+                    type="button"
+                    onClick={handleNextSection}
+                    className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-[#003d82] to-[#0056b3] text-white font-medium hover:shadow-lg transition-all"
+                  >
+                    Next
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className="px-6 py-2.5 rounded-lg bg-gradient-to-r from-[#003d82] to-[#0056b3] text-white font-medium hover:shadow-lg transition-all"
+                  >
+                    Save Changes
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -784,7 +858,26 @@ function StatCard({ label, value, color }) {
 }
 
 /* 📝 Input Field Component */
-function InputField({ label, name, value, onChange, icon, type = "text", required = false, disabled = false, options = [], placeholder = "", step }) {
+function InputField({ label, name, value, onChange, icon, type = "text", required = false, disabled = false, options = [], placeholder = "", step, min, max }) {
+  const handleNumericChange = (e) => {
+    const inputValue = e.target.value;
+    
+    // Allow empty input
+    if (inputValue === "") {
+      onChange(e);
+      return;
+    }
+    
+    // Validate numeric range if min/max are specified
+    if (min !== undefined && max !== undefined) {
+      const numValue = parseFloat(inputValue);
+      if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+        onChange(e);
+      }
+    } else {
+      onChange(e);
+    }
+  };
   return (
     <div className="flex flex-col">
       <label className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
@@ -827,11 +920,13 @@ function InputField({ label, name, value, onChange, icon, type = "text", require
           type={type}
           name={name}
           value={value || ""}
-          onChange={onChange}
+          onChange={(min !== undefined && max !== undefined && type === "number") ? handleNumericChange : onChange}
           disabled={disabled}
           required={required}
           placeholder={placeholder}
           step={step}
+          min={min}
+          max={max}
           className={`border-2 border-gray-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-[#003d82] focus:ring-2 focus:ring-[#003d82]/20 transition-all ${
             disabled ? "bg-gray-100 cursor-not-allowed" : "bg-white"
           }`}
