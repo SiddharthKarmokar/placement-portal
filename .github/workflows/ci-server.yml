@@ -52,7 +52,7 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           APPS_SCRIPT_URL: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-        run: pytest
+        run: python -m pytest
 
 
       - name: Log in to Docker Hub
