@@ -35,7 +35,7 @@ async def upload_student_csv(
         )
 
     file_bytes = await csv_file.read()
-    result = await process_student_csv(db, file_bytes, background_tasks)
+    result = await process_student_csv(db=db, file_bytes=file_bytes, background_tasks=background_tasks)
     cache_delete("students:all")
     return result
 

@@ -68,10 +68,10 @@ async def send_email_to_student(email: str, subject: str, body: str) -> None:
 
 
 def queue_email_task(
-    background_tasks: BackgroundTasks,
     email: str,
     subject: str,
-    body: str
+    body: str,
+    background_tasks: BackgroundTasks | None = None,
 ) -> None:
     """
     Queue an email sending task using FastAPI's background worker.
@@ -82,7 +82,8 @@ def queue_email_task(
         subject (str): Email subject.
         body (str): Email content.
     """
-    background_tasks.add_task(send_email_to_student, email, subject, body)
+    if background_tasks:
+        background_tasks.add_task(send_email_to_student, email, subject, body)
 
 
 async def send_email(to_email: str, subject: str, body: str) -> None:
