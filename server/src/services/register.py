@@ -8,9 +8,11 @@ from motor.motor_asyncio import AsyncIOMotorDatabase
 from fastapi import HTTPException
 from src.services.schemas import StudentCreate, StudentInDB
 from src.routes.utils import security
-from src.services.utils import send_email_task
+from fastapi import BackgroundTasks
+from src.services.utils import queue_email_task
 from src.services.constants import ACCOUNT_CREATION_EMAIL_BODY, BATCH_SIZE, BATCH_DELAY_SECONDS
 from src.services import google_service
+from src import logger
 
 
 def generate_random_password(length: int = 8) -> str:
@@ -26,7 +28,7 @@ def generate_random_password(length: int = 8) -> str:
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 
-async def process_student_csv(db: AsyncIOMotorDatabase, file_bytes: bytes) -> dict:
+async def process_student_csv(db: AsyncIOMotorDatabase, file_bytes: bytes, background_tasks: BackgroundTasks | None = None) -> dict:
     csv_text = file_bytes.decode("utf-8")
     reader = csv.DictReader(io.StringIO(csv_text))
 
@@ -79,6 +81,7 @@ async def process_student_csv(db: AsyncIOMotorDatabase, file_bytes: bytes) -> di
 
     if to_insert:
         await db.students.insert_many(to_insert)
+        logger.info(f"Inserted {len(to_insert)} credentials to database")
 
         # Send mails in batches
         for i in range(0, len(creds_to_send), BATCH_SIZE):
@@ -90,7 +93,7 @@ async def process_student_csv(db: AsyncIOMotorDatabase, file_bytes: bytes) -> di
                     username=cred["username"],
                     password=cred["password"],
                 )
-                send_email_task(cred["email"], subject, body)
+                queue_email_task(background_tasks, cred["email"], subject, body)
 
             if i + BATCH_SIZE < len(creds_to_send):
                 await asyncio.sleep(BATCH_DELAY_SECONDS)
