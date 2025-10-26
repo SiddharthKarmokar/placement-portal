@@ -218,12 +218,17 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Work Location
                   </label>
-                  <input
+                  <select
                     name="work_location"
                     value={formData.work_location}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    <option value="">Select Location</option>
+                    <option value="WFH">Remote</option>
+                    <option value="Hybrid">Hybrid</option>
+                    <option value="Onsite">On-site</option>
+                  </select>
                 </div>
                  <div className="md:col-span-2">
                    <label className="block text-sm font-medium text-gray-700 mb-2">

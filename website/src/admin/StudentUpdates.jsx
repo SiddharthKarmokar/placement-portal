@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { API_URL } from "../../env-config";
+import { useCloudinaryUpload, UploadStatus, FileUploadInput } from "../components/CloudinaryUpload";
+import { UserCircle2 } from "lucide-react";
 
 
 // --- Inline SVG Icon Components (Replaced react-icons) ---
@@ -26,6 +28,10 @@ const SaveIcon = ({ size = 18 }) => (
 const StudentUpdates = ({ student, onClose, onStudentFound }) => {
   // Mocking SERVER_URI and API_URL based on the original structure
   const SERVER_URI = API_URL;
+  
+  // Cloudinary upload hook
+  const { uploadImageFile, uploading, error } = useCloudinaryUpload();
+  const [uploadedFields, setUploadedFields] = useState({});
 
   const [formData, setFormData] = useState({
     _id: "",
@@ -92,6 +98,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
         // START PRE-FILL NEW FIELDS
         aadhar_card_link: student.aadhar_card_link || "",
         pan_card_link: student.pan_card_link || "",
+        profile_pic_link: student.profile_pic_link || "",
         // END PRE-FILL NEW FIELDS
         role: student.role || "student",
         career_path: student.career_path || "",
@@ -119,6 +126,19 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
     });
   };
 
+  const handleFileUpload = async (name, file) => {
+    if (!file) return;
+    
+    const result = await uploadImageFile(file);
+    if (result.url && !result.error) {
+      setUploadedFields((prev) => ({ ...prev, [name]: result.url }));
+      setFormData((prev) => ({ ...prev, [name]: result.url }));
+      toast.success(`${name.replace(/_/g, ' ')} uploaded successfully!`);
+    } else if (result.error) {
+      toast.error(`Failed to upload: ${result.error}`);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -128,6 +148,7 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
         // Construct the payload to match the schema, ensuring all fields are sent
         const payload = {
             ...formData,
+            ...uploadedFields,
             // The API schema shows date_of_birth as Z-formatted date string,
             // but for a PUT request with a date input, the collected date string is often sufficient.
             date_of_birth: formData.date_of_birth,
@@ -180,6 +201,21 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
             <h3 className="text-xl font-semibold text-gray-800 mb-4 border-l-4 border-indigo-500 pl-3">
               Personal Details
             </h3>
+            
+            {/* Profile Picture Upload */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-2">
+                <UserCircle2 size={18} className="text-indigo-600" />
+                Profile Picture
+              </label>
+              <FileUploadInput
+                onFileSelect={(file) => handleFileUpload('profile_pic_link', file)}
+                uploading={uploading}
+                currentValue={formData.profile_pic_link}
+              />
+              <UploadStatus uploading={uploading} error={error} success={uploadedFields.profile_pic_link} />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Input
                 label="Full Name"
@@ -250,8 +286,8 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
                   options: courses,
                 },
                 { label: "Batch Year", name: "batch", type: "number" },
-                { label: "SSC CGPA", name: "ssc_cgpa", type: "number", step: "0.1" },
-                { label: "HSC CGPA", name: "hsc_cgpa", type: "number", step: "0.1" },
+                { label: "SSC CGPA", name: "ssc_cgpa", type: "number", step: 0.01, min: 0, max: 10, placeholder: "0.00 - 10.00" },
+                { label: "HSC CGPA", name: "hsc_cgpa", type: "number", step: 0.01, min: 0, max: 10, placeholder: "0.00 - 10.00" },
                 {
                   label: "B.Tech CGPA",
                   name: "btech_cgpa",
@@ -398,21 +434,45 @@ const StudentUpdates = ({ student, onClose, onStudentFound }) => {
 };
 
 // Helper components for clean JSX structure and consistent styling
-const Input = ({ label, name, value, onChange, type = "text", placeholder, required = false, step }) => (
-  <div>
-    {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={onChange}
-      required={required}
-      placeholder={placeholder}
-      step={step}
-      className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150"
-    />
-  </div>
-);
+const Input = ({ label, name, value, onChange, type = "text", placeholder, required = false, step, min, max }) => {
+  const handleNumericChange = (e) => {
+    const inputValue = e.target.value;
+    
+    // Allow empty input
+    if (inputValue === "") {
+      onChange(e);
+      return;
+    }
+    
+    // Validate numeric range if min/max are specified
+    if (min !== undefined && max !== undefined) {
+      const numValue = parseFloat(inputValue);
+      if (!isNaN(numValue) && numValue >= min && numValue <= max) {
+        onChange(e);
+      }
+    } else {
+      onChange(e);
+    }
+  };
+
+  return (
+    <div>
+      {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+      <input
+        type={type}
+        name={name}
+        value={value}
+        onChange={(min !== undefined && max !== undefined && type === "number") ? handleNumericChange : onChange}
+        required={required}
+        placeholder={placeholder}
+        step={step}
+        min={min}
+        max={max}
+        className="w-full mt-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition duration-150"
+      />
+    </div>
+  );
+};
 
 const Textarea = ({ name, value, onChange, placeholder }) => (
   <textarea
