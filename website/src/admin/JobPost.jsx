@@ -93,22 +93,28 @@ const JobPost = () => {
 
     fetchJobs();
   }, []);
-  const handleUpdateMetrics=async()=>{
-    try{
-      const token=localStorage.getItem("token");
-      const res=await axios.post(`${API_URL}/api/jobs/update-all-metrics`,{
-        headers:{
-          Authorization:`Bearer ${token}`,
+  const handleUpdateMetrics = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      `${API_URL}/api/jobs/update-all-metrics`,
+      {}, // empty body since -d '' in curl
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        }
-      })
-      toast.success("Job Metrics Updates Successfully!");
-    }
-    catch(e){
-      console.log(e);
-      toast.error("Failed to Update Job Metrics");
-    }
-  };
+          Accept: "application/json",
+        },
+      }
+    );
+
+    toast.success("Job Metrics Updated Successfully!");
+  } catch (e) {
+    console.error(e);
+    toast.error("Failed to Update Job Metrics");
+  }
+};
+
   const handlePostJob = async (jobData) => {
     try {
       console.log("Posting job data:", jobData);
@@ -145,20 +151,34 @@ const JobPost = () => {
       setShowPostPopup(false);
       toast.success("Job posted successfully!");
     } catch (err) {
-      console.error("Error posting job:", err);
-      if (err.response?.status === 401) {
-        toast.error("Authentication failed. Please login again.");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        localStorage.removeItem("role");
-        // Optionally redirect to login
-      } else {
-        toast.error(`Failed to post job: ${err.response?.data?.detail || err.message}`);
-      }
       // console.error("Error posting job:", err);
       toast.error("Failed to post job");
     }
   };
+  const handleGetMetrics = async (jobId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      `${API_URL}/api/jobs/job_metrics`,
+      {
+        params: { jobid: jobId }, // this translates to ?jobid=...
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Accept": "application/json",
+        },
+      }
+    );
+
+    setJobs([...jobs, res.data]);
+    setShowPostPopup(false);
+    toast.success("Metrics fetched successfully!");
+  } catch (err) {
+    console.error("Error fetching metrics:", err);
+    toast.error("Failed to get metrics");
+  }
+};
+
 
   const handleModifyJob = async (updatedJob) => {
     try {
@@ -235,59 +255,44 @@ const JobPost = () => {
     }
   };
 
-  const filteredJobs = jobs
-    .filter((job) => {
-      // --- 1. Search by designation OR company ---
-      const matchesSearch =
-        !searchTerm ||
-        job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredJobs = jobs.filter((job) => {
 
-      // --- 2. Employment Type ---
-      let matchesEmployment = employmentFilter === "all";
-      
-      if (!matchesEmployment && job.type_of_employment) {
-        const jobType = job.type_of_employment.toLowerCase();
-        const filterType = employmentFilter.toLowerCase();
-        
-        // Map filter values to actual job type values
-        const filterMap = {
-          "internship": "internship",
-          "ppo": "ppo",
-          "fulltime": "full-time",
-          "parttime": "part-time",
-          "contract": "contract"
-        };
-        
-        matchesEmployment = jobType === filterMap[filterType];
+    const matchesSearch =
+      !searchTerm ||
+      job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+  
+    const matchesEmployment =
+      employmentFilter === "all" ||
+      job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
+
+
+    const matchesBatch =
+      batchFilter === "all" || job.batch?.includes(Number(batchFilter));
+
+
+    const matchesLocation =
+      locationFilter === "all" ||
+      job.work_location?.toLowerCase() === locationFilter.toLowerCase();
+
+  
+    let matchesCtc = true;
+    if (ctcFilter !== "all" && job.ctc) {
+      const ctcValue = parseFloat(job.ctc); 
+      if (!isNaN(ctcValue)) {
+        if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
+        if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
+          matchesCtc = false;
+        if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
       }
+    }
 
-      // --- 3. Batch ---
-      const matchesBatch =
-        batchFilter === "all" || job.batch?.includes(Number(batchFilter));
-
-      // --- 4. Work Location ---
-      const matchesLocation =
-        locationFilter === "all" ||
-        job.work_location?.toLowerCase() === locationFilter.toLowerCase();
-
-      // --- 5. CTC Range ---
-      let matchesCtc = true;
-      if (ctcFilter !== "all" && job.ctc) {
-        const ctcValue = parseFloat(job.ctc); // assumes format like "8 LPA"
-        if (!isNaN(ctcValue)) {
-          if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
-          if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
-            matchesCtc = false;
-          if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
-        }
-      }
-
-      // --- 6. Deadline ---
-      let matchesDeadline = true;
-      if (deadlineFilter !== "all" && job.application_deadline) {
-        const now = new Date();
-        const deadline = new Date(job.application_deadline);
+  
+    let matchesDeadline = true;
+    if (deadlineFilter !== "all" && job.application_deadline) {
+      const now = new Date();
+      const deadline = new Date(job.application_deadline);
 
         if (deadlineFilter === "active" && deadline < now)
           matchesDeadline = false;
@@ -393,7 +398,6 @@ const JobPost = () => {
             <option value="2025">2025</option>
             <option value="2026">2026</option>
             <option value="2027">2027</option>
-            <option value="2028">2028</option>
           </select>
 
           {/* Work Location */}
@@ -420,8 +424,6 @@ const JobPost = () => {
             <option value="internship">Internship</option>
             <option value="ppo">PPO</option>
             <option value="fulltime">Full-time</option>
-            <option value="parttime">Part-time</option>
-            <option value="contract">Contract</option>
           </select>
 
           {/* CTC */}
@@ -589,10 +591,11 @@ const JobPost = () => {
                           Edit
                         </button>
                         <div className="flex justify-around items-center">
+                          
                           <a
                             href={job.responses_sheet_link}
                             target="_blank"
-                            className="flex items-center mx-[2px] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                            className="flex items-center mx-[2px] md:w-[40%] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
                           >
                             <img
                               src="/excel-logo.png"
@@ -640,12 +643,26 @@ const JobPost = () => {
                       </div>
 
                       {/* Created Info */}
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs flex flex-wrap justify-evenly items-center  text-gray-500">
+                        <div className="">
+
                         <p>Created: {formatDate(job.created_at)}</p>
                         {job.updated_at && (
                           <p>Updated: {formatDate(job.updated_at)}</p>
                         )}
+                        </div>
+                        <div className="flex flex-wrap justify-between items-center">
+                          <button
+                            onClick={handleGetMetrics(job._id)}
+                            
+                            className="flex items-center mx-[2px] w-fit justify-center gap-2 bg-[#57C62B]  hover:bg-[#4da72a]  text-white px-4 py-2 rounded-lg transition-colors"
+                          >
+                            
+                            Get Metrics
+                          </button>
+                        </div>
                       </div>
+                      
                     </div>
                   </div>
                 </div>
