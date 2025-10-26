@@ -93,22 +93,28 @@ const JobPost = () => {
 
     fetchJobs();
   }, []);
-  const handleUpdateMetrics=async()=>{
-    try{
-      const token=localStorage.getItem("token");
-      const res=await axios.post(`${API_URL}/api/jobs/update-all-metrics`,{
-        headers:{
-          Authorization:`Bearer ${token}`,
+  const handleUpdateMetrics = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const res = await axios.post(
+      `${API_URL}/api/jobs/update-all-metrics`,
+      {}, // empty body since -d '' in curl
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
-        }
-      })
-      toast.success("Job Metrics Updates Successfully!");
-    }
-    catch(e){
-      console.log(e);
-      toast.error("Failed to Update Job Metrics");
-    }
-  };
+          Accept: "application/json",
+        },
+      }
+    );
+
+    toast.success("Job Metrics Updated Successfully!");
+  } catch (e) {
+    console.error(e);
+    toast.error("Failed to Update Job Metrics");
+  }
+};
+
   const handlePostJob = async (jobData) => {
     try {
       console.log("Posting job data:", jobData);
@@ -150,22 +156,29 @@ const JobPost = () => {
     }
   };
   const handleGetMetrics = async (jobId) => {
-    try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/api/jobs/job_metrics`, jobId, {
+  try {
+    const token = localStorage.getItem("token");
+
+    const res = await axios.get(
+      `${API_URL}/api/jobs/job_metrics`,
+      {
+        params: { jobid: jobId }, // this translates to ?jobid=...
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
+          "Accept": "application/json",
         },
-      });
-      setJobs([...jobs, res.data]);
-      setShowPostPopup(false);
-      toast.success("Metrics fetch successfull!");
-    } catch (err) {
-      // console.error("Error posting job:", err);
-      toast.error("Failed to get metrics");
-    }
-  };
+      }
+    );
+
+    setJobs([...jobs, res.data]);
+    setShowPostPopup(false);
+    toast.success("Metrics fetched successfully!");
+  } catch (err) {
+    console.error("Error fetching metrics:", err);
+    toast.error("Failed to get metrics");
+  }
+};
+
 
   const handleModifyJob = async (updatedJob) => {
     try {
@@ -640,7 +653,7 @@ const JobPost = () => {
                         </div>
                         <div className="flex flex-wrap justify-between items-center">
                           <button
-                            onClick={handleGetMetrics}
+                            onClick={handleGetMetrics(job._id)}
                             
                             className="flex items-center mx-[2px] w-fit justify-center gap-2 bg-[#57C62B]  hover:bg-[#4da72a]  text-white px-4 py-2 rounded-lg transition-colors"
                           >
