@@ -127,6 +127,23 @@ const JobPost = () => {
       toast.error("Failed to post job");
     }
   };
+  const handleGetMetrics = async (jobId) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(`${API_URL}/api/jobs/job_metrics`, jobId, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      setJobs([...jobs, res.data]);
+      setShowPostPopup(false);
+      toast.success("Job posted successfully!");
+    } catch (err) {
+      // console.error("Error posting job:", err);
+      toast.error("Failed to post job");
+    }
+  };
 
   const handleModifyJob = async (updatedJob) => {
     try {
@@ -525,10 +542,11 @@ const JobPost = () => {
                           Edit
                         </button>
                         <div className="flex justify-around items-center">
+                          
                           <a
                             href={job.responses_sheet_link}
                             target="_blank"
-                            className="flex items-center mx-[2px] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
+                            className="flex items-center mx-[2px] md:w-[40%] justify-center gap-2 bg-[#10793F] hover:bg-white hover:text-black text-white px-4 py-2 rounded-lg transition-colors"
                           >
                             <img
                               src="/excel-logo.png"
@@ -576,12 +594,26 @@ const JobPost = () => {
                       </div>
 
                       {/* Created Info */}
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs flex flex-wrap justify-evenly items-center  text-gray-500">
+                        <div className="">
+
                         <p>Created: {formatDate(job.created_at)}</p>
                         {job.updated_at && (
                           <p>Updated: {formatDate(job.updated_at)}</p>
                         )}
+                        </div>
+                        <div className="flex flex-wrap justify-between items-center">
+                          <button
+                            onClick={handleGetMetrics}
+                            
+                            className="flex items-center mx-[2px] w-fit justify-center gap-2 bg-[#57C62B]  hover:bg-[#4da72a]  text-white px-4 py-2 rounded-lg transition-colors"
+                          >
+                            
+                            Get Metrics
+                          </button>
+                        </div>
                       </div>
+                      
                     </div>
                   </div>
                 </div>
