@@ -1,4 +1,4 @@
-from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status
+from fastapi import APIRouter, UploadFile, File, Depends, HTTPException, status, BackgroundTasks
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from src.services.register import process_student_csv, create_admin
 from src.database import get_database
@@ -10,9 +10,10 @@ router = APIRouter(prefix="/register", tags=["Registration"])
 
 @router.post("/upload-csv")
 async def upload_student_csv(
+    background_tasks: BackgroundTasks,
     csv_file: UploadFile = File(...),
     db: AsyncIOMotorDatabase = Depends(get_database),
-    current_user: dict = Depends(security.get_current_user)
+    current_user: dict = Depends(security.get_current_user),
 ):
     """
     Upload and process a student CSV file.
@@ -34,7 +35,7 @@ async def upload_student_csv(
         )
 
     file_bytes = await csv_file.read()
-    result = await process_student_csv(db, file_bytes)
+    result = await process_student_csv(db, file_bytes, background_tasks)
     cache_delete("students:all")
     return result
 

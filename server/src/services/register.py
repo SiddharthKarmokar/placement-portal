@@ -12,6 +12,7 @@ from fastapi import BackgroundTasks
 from src.services.utils import queue_email_task
 from src.services.constants import ACCOUNT_CREATION_EMAIL_BODY, BATCH_SIZE, BATCH_DELAY_SECONDS
 from src.services import google_service
+from src import logger
 
 
 def generate_random_password(length: int = 8) -> str:
@@ -27,7 +28,7 @@ def generate_random_password(length: int = 8) -> str:
     return ''.join(random.choices(string.ascii_letters + string.digits, k=length))
 
 
-async def process_student_csv(background_tasks: BackgroundTasks, db: AsyncIOMotorDatabase, file_bytes: bytes) -> dict:
+async def process_student_csv(db: AsyncIOMotorDatabase, file_bytes: bytes, background_tasks: BackgroundTasks | None = None) -> dict:
     csv_text = file_bytes.decode("utf-8")
     reader = csv.DictReader(io.StringIO(csv_text))
 
@@ -80,6 +81,7 @@ async def process_student_csv(background_tasks: BackgroundTasks, db: AsyncIOMoto
 
     if to_insert:
         await db.students.insert_many(to_insert)
+        logger.info(f"Inserted {len(to_insert)} credentials to database")
 
         # Send mails in batches
         for i in range(0, len(creds_to_send), BATCH_SIZE):
