@@ -77,7 +77,7 @@ async def test_new_student_insert_and_email(monkeypatch):
     def fake_send_email(to, subject, body):
         sent_emails.append((to, subject, body))
 
-    monkeypatch.setattr("src.services.register.send_email_task", fake_send_email)
+    monkeypatch.setattr("src.services.register.queue_email_task", fake_send_email)
 
     result = await process_student_csv(db, file_bytes)
 
