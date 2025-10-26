@@ -190,7 +190,7 @@ export default function Profile() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex">
       {/* Sidebar - Sticky */}
-      <div className="hidden lg:block sticky top-0 h-screen overflow-y-auto">
+      <div className="hidden lg:block sticky top-0 h-screen">
         <Sidebar />
       </div>
 
@@ -198,9 +198,7 @@ export default function Profile() {
       <div className="flex-1 overflow-y-auto">
         {/* Custom Notification Container */}
         <NotificationContainer notifications={notifications} removeNotification={removeNotification} />
-        <div className="sticky top-0 z-10 bg-white shadow-sm">
         <LogoNav />
-        </div>
 
         <div className="p-4 md:p-6 max-w-7xl mx-auto">
           {/* Hero Profile Header */}
