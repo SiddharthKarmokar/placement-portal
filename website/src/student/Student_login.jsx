@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
 import "../css/student_login.css";
 import { API_URL } from "../../env-config";
 import toast, { Toaster } from "react-hot-toast";
+import MotionPath from "../components/transition";
 
 export default function StudentLogin() {
   const [Password, setPassword] = useState("");
@@ -32,11 +33,11 @@ export default function StudentLogin() {
         setLoading(false);
         return;
       }
-      // console.log(tokenData);
+
       const accessToken = tokenData.access_token;
+      
       localStorage.setItem("token", accessToken);
       localStorage.setItem("role", "student");
-
       const profileRes = await fetch(`${API_URL}/profile/student/me`, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
@@ -44,16 +45,17 @@ export default function StudentLogin() {
 
       const profileData = await profileRes.json();
       if (!profileRes.ok) {
-        toast.error("Login succeeded, but failed to fetch profile.");
+        toast.error("Login failed.");
+        localStorage.clear();
         setLoading(false);
         return;
       }
 
       localStorage.setItem("user", JSON.stringify(profileData));
       toast.success(`✅ Welcome, ${profileData.username || "User"}!`);
-      var student = profileData.roll_number;
-      // console.log(student);
-      setTimeout(() => navigate(`/student/${student}`), 1000);
+      const student = JSON.parse(localStorage.getItem("user")).name;
+      navigate(`/student/${student}`);
+
     } catch (err) {
       console.error("Login Error:", err);
       toast.error("❌ Server error. Please try again.");
@@ -63,69 +65,97 @@ export default function StudentLogin() {
   };
 
   return (
-    <div className="flex h-screen">
-      {/* Left Section */}
-      <div className="flex-1 bg-white w-1/2 flex flex-col justify-start px-12">
+    <div className="flex flex-col md:flex-row h-screen overflow-hidden relative font-[Figtree]">
+
+      {/* --- Fullscreen Loader --- */}
+ {loading && (
+  <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/70 backdrop-blur-md overflow-hidden">
+    {/* Animated Motion Path */}
+    <div className="flex items-center justify-center w-full h-full opacity-40">
+      <MotionPath />
+    </div>
+
+    {/* Center text content */}
+    <div className="relative z-10 flex flex-col items-center justify-center">
+      <p className="text-white text-2xl sm:text-3xl font-semibold mb-6 animate-pulse drop-shadow-lg">
+        Logging you in...
+      </p>
+      <p className="text-gray-300 text-sm sm:text-base">
+        Please wait while we fetch your dashboard
+      </p>
+    </div>
+  </div>
+)}
+
+
+      {/* LEFT SECTION */}
+      <div className="flex-1 bg-white flex flex-col justify-center px-8 sm:px-12 py-8">
         <img
-          className="w-[200px] mx-auto mb-40 mt-20"
+          className="w-[160px] sm:w-[200px] mx-auto mb-12 sm:mb-20"
           src="/logo.webp"
           alt="logo"
         />
-        <h2 className="text-3xl mx-auto font-bold mb-8">Login</h2>
+        <h2 className="text-2xl sm:text-3xl text-center font-bold mb-8">
+          Student Login
+        </h2>
+
         <form
-          className="flex w-2/3 mx-auto flex-col gap-5"
+          className="flex flex-col gap-5 w-full sm:w-2/3 mx-auto"
           onSubmit={handleLogin}
         >
           <input
             type="text"
             placeholder="Username"
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => setUsername(e.target.value.toLowerCase())}
             className="border-b border-gray-300 focus:outline-none focus:border-black pb-2"
             required
           />
 
-      {/* Password */}
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          placeholder="Password"
-          onChange={(e) => setPassword(e.target.value)}
-          className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
-          required
-        />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-2 top-2 text-gray-500 hover:text-black"
-        >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
+              className="border-b border-gray-300 focus:outline-none focus:border-black pb-2 w-full pr-10"
+              required
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-2 top-2 text-gray-500 hover:text-black"
+            >
+              {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
 
-          <p className="text-sm text-gray-500 cursor-pointer">
+          <p className="text-sm text-gray-500 cursor-pointer text-right">
             Forgot Password?
           </p>
+
           <button
             type="submit"
             disabled={loading}
             className={`${
-              loading ? "bg-gray-400 cursor-not-allowed" : "bg-[#181204] hover:bg-black"
-            } text-white py-3 rounded-lg transition`}
+              loading 
+                ? "bg-gray-700 cursor-not-allowed"
+                : "bg-[#181204] hover:bg-black"
+            } text-white py-3 rounded-lg transition-all duration-300`}
           >
-            {loading ? "Logging in..." : "Login"}
+            Login
           </button>
-                    <div className="flex justify-between mt-4">
+
+          <div className="flex justify-between mt-4">
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm sm:text-base"
             >
               ⬅ Home
             </button>
             <button
               type="button"
               onClick={() => navigate("/admin/login")}
-              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+              className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100 text-sm sm:text-base"
             >
               Admin Login
             </button>
@@ -133,29 +163,24 @@ export default function StudentLogin() {
         </form>
       </div>
 
-  {/* Right Section */}
-  <div className="right-section hidden md:flex md:flex-col w-full md:w-1/2 md:justify-center md:items-center bg-[#181204] md:relative overflow-hidden py-10 px-4">
-    <div className="z-20 text-center">
-      <h1 className="text-white text-2xl sm:text-4xl lg:text-5xl font-bold leading-tight">
-        Welcome to <br />
-        <span className="text-4xl sm:text-6xl lg:text-7xl font-extrabold">
-          student portal
-        </span>
-      </h1>
-      <p className="text-gray-300 mt-2 text-xs sm:text-sm">
-        Login to access your account
-      </p>
+      {/* RIGHT SECTION */}
+      <div className="hidden md:flex md:flex-1 justify-center items-center relative overflow-hidden">
+        <img
+          src="/student_signin.svg"
+          alt="students coding together"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="z-20 absolute top-10 text-center px-6">
+          <h1 className="text-6xl font-extrabold mb-2 leading-snug drop-shadow-lg">
+            Welcome Back
+          </h1>
+          <p className=" text-xl sm:text-base">
+            Connect. Explore. Succeed.        
+              </p>
+        </div>
+      </div>
+
+      <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
     </div>
-
-    <img
-      className="max-h-[250px] sm:max-h-[350px] lg:max-h-[600px]  w-auto mt-6 z-30"
-      src="/login.png"
-      alt="login"
-    />
-  </div>
-
-  {/* Toast Container */}
-  <Toaster position="top-right" toastOptions={{ duration: 3000 }} />
-</div>
   );
 }

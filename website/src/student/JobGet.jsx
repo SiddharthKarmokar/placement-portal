@@ -74,7 +74,13 @@ const JobDetails = ({ job }) => {
         <div className="flex items-center gap-2">
           <FiUser className="text-gray-400" />
           <span>
-            <strong>Branch:</strong> {job.applicable_branch || "All branches"}
+            <strong>Branch:</strong> {
+              Array.isArray(job.applicable_branch) 
+                ? job.applicable_branch.length > 0 
+                  ? job.applicable_branch.join(", ")
+                  : "All branches"
+                : job.applicable_branch || "All branches"
+            }
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -84,8 +90,8 @@ const JobDetails = ({ job }) => {
             {job.ctc
               ? `CTC: ${job.ctc}`
               : job.stipend
-              ? `Stipend: ${job.stipend}`
-              : "Not specified"}
+                ? `Stipend: ${job.stipend}`
+                : "Not specified"}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -156,7 +162,7 @@ const JobDetails = ({ job }) => {
         </div>
       )}
 
-      {/* ✅ Apply Button Logic */}
+      {/* Apply Button Logic */}
       {job.form_link && (
         <div className="text-center mt-6">
           {eligible ? (
@@ -178,7 +184,7 @@ const JobDetails = ({ job }) => {
                 Apply Now
               </button>
               <p className="text-red-600 text-sm mt-2 font-medium">
-                 You are not eligible — CGPA below required minimum (
+                You are not eligible — CGPA below required minimum (
                 {cgpa} / {job.cgpa_eligibility})
               </p>
             </>
@@ -202,7 +208,7 @@ const JobGet = () => {
   const [locationFilter, setLocationFilter] = useState("all");
   const [ctcFilter, setCtcFilter] = useState("all");
   const [deadlineFilter, setDeadlineFilter] = useState("all");
-  
+
   const userData = JSON.parse(localStorage.getItem("user"));
   const cgpa = userData?.btech_cgpa || 0;
 
@@ -225,68 +231,83 @@ const JobGet = () => {
     fetchJobs();
   }, []);
 
-  // Filtering
-  const filteredJobs = jobs.filter((job) => {
-  // --- 1. Search by designation OR company ---
-  const matchesSearch =
-    !searchTerm ||
-    job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+  // Filtering and Sorting
+  const filteredJobs = jobs
+    .filter((job) => {
+      // --- 0. Filter out expired jobs by default ---
+      const now = new Date();
+      const deadline = job.application_deadline ? new Date(job.application_deadline) : null;
+      const isExpired = deadline && deadline < now;
+      
+      // Don't show expired jobs unless explicitly requested
+      if (isExpired && deadlineFilter !== "expired") {
+        return false;
+      }
 
-  // --- 2. Employment Type ---
-  const matchesEmployment =
-    employmentFilter === "all" ||
-    job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
+      // --- 1. Search by designation OR company ---
+      const matchesSearch =
+        !searchTerm ||
+        job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
 
-  // --- 3. Batch ---
-  const matchesBatch =
-    batchFilter === "all" || job.batch?.includes(Number(batchFilter));
+      // --- 2. Employment Type ---
+      const matchesEmployment =
+        employmentFilter === "all" ||
+        job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
 
-  // --- 4. Work Location ---
-  const matchesLocation =
-    locationFilter === "all" ||
-    job.work_location?.toLowerCase() === locationFilter.toLowerCase();
+      // --- 3. Batch ---
+      const matchesBatch =
+        batchFilter === "all" || job.batch?.includes(Number(batchFilter));
 
-  // --- 5. CTC Range ---
-  let matchesCtc = true;
-  if (ctcFilter !== "all" && job.ctc) {
-    const ctcValue = parseFloat(job.ctc); // assumes format like "8 LPA"
-    if (!isNaN(ctcValue)) {
-      if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
-      if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
-        matchesCtc = false;
-      if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
-    }
-  }
+      // --- 4. Work Location ---
+      const matchesLocation =
+        locationFilter === "all" ||
+        job.work_location?.toLowerCase() === locationFilter.toLowerCase();
 
-  // --- 6. Deadline ---
-  let matchesDeadline = true;
-  if (deadlineFilter !== "all" && job.application_deadline) {
-    const now = new Date();
-    const deadline = new Date(job.application_deadline);
+      // --- 5. CTC Range ---
+      let matchesCtc = true;
+      if (ctcFilter !== "all" && job.ctc) {
+        const ctcValue = parseFloat(job.ctc); // assumes format like "8 LPA"
+        if (!isNaN(ctcValue)) {
+          if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
+          if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
+            matchesCtc = false;
+          if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
+        }
+      }
 
-    if (deadlineFilter === "active" && deadline < now) matchesDeadline = false;
-    if (
-      deadlineFilter === "soon" &&
-      (deadline < now ||
-        deadline > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000))
-    ) {
-      matchesDeadline = false;
-    }
-    if (deadlineFilter === "expired" && deadline >= now)
-      matchesDeadline = false;
-  }
+      // --- 6. Deadline Filter ---
+      let matchesDeadline = true;
+      if (deadlineFilter !== "all" && job.application_deadline) {
+        if (deadlineFilter === "active" && isExpired) matchesDeadline = false;
+        if (
+          deadlineFilter === "soon" &&
+          (isExpired ||
+            deadline > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000))
+        ) {
+          matchesDeadline = false;
+        }
+        if (deadlineFilter === "expired" && !isExpired)
+          matchesDeadline = false;
+      }
 
-  // --- Final Decision ---
-  return (
-    matchesSearch &&
-    matchesEmployment &&
-    matchesBatch &&
-    matchesLocation &&
-    matchesCtc &&
-    matchesDeadline
-  );
-});
+      // --- Final Decision ---
+      return (
+        matchesSearch &&
+        matchesEmployment &&
+        matchesBatch &&
+        matchesLocation &&
+        matchesCtc &&
+        matchesDeadline
+      );
+    })
+    .sort((a, b) => {
+      // Sort by newest jobs first (by creation date or application deadline)
+      const dateA = a.created_at ? new Date(a.created_at) : (a.application_deadline ? new Date(a.application_deadline) : new Date(0));
+      const dateB = b.created_at ? new Date(b.created_at) : (b.application_deadline ? new Date(b.application_deadline) : new Date(0));
+      
+      return dateB - dateA; // Newest first
+    });
 
   const handleApply = (job) => {
     if (job.form_link) {
@@ -315,87 +336,87 @@ const JobGet = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-gray-800">Available Jobs</h1>
         </div>
-<div className="flex flex-wrap gap-4 mb-8">
+        <div className="flex flex-wrap gap-4 mb-8">
 
-  {/* Search */}
-  <div className="relative flex-1 min-w-[250px]">
-    <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-    <input
-      type="text"
-      placeholder="Search by designation or company..."
-      value={searchTerm}
-      onChange={(e) => setSearchTerm(e.target.value)}
-      className="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-gray-300 
+          {/* Search */}
+          <div className="relative flex-1 min-w-[250px]">
+            <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by designation or company..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 rounded-xl border-2 border-gray-300 
                  focus:outline-none focus:border-blue-500 transition-colors"
-    />
-  </div>
+            />
+          </div>
 
-  {/* Batch */}
-  <select
-    value={batchFilter}
-    onChange={(e) => setBatchFilter(e.target.value)}
-    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+          {/* Batch */}
+          <select
+            value={batchFilter}
+            onChange={(e) => setBatchFilter(e.target.value)}
+            className="px-4 py-2 rounded-xl border-2 border-gray-300 
                focus:outline-none focus:border-blue-500 transition-colors"
-  >
-    <option value="all">All Batches</option>
-    <option value="2025">2025</option>
-    <option value="2026">2026</option>
-    <option value="2027">2027</option>
-  </select>
+          >
+            <option value="all">All Batches</option>
+            <option value="2025">2025</option>
+            <option value="2026">2026</option>
+            <option value="2027">2027</option>
+          </select>
 
-  {/* Work Location */}
-  <select
-    value={locationFilter}
-    onChange={(e) => setLocationFilter(e.target.value)}
-    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+          {/* Work Location */}
+          <select
+            value={locationFilter}
+            onChange={(e) => setLocationFilter(e.target.value)}
+            className="px-4 py-2 rounded-xl border-2 border-gray-300 
                focus:outline-none focus:border-blue-500 transition-colors"
-  >
-    <option value="all">All Locations</option>
-    <option value="WFH">Remote</option>
-    <option value="Hybrid">Hybrid</option>
-    <option value="Onsite">On-site</option>
-  </select>
+          >
+            <option value="all">All Locations</option>
+            <option value="WFH">Remote</option>
+            <option value="Hybrid">Hybrid</option>
+            <option value="Onsite">On-site</option>
+          </select>
 
-  {/* Type of Employment */}
-  <select
-    value={employmentFilter}
-    onChange={(e) => setEmploymentFilter(e.target.value)}
-    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+          {/* Type of Employment */}
+          <select
+            value={employmentFilter}
+            onChange={(e) => setEmploymentFilter(e.target.value)}
+            className="px-4 py-2 rounded-xl border-2 border-gray-300 
                focus:outline-none focus:border-blue-500 transition-colors"
-  >
-    <option value="all">All Types</option>
-    <option value="internship">Internship</option>
-    <option value="ppo">PPO</option>
-    <option value="fulltime">Full-time</option>
-  </select>
+          >
+            <option value="all">All Types</option>
+            <option value="internship">Internship</option>
+            <option value="ppo">PPO</option>
+            <option value="fulltime">Full-time</option>
+          </select>
 
-  {/* CTC */}
-  <select
-    value={ctcFilter}
-    onChange={(e) => setCtcFilter(e.target.value)}
-    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+          {/* CTC */}
+          <select
+            value={ctcFilter}
+            onChange={(e) => setCtcFilter(e.target.value)}
+            className="px-4 py-2 rounded-xl border-2 border-gray-300 
                focus:outline-none focus:border-blue-500 transition-colors"
-  >
-    <option value="all">All CTC</option>
-    <option value="lt5">Less than 5 LPA</option>
-    <option value="5to10">5–10 LPA</option>
-    <option value="gt10">10+ LPA</option>
-  </select>
+          >
+            <option value="all">All CTC</option>
+            <option value="lt5">Less than 5 LPA</option>
+            <option value="5to10">5–10 LPA</option>
+            <option value="gt10">10+ LPA</option>
+          </select>
 
-  {/* Deadline */}
-  <select
-    value={deadlineFilter}
-    onChange={(e) => setDeadlineFilter(e.target.value)}
-    className="px-4 py-2 rounded-xl border-2 border-gray-300 
+          {/* Deadline */}
+          <select
+            value={deadlineFilter}
+            onChange={(e) => setDeadlineFilter(e.target.value)}
+            className="px-4 py-2 rounded-xl border-2 border-gray-300 
                focus:outline-none focus:border-blue-500 transition-colors"
-  >
-    <option value="all">All Deadlines</option>
-    <option value="active">Active</option>
-    <option value="soon">Closing Soon</option>
-    <option value="expired">Expired</option>
-  </select>
+          >
+            <option value="all">All Deadlines</option>
+            <option value="active">Active</option>
+            <option value="soon">Closing Soon</option>
+            <option value="expired">Expired</option>
+          </select>
 
-</div>
+        </div>
         <hr className="border-gray-400 mb-8" />
 
         {/* Job Cards */}
@@ -449,8 +470,8 @@ const JobGet = () => {
                             {job.ctc
                               ? `CTC: ${job.ctc}`
                               : job.stipend
-                              ? `Stipend: ${job.stipend}`
-                              : "Not specified"}
+                                ? `Stipend: ${job.stipend}`
+                                : "Not specified"}
                           </span>
                         </div>
                         {job.application_deadline && (
@@ -472,22 +493,23 @@ const JobGet = () => {
 
                     {/* Action Buttons */}
                     <div className="flex flex-col gap-3 min-w-[120px]">
-{cgpa >= (job.eligibility_criteria || 0) ? (
-    <button
-      onClick={() => handleApply(job)}
-      className="flex items-center justify-center gap-2 bg-[#029309] text-white px-4 py-2 rounded-lg hover:bg-[#03b40c] transition-colors"
-    >
-      Apply
-    </button>
-  ) : (
-    <button
-      disabled
-      className="flex items-center justify-center gap-2 bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed opacity-70"
-      title={`Not eligible — CGPA ${cgpa} / ${job.cgpa_eligibility}`}
-    >
-      Apply
-    </button>
-  )}
+                      {parseFloat(cgpa || 0) >= parseFloat(job.cgpa_eligibility || 0) ? (
+                        <button
+                          onClick={() => handleApply(job)}
+                          className="flex items-center justify-center gap-2 bg-[#029309] text-white px-4 py-2 rounded-lg hover:bg-[#03b40c] transition-colors"
+                        >
+                          Apply
+                        </button>
+                      ) : (
+                        <button
+                          disabled
+                          className="flex items-center justify-center gap-2 bg-gray-400 text-white px-4 py-2 rounded-lg cursor-not-allowed opacity-70"
+                          title={`Not eligible — CGPA ${cgpa || "N/A"} / ${job.cgpa_eligibility || "N/A"}`}
+                        >
+                          Apply
+                        </button>
+                      )}
+
                       <button
                         onClick={() => handleDetails(job)}
                         className="flex items-center justify-center gap-2 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"

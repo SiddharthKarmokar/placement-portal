@@ -12,8 +12,8 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
     job_designation: "",
     type_of_employment: "",
     eligibility_criteria: "",
-    cgpa_eligibility:6,
-    applicable_branch: "",
+    cgpa_eligibility: 6,
+    applicable_branch: [],
     stipend: "",
     ctc: "",
     other_benefits: "",
@@ -35,6 +35,13 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
         batch: checked
           ? [...prev.batch, numericValue]
           : prev.batch.filter((year) => year !== numericValue),
+      }));
+    } else if (type === "checkbox" && name === "applicable_branch") {
+      setFormData((prev) => ({
+        ...prev,
+        applicable_branch: checked
+          ? [...prev.applicable_branch, value]
+          : prev.applicable_branch.filter((branch) => branch !== value),
       }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -65,26 +72,35 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    // Clean up the data before submitting
     const payload = {
       ...formData,
+      // Ensure arrays are properly formatted
+      batch: formData.batch || [],
+      applicable_branch: formData.applicable_branch || [],
       selection_process: formData.selection_process.filter(
         (step) => step.trim() !== ""
       ),
+      // Ensure numeric values are properly formatted
+      cgpa_eligibility: Number(formData.cgpa_eligibility) || 6,
     };
+    
+    console.log("Submitting job data:", payload);
     onSubmit(payload);
     onClose();
   };
 
-  const batches = [2025, 2026, 2027, 2028];
+  const batches = [2026, 2027, 2028, 2029];
   const employmentTypes = ["Full-time", "Part-time", "Internship", "Contract"];
   const branches = [
     "CSE",
-    "ECE",
+    "ECE", 
     "AIDS",
     "MECH",
     "EEE",
     "Civil",
-    "All Branches",
+    "All Branches"
   ];
 
   return (
@@ -209,24 +225,35 @@ const JobFormPopup = ({ onClose, onSubmit }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Applicable Branch
-                  </label>
-                  <select
-                    name="applicable_branch"
-                    value={formData.applicable_branch}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">Select Branch</option>
-                    {branches.map((branch) => (
-                      <option key={branch} value={branch}>
-                        {branch}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                 <div className="md:col-span-2">
+                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                     Applicable Branches
+                   </label>
+                   <div className="text-sm text-gray-600 mb-3 p-2 bg-gray-50 rounded-md border">
+                     {formData.applicable_branch.length === 0 
+                       ? "No branches selected" 
+                       : formData.applicable_branch.join(", ")
+                     }
+                   </div>
+                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                     {branches.map((branch) => (
+                       <label
+                         key={branch}
+                         className="flex items-center gap-2 p-3 border border-gray-300 rounded-lg hover:border-blue-500 hover:bg-blue-50 cursor-pointer transition-all duration-200"
+                       >
+                         <input
+                           type="checkbox"
+                           name="applicable_branch"
+                           value={branch}
+                           checked={formData.applicable_branch.includes(branch)}
+                           onChange={handleChange}
+                           className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+                         />
+                         <span className="text-sm font-medium text-gray-700">{branch}</span>
+                       </label>
+                     ))}
+                   </div>
+                 </div>
               </div>
             </div>
 
