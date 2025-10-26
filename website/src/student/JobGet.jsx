@@ -74,7 +74,13 @@ const JobDetails = ({ job }) => {
         <div className="flex items-center gap-2">
           <FiUser className="text-gray-400" />
           <span>
-            <strong>Branch:</strong> {job.applicable_branch || "All branches"}
+            <strong>Branch:</strong> {
+              Array.isArray(job.applicable_branch) 
+                ? job.applicable_branch.length > 0 
+                  ? job.applicable_branch.join(", ")
+                  : "All branches"
+                : job.applicable_branch || "All branches"
+            }
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -225,68 +231,83 @@ const JobGet = () => {
     fetchJobs();
   }, []);
 
-  // Filtering
-  const filteredJobs = jobs.filter((job) => {
-    // --- 1. Search by designation OR company ---
-    const matchesSearch =
-      !searchTerm ||
-      job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
-
-    // --- 2. Employment Type ---
-    const matchesEmployment =
-      employmentFilter === "all" ||
-      job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
-
-    // --- 3. Batch ---
-    const matchesBatch =
-      batchFilter === "all" || job.batch?.includes(Number(batchFilter));
-
-    // --- 4. Work Location ---
-    const matchesLocation =
-      locationFilter === "all" ||
-      job.work_location?.toLowerCase() === locationFilter.toLowerCase();
-
-    // --- 5. CTC Range ---
-    let matchesCtc = true;
-    if (ctcFilter !== "all" && job.ctc) {
-      const ctcValue = parseFloat(job.ctc); // assumes format like "8 LPA"
-      if (!isNaN(ctcValue)) {
-        if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
-        if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
-          matchesCtc = false;
-        if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
-      }
-    }
-
-    // --- 6. Deadline ---
-    let matchesDeadline = true;
-    if (deadlineFilter !== "all" && job.application_deadline) {
+  // Filtering and Sorting
+  const filteredJobs = jobs
+    .filter((job) => {
+      // --- 0. Filter out expired jobs by default ---
       const now = new Date();
-      const deadline = new Date(job.application_deadline);
-
-      if (deadlineFilter === "active" && deadline < now) matchesDeadline = false;
-      if (
-        deadlineFilter === "soon" &&
-        (deadline < now ||
-          deadline > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000))
-      ) {
-        matchesDeadline = false;
+      const deadline = job.application_deadline ? new Date(job.application_deadline) : null;
+      const isExpired = deadline && deadline < now;
+      
+      // Don't show expired jobs unless explicitly requested
+      if (isExpired && deadlineFilter !== "expired") {
+        return false;
       }
-      if (deadlineFilter === "expired" && deadline >= now)
-        matchesDeadline = false;
-    }
 
-    // --- Final Decision ---
-    return (
-      matchesSearch &&
-      matchesEmployment &&
-      matchesBatch &&
-      matchesLocation &&
-      matchesCtc &&
-      matchesDeadline
-    );
-  });
+      // --- 1. Search by designation OR company ---
+      const matchesSearch =
+        !searchTerm ||
+        job.job_designation?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        job.company_name?.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // --- 2. Employment Type ---
+      const matchesEmployment =
+        employmentFilter === "all" ||
+        job.type_of_employment?.toLowerCase() === employmentFilter.toLowerCase();
+
+      // --- 3. Batch ---
+      const matchesBatch =
+        batchFilter === "all" || job.batch?.includes(Number(batchFilter));
+
+      // --- 4. Work Location ---
+      const matchesLocation =
+        locationFilter === "all" ||
+        job.work_location?.toLowerCase() === locationFilter.toLowerCase();
+
+      // --- 5. CTC Range ---
+      let matchesCtc = true;
+      if (ctcFilter !== "all" && job.ctc) {
+        const ctcValue = parseFloat(job.ctc); // assumes format like "8 LPA"
+        if (!isNaN(ctcValue)) {
+          if (ctcFilter === "lt5" && ctcValue >= 5) matchesCtc = false;
+          if (ctcFilter === "5to10" && (ctcValue < 5 || ctcValue > 10))
+            matchesCtc = false;
+          if (ctcFilter === "gt10" && ctcValue <= 10) matchesCtc = false;
+        }
+      }
+
+      // --- 6. Deadline Filter ---
+      let matchesDeadline = true;
+      if (deadlineFilter !== "all" && job.application_deadline) {
+        if (deadlineFilter === "active" && isExpired) matchesDeadline = false;
+        if (
+          deadlineFilter === "soon" &&
+          (isExpired ||
+            deadline > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000))
+        ) {
+          matchesDeadline = false;
+        }
+        if (deadlineFilter === "expired" && !isExpired)
+          matchesDeadline = false;
+      }
+
+      // --- Final Decision ---
+      return (
+        matchesSearch &&
+        matchesEmployment &&
+        matchesBatch &&
+        matchesLocation &&
+        matchesCtc &&
+        matchesDeadline
+      );
+    })
+    .sort((a, b) => {
+      // Sort by newest jobs first (by creation date or application deadline)
+      const dateA = a.created_at ? new Date(a.created_at) : (a.application_deadline ? new Date(a.application_deadline) : new Date(0));
+      const dateB = b.created_at ? new Date(b.created_at) : (b.application_deadline ? new Date(b.application_deadline) : new Date(0));
+      
+      return dateB - dateA; // Newest first
+    });
 
   const handleApply = (job) => {
     if (job.form_link) {

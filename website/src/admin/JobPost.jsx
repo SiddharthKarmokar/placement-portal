@@ -111,15 +111,37 @@ const JobPost = () => {
   };
   const handlePostJob = async (jobData) => {
     try {
-      // console.log(jobData);
+      console.log("Posting job data:", jobData);
       const token = localStorage.getItem("token");
+      
+      if (!token) {
+        toast.error("Authentication token not found. Please login again.");
+        return;
+      }
+
       const res = await axios.post(`${API_URL}/api/jobs/create`, jobData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
       });
-      setJobs([...jobs, res.data]);
+      
+      // Refresh the jobs list
+      const fetchJobs = async () => {
+        try {
+          const res = await axios.get(`${API_URL}/api/jobs/get-jobs`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+          setJobs(Array.isArray(res.data) ? res.data : []);
+        } catch (err) {
+          console.error("Error fetching jobs:", err);
+        }
+      };
+      
+      await fetchJobs();
       setShowPostPopup(false);
       toast.success("Job posted successfully!");
     } catch (err) {
@@ -138,10 +160,10 @@ const JobPost = () => {
       });
       setJobs([...jobs, res.data]);
       setShowPostPopup(false);
-      toast.success("Job posted successfully!");
+      toast.success("Metrics fetch successfull!");
     } catch (err) {
       // console.error("Error posting job:", err);
-      toast.error("Failed to post job");
+      toast.error("Failed to get metrics");
     }
   };
 
@@ -161,7 +183,7 @@ const JobPost = () => {
         type_of_employment: updatedJob.type_of_employment || "",
         eligibility_criteria: updatedJob.eligibility_criteria || "",
         cgpa_eligibility: updatedJob.cgpa_eligibility || 6,
-        applicable_branch: updatedJob.applicable_branch || "",
+        applicable_branch: updatedJob.applicable_branch || [],
         stipend: updatedJob.stipend || "",
         ctc: updatedJob.ctc || "",
         other_benefits: updatedJob.other_benefits || "",
@@ -259,29 +281,36 @@ const JobPost = () => {
       const now = new Date();
       const deadline = new Date(job.application_deadline);
 
-      if (deadlineFilter === "active" && deadline < now)
-        matchesDeadline = false;
-      if (
-        deadlineFilter === "soon" &&
-        (deadline < now ||
-          deadline > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000))
-      ) {
-        matchesDeadline = false;
+        if (deadlineFilter === "active" && deadline < now)
+          matchesDeadline = false;
+        if (
+          deadlineFilter === "soon" &&
+          (deadline < now ||
+            deadline > new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000))
+        ) {
+          matchesDeadline = false;
+        }
+        if (deadlineFilter === "expired" && deadline >= now)
+          matchesDeadline = false;
       }
-      if (deadlineFilter === "expired" && deadline >= now)
-        matchesDeadline = false;
-    }
 
-    // --- Final Decision ---
-    return (
-      matchesSearch &&
-      matchesEmployment &&
-      matchesBatch &&
-      matchesLocation &&
-      matchesCtc &&
-      matchesDeadline
-    );
-  });
+      // --- Final Decision ---
+      return (
+        matchesSearch &&
+        matchesEmployment &&
+        matchesBatch &&
+        matchesLocation &&
+        matchesCtc &&
+        matchesDeadline
+      );
+    })
+    .sort((a, b) => {
+      // Sort by newest jobs first (by creation date or application deadline)
+      const dateA = a.created_at ? new Date(a.created_at) : (a.application_deadline ? new Date(a.application_deadline) : new Date(0));
+      const dateB = b.created_at ? new Date(b.created_at) : (b.application_deadline ? new Date(b.application_deadline) : new Date(0));
+      
+      return dateB - dateA; // Newest first
+    });
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -457,7 +486,14 @@ const JobPost = () => {
                         </div>
                         <div className="flex items-center gap-2 text-gray-600">
                           <FiUser className="text-gray-400" />
-                          <span>{job.applicable_branch || "All branches"}</span>
+                          <span>
+                            {Array.isArray(job.applicable_branch) 
+                              ? job.applicable_branch.length > 0 
+                                ? job.applicable_branch.join(", ")
+                                : "All branches"
+                              : job.applicable_branch || "All branches"
+                            }
+                          </span>
                         </div>
                         <div className="flex items-center gap-2 text-gray-600">
                           <FiDollarSign className="text-gray-400" />

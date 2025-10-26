@@ -45,7 +45,8 @@ export default function AdminLogin() {
 
       const profileData = await profileRes.json();
       if (!profileRes.ok) {
-        toast.error("Login succeeded, but failed to fetch profile.");
+        toast.error("Login failed.");
+        localStorage.clear();
         setLoading(false);
         return;
       }
