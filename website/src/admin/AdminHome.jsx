@@ -64,7 +64,7 @@ const AdminHome = () => {
   return (
     <div className="h-screen flex bg-[#EEEEEE]">
       {/* Sidebar - collapses on small screens */}
-      <div className="hidden md:block">
+      <div className="hidden lg:block">
         <Sidebar />
       </div>
       {/* Main Content Area */}
