@@ -85,7 +85,7 @@ const JobPost = () => {
         setIsLoading(false);
         // console.log(res.data);
       } catch (err) {
-        console.error("Error fetching jobs:", err);
+        // console.error("Error fetching jobs:", err);
         toast.error("Failed to fetch jobs");
         setIsLoading(false);
       }
@@ -93,7 +93,22 @@ const JobPost = () => {
 
     fetchJobs();
   }, []);
-
+  const handleUpdateMetrics=async()=>{
+    try{
+      const token=localStorage.getItem("token");
+      const res=await axios.post(`${API_URL}/api/jobs/update-all-metrics`,{
+        headers:{
+          Authorization:`Bearer ${token}`,
+          "Content-Type": "application/json",
+        }
+      })
+      toast.success("Job Metrics Updates Successfully!");
+    }
+    catch(e){
+      console.log(e);
+      toast.error("Failed to Update Job Metrics");
+    }
+  };
   const handlePostJob = async (jobData) => {
     try {
       console.log("Posting job data:", jobData);
@@ -140,6 +155,8 @@ const JobPost = () => {
       } else {
         toast.error(`Failed to post job: ${err.response?.data?.detail || err.message}`);
       }
+      // console.error("Error posting job:", err);
+      toast.error("Failed to post job");
     }
   };
 
@@ -190,30 +207,14 @@ const JobPost = () => {
       setShowModifyPopup(false);
       toast.success("Job updated successfully!");
     } catch (err) {
-      console.error(
-        "Error updating job:",
-        err.response?.data || err.message
-      );
+      // console.error(
+      //   "Error updating job:",
+      //   err.response?.data || err.message
+      // );
       toast.error("Failed to update job");
     }
   };
-  
-  // const handleDeleteJob = async (jobId) => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     await axios.delete(`${SERVER_URI}/api/jobs/${jobId}`, {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  //     setJobs(jobs.filter((job) => job._id !== jobId));
-  //     setShowDeleteModal(false);
-  //     toast.success("Job deleted successfully!");
-  //   } catch (err) {
-  //     console.error("Error deleting job:", err);
-  //     toast.error("Failed to delete job");
-  //   }
-  // };
+
 
   const handleSyncJobs = async () => {
     try {
@@ -229,7 +230,7 @@ const JobPost = () => {
       );
       toast.success("Jobs synced successfully!");
     } catch (err) {
-      console.error("Error syncing jobs:", err);
+
       toast.error("Failed to sync jobs");
     }
   };
@@ -341,9 +342,15 @@ const JobPost = () => {
     <div className="bg-[#F5F7FC] min-h-screen p-8 font-[Figtree]">
       <div className="max-w-6xl mx-auto">
         {/* Header with Title and Create Button */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex flex-wrap justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800 sm:text-2xl">Job Postings</h1>
           <div className="flex justify-between items-center gap-5">
+            <button
+              onClick={handleUpdateMetrics}
+              className="flex items-center gap-2 px-4 py-2 bg-[#10793F] text-white rounded-xl shadow-lg hover:bg-white hover:text-black transition-colors"
+            >
+            ↻Metrics
+            </button>
             <button
               onClick={handleSyncJobs}
               className="flex items-center gap-2 px-4 py-2 bg-[#57C62B] text-white rounded-xl shadow-lg hover:bg-[#4da72a] transition-colors"
