@@ -54,7 +54,9 @@ jobs:
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REDIRECT_URI: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           APPS_SCRIPT_URL: ${{ secrets.GOOGLE_CLIENT_SECRET }}
-        run: pytest
+        run: |
+          pip install pytest pytest-mock pytest-asyncio
+          pytest
 
 
       - name: Log in to Docker Hub
