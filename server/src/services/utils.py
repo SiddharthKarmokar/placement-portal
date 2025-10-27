@@ -82,7 +82,7 @@ def queue_email_task(
         subject (str): Email subject.
         body (str): Email content.
     """
-    if background_tasks:
+    if isinstance(background_tasks, BackgroundTasks):
         background_tasks.add_task(send_email_to_student, email, subject, body)
 
 

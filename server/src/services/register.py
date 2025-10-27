@@ -93,7 +93,7 @@ async def process_student_csv(db: AsyncIOMotorDatabase, file_bytes: bytes, backg
                     username=cred["username"],
                     password=cred["password"],
                 )
-                queue_email_task(background_tasks, cred["email"], subject, body)
+                queue_email_task(background_tasks=background_tasks, email=cred["email"], subject=subject, body=body)
 
             if i + BATCH_SIZE < len(creds_to_send):
                 await asyncio.sleep(BATCH_DELAY_SECONDS)
