@@ -87,6 +87,7 @@ async def sync_expired_jobs(db: AsyncIOMotorDatabase = Depends(get_database)):
 async def get_all_jobs(
     db: AsyncIOMotorDatabase = Depends(get_database),
 ) -> List[JobResponse]:
+    
     try:
         cached = cache_get("jobs:all")
         if cached:
@@ -123,6 +124,7 @@ async def get_all_master_sheets(
     db: AsyncIOMotorDatabase = Depends(get_database),
 ) -> List[MasterSheetResponse]:
     try:
+        
         cached = cache_get("master_sheets:all")
         if cached:
             return [MasterSheetResponse(**sheet) for sheet in cached]
@@ -278,3 +280,7 @@ async def update_job(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Failed to update job",
         )
+
+
+
+

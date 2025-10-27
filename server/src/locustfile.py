@@ -12,7 +12,7 @@ class StudentUser(HttpUser):
     def on_start(self):
         """Login as a student before running any tasks."""
         self.username = "523cs0009@iiitk.ac.in"
-        self.password = "XBz2biTr"
+        self.password = "VLc9vC98"
         self.headers = {"Authorization": ""}
 
         with self.client.post(

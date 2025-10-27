@@ -27,7 +27,7 @@ async def get_student_profile(current_user: dict = Depends(security.get_current_
             detail="Access denied: Only students can access this endpoint",
         )
 
-    cache_key = f"profile:student:{current_user.get('_id')}"
+    cache_key = f"profile:student:{current_user.get('roll_number')}"
     cached = cache_get(cache_key)
     if cached:
         return cached
