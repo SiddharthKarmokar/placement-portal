@@ -10,6 +10,7 @@ WORKDIR /usr/share/ngnix/html
 COPY --from=build /app/dist .
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# please work
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
