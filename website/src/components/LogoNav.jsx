@@ -108,9 +108,9 @@ const LogoNav = () => {
           
           {
             icon: Info,
-            label: "Placement Process",
-            dest: "/student/process",
-            external: false,
+            label: "ATS Score Checker",
+            dest: "https://placement-portal-ats.vercel.app/",
+            external: true,
           },
           {
             icon: ExternalLink,

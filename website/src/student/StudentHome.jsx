@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import LogoNav from "../components/LogoNav";
 import JobGet from "./JobGet";
 import Sidebar from "../components/SideNav";
-import { API_URL } from "../../env-config";
+import { API_URL } from "../../env-config.mjs";
 import { toast, ToastContainer } from "react-toastify";
 import { Eye, EyeOff, Key, LogOut, User } from "lucide-react";
 import "../css/scroll.css";

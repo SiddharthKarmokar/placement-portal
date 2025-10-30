@@ -1,6 +1,11 @@
 import React, { useState } from 'react';
 import { Upload } from 'lucide-react';
-import { CLOUDINARY_CONFIG } from '../../env-config';
+
+// Cloudinary configuration with fallback values
+const CLOUDINARY_CONFIG = {
+  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'dgsbvayag',
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || 'students'
+};
 
 /**
  * Cloudinary image upload utility component

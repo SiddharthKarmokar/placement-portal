@@ -5,7 +5,7 @@ import StudentUpdates from "./StudentUpdates";
 import Sidebar from "../components/SideNav";
 import { FiEdit } from "react-icons/fi";
 import LogoNav from "../components/LogoNav";
-import { API_URL } from "../../env-config";
+import { API_URL } from "../../env-config.mjs";
 const StudentManagement = () => {
   // const SERVER_URI = "https://placement-portal-registry-latest.onrender.com";
   const SERVER_URI = API_URL;

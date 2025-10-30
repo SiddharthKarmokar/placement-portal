@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { API_URL } from "../../env-config";
+import { API_URL } from "../../env-config.mjs";
 import { useCloudinaryUpload, UploadStatus, FileUploadInput } from "../components/CloudinaryUpload";
 import { UserCircle2 } from "lucide-react";
 
