@@ -82,8 +82,9 @@ def queue_email_task(
         subject (str): Email subject.
         body (str): Email content.
     """
-    if background_tasks:
+    if isinstance(background_tasks, BackgroundTasks):
         background_tasks.add_task(send_email_to_student, email, subject, body)
+        logger.info(f"Send mail to {email}")
 
 
 async def send_email(to_email: str, subject: str, body: str) -> None:
