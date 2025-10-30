@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
  const OurTeam = () => {
-  const developmentTeam = [
+const developmentTeam = [
     {
       id: 1,
       name: "Rushikesh Iche",
@@ -25,8 +25,8 @@ import {
       email: "123cs0035@iiitk.ac.in",
       github: "https://github.com/RushikeshIche",
       linkedin: "https://www.linkedin.com/in/rushikesh-iche-aa395b289/",
-      bio: "Aspiring Software Engineer | Full Stack & Web3 Developer | Machine Learning",
-      skills: ["Next.JS", "Python", "C++"],
+      bio: "Full Stack Developer specializing in React.js, Node.js, and API integration. Experienced in building end-to-end scalable web applications with clean UI and efficient backend logic. Passionate about Web3 technologies and applying machine learning in full-stack solutions.",
+      skills: ["Next.JS","Smart Contracts","Web3" ,"Python", "C++"],
       contributions: ["Frontend Development", "API Routing"],
       projects: 10
     },
@@ -39,7 +39,7 @@ import {
       email: "asharda7898@gmail.com",
       github: "https://github.com/arnav7897",
       linkedin: "https://www.linkedin.com/in/arnav-sharda-bb281725a/",
-      bio: "Lead developer with expertise in modern web technologies and system architecture. Passionate about creating scalable and user-friendly applications.",
+      bio: "Lead Full Stack Developer with expertise in React.js, Node.js, and TypeScript. Skilled in designing scalable system architectures and creating interactive, responsive frontends. Focused on performance optimization and maintainable codebases.",
       skills: ["React", "Node.js", "MongoDB", "Express", "TypeScript"],
       contributions: ["System Architecture", "Frontend Development", "API Design"],
       projects: 15
@@ -53,7 +53,7 @@ import {
       email: "523cs0009@iiitk.ac.in",
       github: "https://github.com/Vurhd0",
       linkedin: "https://linkedin.com/in/dhruvsingh03",
-      bio: "Computer Science Student | Focused on Deep Learning & Computer Vision | Growing in Project Management & Teamwork.",
+      bio: "Backend Developer skilled in Python, FastAPI, and MongoDB. Experienced in designing high-performance APIs and database-driven architectures. Passionate about Computer Vision, Deep Learning, and building reliable, production-ready backends.",
       skills: ["Python", "C++", "MongoDB", "GCP", "Flask"],
       contributions: ["System Architecture", "Backend Development", "API Design"],
       projects: 5
@@ -61,13 +61,13 @@ import {
     {
       id: 4,
       name: "Siddharth Karmokar",
-      role: "DevOps and Testing",
+      role: "DevOps and Testing Engineer",
       specialization: "Cloud and Containerization",
       image: "/Team/siddharth.jpeg",
       email: "siddkarmokar@gmail.com",
       github: "https://github.com/SiddharthKarmokar/placement-portal",
       linkedin: "https://www.linkedin.com/in/siddkarmokar/",
-      bio: "DevOps engineer focused on scalable deployments, testing, and CI/CD pipelines.",
+      bio: "DevOps and Testing Engineer with strong experience in Docker, AWS, and CI/CD pipelines. Focused on automating deployments, maintaining high availability, and implementing scalable cloud infrastructure. Adept at testing strategies including unit, integration, and load testing.",
       skills: ["Python", "React.js", "Docker", "AWS"],
       contributions: ["EC2 + DockerHub", "CICD", "Unit, Integration and Load Testing", "Container Orchestration", "System Design"], 
       projects: 12
@@ -81,9 +81,9 @@ import {
       email: "123cs0009@iiitk.ac.in",
       github: "https://github.com/rineet",
       linkedin: "https://www.linkedin.com/in/rineet-pandey-8aa4112a8/",
-      bio: "Creates clear, concise, and comprehensive documentation to communicate complex technical information.",
-      skills: ["Figma", "Latex", "Design Analysis"],
-      contributions: ["Frontend Design", "System Analysis and Documentation"],
+      bio: "System Analyst and Technical Writer specializing in design documentation, system workflows, and Figma-based UI design. Skilled in LaTeX for professional reporting and system visualization. Ensures every module is clearly documented and analytically sound.",
+      skills: ["Figma", "Python" , "C++" ,"Cryptography","Latex"],
+      contributions: ["Frontend Design", "System Analysis", "Documentation","Security Analysis"],
       projects: 5
     },
     {
@@ -95,7 +95,7 @@ import {
       email: "paarth.batra007@gmail.com",
       github: "https://github.com/hydro-7",
       linkedin: "https://linkedin.com/in/paarth7",
-      bio: "Backend developer with a focus on scalable architectures and Python applications.",
+      bio: "Backend Developer focused on Python and FastAPI. Experienced in designing scalable REST APIs and database systems using MongoDB. Passionate about writing efficient, maintainable backend logic and contributing to documentation and architecture design.",
       skills: ["Python", "C++", "MongoDB", "Flask"],
       contributions: ["System Architecture", "Backend Development", "Documentation"],
       projects: 5
@@ -104,26 +104,26 @@ import {
       id: 7,
       name: "Gaurav Singh",
       role: "Frontend Designer",
-      specialization: ["React.js", "JavaScript","Bootstrap"],
+      specialization: ["React.js", "JavaScript", "Bootstrap"],
       image: "/Team/gaurav.jpeg",
       email: "game092003@gmail.com",
       github: "https://github.com/Loverki",
       linkedin: "https://linkedin.com/in/gaurav092003",
-      bio: "Frontend Designer skilled in React.js, JavaScript, and Bootstrap, focused on building clean, responsive web interfaces.",
-      skills: ["React", "Bootstrap","Node.js", "MongoDB", "Express.js"],
+      bio: "Frontend Designer skilled in React.js, JavaScript, and Bootstrap. Dedicated to crafting visually appealing, responsive, and user-friendly web interfaces. Interested in UI/UX improvement and seamless frontend-backend integration.",
+      skills: ["React", "Bootstrap", "Node.js", "MongoDB", "Express.js"],
       contributions: ["Frontend Development"],
       projects: 4
     },
     {
       id: 8,
       name: "Ayush Rahate",
-      role: "Frontend Developer and Documentation",
+      role: "Frontend Developer and Documentation Specialist",
       specialization: "Python and Figma",
       image: "/Team/ayush.jpeg",
       email: "123cs0006@iiitk.ac.in",
       github: "https://github.com/ayushr27",
       linkedin: "https://www.linkedin.com/in/ayushrahate27/",
-      bio: "Computer Science Student | Applying Deep Learning within the SDLC | Growing in Product Management.",
+      bio: "Frontend Developer and Documentation Specialist with experience in Python, Figma, and LaTeX. Passionate about designing clean user interfaces and ensuring clear, maintainable technical documentation. Interested in applying deep learning within software development lifecycles.",
       skills: ["Python", "C++", "Figma", "Latex"],
       contributions: ["System Architecture", "Documentation", "UI Interface"],
       projects: 4
