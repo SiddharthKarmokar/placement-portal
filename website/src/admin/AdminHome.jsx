@@ -6,7 +6,7 @@ import "../css/scroll.css";
 import { NavLink, useNavigate } from "react-router-dom";
 import { LogOut } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
-import { API_URL } from "../../env-config";
+import { API_URL } from "../../env-config.mjs";
 
 const AdminHome = () => {
   const navigate = useNavigate();

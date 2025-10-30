@@ -13,6 +13,10 @@ import {
   FiBook,
   FiUser,
   FiCalendar,
+  FiBarChart2,
+  FiX,
+  FiGitBranch,
+  FiUsers,
 } from "react-icons/fi";
 import { Dialog } from "@headlessui/react";
 import { toast, ToastContainer } from "react-toastify";
@@ -20,7 +24,7 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import JobFormPopup from "./JobFormPopup";
 import ModifyJobPopup from "./ModifyJobPopup";
-import { API_URL } from "../../env-config";
+import { API_URL } from "../../env-config.mjs";
 
 // const ConfirmationModal = ({ isOpen, title, message, onConfirm, onCancel }) => {
 //   if (!isOpen) return null;
@@ -53,12 +57,131 @@ import { API_URL } from "../../env-config";
 //     </Dialog>
 //   );
 // };
+const MetricsPopup = ({ isOpen, onClose, metricsData, jobTitle }) => {
+  if (!isOpen || !metricsData) return null;
+
+  const { metrics, updated_at } = metricsData;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 overflow-y-auto">
+      {/* Popup container */}
+      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="sticky top-0 bg-white p-6 border-b border-gray-200 rounded-t-2xl">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold text-gray-800 flex items-center gap-3">
+              <FiBarChart2 className="text-blue-600" />
+              Job Metrics
+            </h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+            >
+              <FiX size={24} />
+            </button>
+          </div>
+          <p className="text-gray-600 mt-2">{jobTitle}</p>
+        </div>
+
+        {/* Metrics Content */}
+        <div className="p-6 space-y-6">
+          {/* Gender-wise Metrics */}
+          {metrics.gender_wise && Object.keys(metrics.gender_wise).length > 0 && (
+            <div className="bg-blue-50 rounded-xl p-5 border border-blue-100">
+              <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center gap-2">
+                <FiUsers className="text-blue-600" />
+                Gender-wise Applications
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Object.entries(metrics.gender_wise).map(([gender, count]) => (
+                  <div
+                    key={gender}
+                    className="bg-white rounded-lg p-4 shadow-sm border border-blue-200"
+                  >
+                    <div className="text-2xl font-bold text-blue-600 text-center">
+                      {count}
+                    </div>
+                    <div className="text-sm text-gray-600 text-center mt-1 capitalize">
+                      {gender === "" ? "Not Specified" : gender}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Branch-wise Metrics */}
+          {metrics.branch_wise && Object.keys(metrics.branch_wise).length > 0 && (
+            <div className="bg-green-50 rounded-xl p-5 border border-green-100">
+              <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center gap-2">
+                <FiGitBranch className="text-green-600" />
+                Branch-wise Applications
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {Object.entries(metrics.branch_wise).map(([branch, count]) => (
+                  <div
+                    key={branch}
+                    className="bg-white rounded-lg p-4 shadow-sm border border-green-200"
+                  >
+                    <div className="text-2xl font-bold text-green-600 text-center">
+                      {count}
+                    </div>
+                    <div className="text-sm text-gray-600 text-center mt-1">
+                      {branch === "" ? "Not Specified" : branch}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Total Applications
+          <div className="bg-purple-50 rounded-xl p-5 border border-purple-100">
+            <h3 className="text-lg font-semibold text-purple-800 mb-3">
+              Total Applications
+            </h3>
+            <div className="text-3xl font-bold text-purple-600 text-center">
+              {Object.values(metrics.gender_wise || {}).reduce(
+                (sum, count) => sum + count,
+                0
+              ) +
+                Object.values(metrics.branch_wise || {}).reduce(
+                  (sum, count) => sum + count,
+                  0
+                ) / 2}
+            </div>
+            <p className="text-sm text-gray-600 text-center mt-2">
+              Total applicants for this job posting
+            </p>
+          </div> */}
+
+          {/* Last Updated */}
+          <div className="text-center text-sm text-gray-500 border-t pt-4">
+            Last updated: {new Date(updated_at).toLocaleString()}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="sticky bottom-0 bg-gray-50 p-4 border-t border-gray-200 rounded-b-2xl">
+          <button
+            onClick={onClose}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const JobPost = () => {
   const [jobs, setJobs] = useState([]);
   const [showPostPopup, setShowPostPopup] = useState(false);
   const [showModifyPopup, setShowModifyPopup] = useState(false);
   // const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showMetricsPopup, setShowMetricsPopup] = useState(false);
+  const [metricsData, setMetricsData] = useState(null);
   const [selectedJob, setSelectedJob] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -155,29 +278,29 @@ const JobPost = () => {
       toast.error("Failed to post job");
     }
   };
-const handleGetMetrics = async (jobId) => {
-  try {
-    const token = localStorage.getItem("token");
+  const handleGetMetrics = async (jobId, jobTitle) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.get(
+        `${API_URL}/api/jobs/job_metrics`,
+        {
+          params: { jobid: jobId },
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    const res = await axios.get(
-      `${API_URL}/api/jobs/job_metrics`,
-      {
-        params: { jobid: jobId },
-        headers: {
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
-    console.log("Metrics response:", res.data);
-
-    toast.success("Metrics fetched successfully!");
-  } catch (err) {
-    console.error("Error fetching metrics:", err);
-    toast.error("Failed to get metrics");
-  }
-};
+      setMetricsData(res.data);
+      setSelectedJob({ _id: jobId, job_designation: jobTitle });
+      setShowMetricsPopup(true);
+      toast.success("Metrics fetched successfully!");
+    } catch (err) {
+      console.error("Error fetching metrics:", err);
+      toast.error("Failed to get metrics");
+    }
+  };
 
 
 
@@ -658,15 +781,12 @@ const handleGetMetrics = async (jobId) => {
                         )}
                         </div>
                         <div className="flex flex-wrap justify-between items-center">
-                          <button
-                            onClick={() => handleGetMetrics(job._id)}
-
-                            
-                            className="flex items-center mx-[2px] w-fit justify-center gap-2 bg-[#57C62B]  hover:bg-[#4da72a]  text-white px-4 py-2 rounded-lg transition-colors"
-                          >
-                            
-                            Get Metrics
-                          </button>
+                        <button
+          onClick={() => handleGetMetrics(job._id, job.job_designation)}
+          className="flex items-center mx-[2px] w-fit justify-center gap-2 bg-[#57C62B] hover:bg-[#4da72a] text-white px-4 py-2 rounded-lg transition-colors"
+        >
+          Get Metrics
+        </button>
                         </div>
                       </div>
                       
@@ -700,7 +820,13 @@ const handleGetMetrics = async (jobId) => {
         onConfirm={() => handleDeleteJob(selectedJob?._id)}
         onCancel={() => setShowDeleteModal(false)}
       /> */}
-      <ToastContainer />
+      <MetricsPopup
+        isOpen={showMetricsPopup}
+        onClose={() => setShowMetricsPopup(false)}
+        metricsData={metricsData}
+        jobTitle={selectedJob?.job_designation}
+      />
+     
     </div>
   );
 };

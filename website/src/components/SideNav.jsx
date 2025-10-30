@@ -3,6 +3,7 @@ import { useNavigate, Link, useAsyncError } from "react-router-dom";
 import {
   Home,
   Users,
+  Info,
   Upload,
   FileText,
   ChevronLeft,
@@ -75,8 +76,14 @@ const Sidebar = () => {
             external: true,
           },
           {
+            icon: Info,
+            label: "ATS Score Checker",
+            dest: "https://placement-portal-ats.vercel.app/",
+            external: true,
+          },
+          {
             icon: FileText,
-            label: "Placement Site",
+            label: "Placement Stats",
             dest: "https://iiitk.ac.in/Placement-Statistics/page",
             external: true,
           },
@@ -90,7 +97,7 @@ const Sidebar = () => {
     >
       {/* Logo + Toggle */}
       <div>
-        <div className="flex items-center gap-3 relative z-99">
+        <div className="flex items-center gap-3 relative z-2">
           <img src="/logo.webp" alt="logo" className="w-12" />
           {isOpen && (
             <motion.span

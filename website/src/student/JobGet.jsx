@@ -9,7 +9,7 @@ import {
 } from "react-icons/fi";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { API_URL } from "../../env-config";
+import { API_URL } from "../../env-config.mjs";
 import { FiSearch } from "react-icons/fi";
 
 const Modal = ({ children, onClose }) => {

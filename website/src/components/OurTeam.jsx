@@ -35,7 +35,7 @@ import {
       name: "Arnav Sharda",
       role: "Full Stack Developer",
       specialization: "React.js & Node.js",
-      image: "/Team/arnav.png",
+      image: "/Team/arnav.jpeg",
       email: "asharda7898@gmail.com",
       github: "https://github.com/arnav7897",
       linkedin: "https://www.linkedin.com/in/arnav-sharda-bb281725a/",
@@ -145,7 +145,10 @@ import {
     { number: "99.9%", label: "Uptime" }
   ];
 
-  const DeveloperCard = ({ developer }) => (
+  const DeveloperCard = ({ developer }) => {
+    const [imgError, setImgError] = React.useState(false);
+    
+    return (
     <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 overflow-hidden border border-gray-100">
       {/* Background Gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -155,10 +158,19 @@ import {
         <div className="flex items-start space-x-4 mb-4">
           <div className="relative">
             <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 p-1">
-              <div className="w-full h-full rounded-full bg-white p-1">
-                <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-                  <Code className="w-8 h-8 text-gray-400" />
-                </div>
+              <div className="w-full h-full rounded-full bg-white p-1 overflow-hidden relative">
+                {!imgError && developer.image ? (
+                  <img 
+                    src={developer.image} 
+                    alt={developer.name}
+                    className="w-full h-full rounded-full object-cover"
+                    onError={() => setImgError(true)}
+                  />
+                ) : (
+                  <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
+                    <Users className="w-8 h-8 text-gray-400" />
+                  </div>
+                )}
               </div>
             </div>
             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
@@ -244,7 +256,8 @@ import {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50/30">

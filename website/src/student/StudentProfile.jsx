@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import LogoNav from "../components/LogoNav";
 import Sidebar from "../components/SideNav";
-import { API_URL } from "../../env-config";
+import { API_URL } from "../../env-config.mjs";
 import { useNotification, NotificationContainer } from "../components/notification";
 import { useCloudinaryUpload, UploadStatus, FileUploadInput } from "../components/CloudinaryUpload";
 
