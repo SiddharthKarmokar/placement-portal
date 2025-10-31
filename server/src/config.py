@@ -8,4 +8,7 @@ class Secrets(BaseSettings):
     MAIL_USERNAME: str
     MAIL_PASSWORD: str
 
+    model_config = SettingsConfigDict(env_file=".env")
 
+
+secrets = Secrets()
