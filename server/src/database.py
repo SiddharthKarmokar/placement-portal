@@ -6,4 +6,4 @@ database = client[secrets.DATABASE_NAME]
 
 
 def get_database() -> AsyncIOMotorDatabase:
-    return database
+    return 
