@@ -20,7 +20,7 @@ export default function AdminLogin() {
     try {
       const tokenRes = await fetch(`${API_URL}/api/auth/token`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded", "ngrok-skip-browser-warning": "true" },
+        headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json", "ngrok-skip-browser-warning": "true" },
         body: new URLSearchParams({
           username: Username,
           password: Password,
