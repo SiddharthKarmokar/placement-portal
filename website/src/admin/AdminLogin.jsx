@@ -40,10 +40,7 @@ export default function AdminLogin() {
 
       const profileRes = await fetch(`${API_URL}/profile/admin/me`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${accessToken}`,
-              "Accept": "application/json",
-              "ngrok-skip-browser-warning": "true"
-         },
+        headers: { Authorization: `Bearer ${accessToken}`, "Accept": "application/json", "ngrok-skip-browser-warning": "true" },
       });
 
       const profileData = await profileRes.json();
