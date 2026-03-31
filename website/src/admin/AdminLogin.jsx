@@ -42,7 +42,7 @@ export default function AdminLogin() {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}`,
               "Accept": "application/json",
-              "ngrok-skip-browser-warning": "true",
+              "ngrok-skip-browser-warning": "true"
          },
       });
 
